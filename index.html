@@ -9,7 +9,12 @@
     <meta property="og:description" content="Discovery protocol. Propose candidates for universal truths. The system decomposes, scores, and eliminates without mercy.">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Nicomaco">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -347,11 +352,27 @@
         }
         .footer-links a:hover { color: var(--comment); }
 
+        /* ── config panels ── */
+        .cfg-panel { padding: 4px 0; }
+        .buy-pack {
+            font-size: 11px !important;
+            padding: 6px 10px !important;
+            border-color: #2a2a00 !important;
+            color: var(--yellow) !important;
+        }
+        .buy-pack:hover { border-color: var(--yellow) !important; background: #1a1a00 !important; }
+        .buy-pack:disabled { opacity: 0.4; cursor: wait; }
+        #invoice-qr img { max-width: 200px; }
+        .s-yellow { color: var(--yellow); }
+        .s-green { color: var(--green); }
+        .s-bright { color: var(--text-bright); }
+
         /* ── responsive ── */
         @media (max-width: 600px) {
             #app { padding: 16px 12px 0; }
             .gutter { display: none; }
             .header { flex-direction: column; gap: 8px; }
+            .buy-pack { width: 100%; }
         }
     </style>
 </head>
@@ -364,22 +385,70 @@
                     <div class="header-sub">// configuration</div>
                 </div>
             </div>
-            <div class="s-cmt" style="margin-bottom:12px">// stored in your browser. never transmitted to third parties.</div>
-            <div class="cfg-line">
-                <label>api_key:</label>
-                <input type="password" id="cfg-key" placeholder="sk-ant-..." />
+
+            <!-- mode tabs -->
+            <div class="tabs" style="margin-bottom:16px">
+                <button class="tab active" data-cfg="free">free / credits</button>
+                <button class="tab" data-cfg="apikey">own api key</button>
             </div>
-            <div class="cfg-line">
-                <label>model: </label>
-                <select id="cfg-model">
-                    <option value="claude-sonnet-4-20250514">claude-sonnet-4</option>
-                    <option value="claude-opus-4-20250514">claude-opus-4</option>
-                    <option value="claude-3-5-sonnet-20241022">claude-3.5-sonnet</option>
-                    <option value="claude-3-5-haiku-20241022">claude-3.5-haiku</option>
-                </select>
+
+            <!-- free / credits mode -->
+            <div id="cfg-free" class="cfg-panel">
+                <div class="s-cmt" style="margin-bottom:12px">// 3 free analyses per day. buy credits with Lightning BTC for more.</div>
+                <div id="credits-display" style="margin:12px 0">
+                    <span class="s-cmt">// checking credits...</span>
+                </div>
+                <div id="credits-token-row" class="cfg-line" style="display:none">
+                    <label>token:</label>
+                    <input type="text" id="cfg-token" placeholder="paste your token..." style="color:var(--green)" />
+                </div>
+
+                <!-- lightning buy section -->
+                <div style="margin:20px 0 12px">
+                    <div class="s-cmt" style="margin-bottom:8px">// buy credits with Lightning BTC</div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <button class="btn buy-pack" data-pack="trial">⚡ 1,000 sats → 10 analyses</button>
+                        <button class="btn buy-pack" data-pack="basic">⚡ 5,000 sats → 80 analyses</button>
+                        <button class="btn buy-pack" data-pack="pro">⚡ 20,000 sats → 400 analyses</button>
+                    </div>
+                </div>
+
+                <!-- invoice display (hidden by default) -->
+                <div id="invoice-display" style="display:none;margin:16px 0">
+                    <div class="s-cmt">// scan with any Lightning wallet</div>
+                    <div id="invoice-qr" style="margin:12px 0;text-align:center"></div>
+                    <div class="cfg-line">
+                        <label>invoice:</label>
+                        <input type="text" id="invoice-text" readonly style="color:var(--yellow);font-size:10px" />
+                        <button class="btn btn-sm" id="copy-invoice">copy</button>
+                    </div>
+                    <div id="payment-status" class="s-cmt" style="margin-top:8px">// waiting for payment...</div>
+                </div>
+
+                <div style="margin-top:16px">
+                    <button class="btn" id="cfg-save-free">start</button>
+                </div>
             </div>
-            <div style="margin-top:16px">
-                <button class="btn" id="cfg-save">save</button>
+
+            <!-- api key mode -->
+            <div id="cfg-apikey" class="cfg-panel" style="display:none">
+                <div class="s-cmt" style="margin-bottom:12px">// stored in your browser. never transmitted to third parties.</div>
+                <div class="cfg-line">
+                    <label>api_key:</label>
+                    <input type="password" id="cfg-key" placeholder="sk-ant-..." />
+                </div>
+                <div class="cfg-line">
+                    <label>model: </label>
+                    <select id="cfg-model">
+                        <option value="claude-sonnet-4-20250514">claude-sonnet-4</option>
+                        <option value="claude-opus-4-20250514">claude-opus-4</option>
+                        <option value="claude-3-5-sonnet-20241022">claude-3.5-sonnet</option>
+                        <option value="claude-3-5-haiku-20241022">claude-3.5-haiku</option>
+                    </select>
+                </div>
+                <div style="margin-top:16px">
+                    <button class="btn" id="cfg-save">save</button>
+                </div>
             </div>
         </div>
 
@@ -391,8 +460,9 @@
                     <div class="header-sub">// discovery protocol</div>
                 </div>
                 <div class="header-nav">
-                    <a href="motivos.html">motives</a>
+                    <a href="motivos.html" id="nav-motives">motives</a>
                     <a href="#" id="nav-cfg">cfg</a>
+                    <a href="#" id="nav-lang" style="color:var(--comment)">ES</a>
                 </div>
             </div>
 
@@ -596,8 +666,83 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         { text: "Repeating something a thousand times doesn't make it true, but it does make it a belief", hint: "inheritance vs derivation" }
     ];
 
+    const WORKER_URL = 'https://nicomaco-api.joseandv-creator.workers.dev';
+
+    const I18N = {
+        en: {
+            subtitle: '// discovery protocol',
+            motives: 'motives',
+            discover: 'discover',
+            history: 'history',
+            integrated: 'integrated',
+            placeholder: 'write a candidate or paste a URL...',
+            hints: 'enter to send \u00b7 shift+enter new line \u00b7 paste URL to analyze \u00b7 esc cancel',
+            challenge: 'challenge',
+            integrate: 'integrate',
+            copy: 'copy',
+            copied: 'copied',
+            save: 'save',
+            start: 'start',
+            configTitle: '// configuration',
+            freeTab: 'free / credits',
+            apikeyTab: 'own api key',
+            freeHint: '// 3 free analyses per day. buy credits with Lightning BTC for more.',
+            apikeyHint: '// stored in your browser. never transmitted to third parties.',
+            noHistory: '// no history yet',
+            noIntegrated: '// no integrated truths yet',
+            welcome1: '// propose a candidate universal truth',
+            welcome2: '// the system decomposes, scores, eliminates',
+            welcome3: '// what survives gets integrated',
+            welcome4: '// what doesn\'t shows you exactly why',
+            challengePrompt: 'provide territory evidence...',
+        },
+        es: {
+            subtitle: '// protocolo de descubrimiento',
+            motives: 'motivos',
+            discover: 'descubrir',
+            history: 'historial',
+            integrated: 'integradas',
+            placeholder: 'escribe un candidato o pega una URL...',
+            hints: 'enter para enviar \u00b7 shift+enter nueva l\u00ednea \u00b7 pega URL para analizar \u00b7 esc cancelar',
+            challenge: 'desafiar',
+            integrate: 'integrar',
+            copy: 'copiar',
+            copied: 'copiado',
+            save: 'guardar',
+            start: 'iniciar',
+            configTitle: '// configuraci\u00f3n',
+            freeTab: 'gratis / cr\u00e9ditos',
+            apikeyTab: 'tu api key',
+            freeHint: '// 3 an\u00e1lisis gratis por d\u00eda. compra cr\u00e9ditos con Lightning BTC para m\u00e1s.',
+            apikeyHint: '// guardado en tu navegador. nunca se transmite a terceros.',
+            noHistory: '// sin historial a\u00fan',
+            noIntegrated: '// sin verdades integradas a\u00fan',
+            welcome1: '// propone un candidato a verdad universal',
+            welcome2: '// el sistema descompone, puntua, elimina',
+            welcome3: '// lo que sobrevive se integra',
+            welcome4: '// lo que no, te muestra exactamente por qu\u00e9',
+            challengePrompt: 'proporciona evidencia de territorio...',
+        }
+    };
+
+    const SUGGESTIONS_ES = [
+        { text: "Lo que no se mantiene, se degrada", hint: "entrop\u00eda aplicada a todo sistema" },
+        { text: "Quien no paga el costo de equivocarse no puede saber si acierta", hint: "skin in the game como filtro de verdad" },
+        { text: "La gente act\u00faa por lo que gana, no por lo que dice valorar", hint: "incentivos vs discurso" },
+        { text: "La comodidad prolongada debilita la capacidad que la produjo", hint: "comodidad como entrop\u00eda silenciosa" },
+        { text: "Lo que funciona en peque\u00f1o no necesariamente funciona en grande", hint: "la escala cambia las reglas" },
+        { text: "Las decisiones se revelan en lo que haces, no en lo que planeas", hint: "la acci\u00f3n como \u00fanica declaraci\u00f3n real" },
+        { text: "Consejo de quien no arriesga nada es ruido, no se\u00f1al", hint: "filtrar por consecuencias reales" },
+        { text: "Lo urgente desplaza a lo importante hasta que lo importante se vuelve urgente", hint: "tensi\u00f3n entre lo inmediato y lo fundamental" },
+        { text: "Ning\u00fan mapa puede verificarse completamente desde adentro", hint: "l\u00edmites de la auto-observaci\u00f3n" },
+        { text: "Repetir algo mil veces no lo hace verdad, pero s\u00ed lo hace creencia", hint: "herencia vs derivaci\u00f3n" }
+    ];
+
     const state = {
+        lang: localStorage.getItem('vu_lang') || 'en',
+        mode: localStorage.getItem('vu_mode') || 'free', // 'free' | 'apikey'
         apiKey: localStorage.getItem('vu_key') || '',
+        token: localStorage.getItem('vu_token') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
         history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
         integrated: JSON.parse(localStorage.getItem('vu_integrated') || '[]'),
@@ -605,31 +750,101 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         processing: false,
         challengeTarget: null,
         controller: null,
-        analysisCount: 0
+        analysisCount: 0,
+        paymentPolling: null
     };
 
     const $ = s => document.querySelector(s);
     const $$ = s => document.querySelectorAll(s);
+    function t(key) { return (I18N[state.lang] || I18N.en)[key] || key; }
+
+    function setLang(lang) {
+        state.lang = lang;
+        localStorage.setItem('vu_lang', lang);
+        // Update toggle
+        const toggle = $('#nav-lang');
+        if (toggle) toggle.textContent = lang === 'en' ? 'ES' : 'EN';
+        // Update UI strings
+        $('.header-sub').textContent = t('subtitle');
+        $('#nav-motives').textContent = t('motives');
+        $$('[data-tab="discover"]').forEach(el => el.textContent = t('discover'));
+        $$('[data-tab="history"]').forEach(el => el.textContent = t('history'));
+        $$('[data-tab="integrated"]').forEach(el => el.textContent = t('integrated'));
+        $('#input').placeholder = t('placeholder');
+        $('.input-hints').innerHTML = t('hints');
+        // Config screen
+        $$('[data-cfg="free"]').forEach(el => el.textContent = t('freeTab'));
+        $$('[data-cfg="apikey"]').forEach(el => el.textContent = t('apikeyTab'));
+        $('#cfg-save').textContent = t('save');
+        $('#cfg-save-free').textContent = t('start');
+        // Re-render welcome if visible
+        if ($('#suggestions')) renderWelcome();
+    }
 
     function init() {
-        if (state.apiKey) {
+        // Show main if user has access (free mode or API key)
+        if (state.mode === 'free' || state.apiKey) {
             showScreen('main');
             renderWelcome();
         } else {
             showScreen('config');
         }
+
+        // Config mode tabs (free vs apikey)
+        $$('[data-cfg]').forEach(t => t.addEventListener('click', () => switchConfigTab(t.dataset.cfg)));
+        switchConfigTab(state.mode === 'apikey' ? 'apikey' : 'free');
+
+        // API key mode controls
         $('#cfg-key').value = state.apiKey;
         $('#cfg-model').value = state.model;
         $('#cfg-save').addEventListener('click', saveConfig);
-        $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
-        $$('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+        // Free mode controls
+        $('#cfg-save-free').addEventListener('click', saveConfigFree);
+        $('#cfg-token').value = state.token;
+        if (state.token) $('#credits-token-row').style.display = '';
+
+        // Buy pack buttons
+        $$('.buy-pack').forEach(btn => btn.addEventListener('click', () => buyPack(btn.dataset.pack)));
+
+        // Copy invoice button
+        $('#copy-invoice').addEventListener('click', () => {
+            const inv = $('#invoice-text').value;
+            if (inv) {
+                navigator.clipboard.writeText(inv);
+                $('#copy-invoice').textContent = 'copied';
+                setTimeout(() => $('#copy-invoice').textContent = 'copy', 1500);
+            }
+        });
+
+        // Navigation
+        $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); refreshCredits(); });
+
+        // Main content tabs (only data-tab, not data-cfg)
+        $$('[data-tab]').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+        // Input
         const input = $('#input');
         input.addEventListener('keydown', handleKey);
         input.addEventListener('input', autoResize);
+
+        // Model selector
         $('#cfg-model').addEventListener('change', e => {
             state.model = e.target.value;
             localStorage.setItem('vu_model', state.model);
         });
+
+        // Language toggle
+        $('#nav-lang').addEventListener('click', e => {
+            e.preventDefault();
+            setLang(state.lang === 'en' ? 'es' : 'en');
+        });
+        // Apply saved language
+        if (state.lang !== 'en') setLang(state.lang);
+        else { const toggle = $('#nav-lang'); if (toggle) toggle.textContent = 'ES'; }
+
+        // Load credits display if in free mode
+        if (state.mode === 'free') refreshCredits();
     }
 
     function showScreen(name) {
@@ -645,10 +860,31 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         if (!key) return;
         state.apiKey = key;
         state.model = model;
+        state.mode = 'apikey';
         localStorage.setItem('vu_key', key);
         localStorage.setItem('vu_model', model);
+        localStorage.setItem('vu_mode', 'apikey');
         showScreen('main');
         if ($('#output').children.length === 0) renderWelcome();
+    }
+
+    function saveConfigFree() {
+        state.mode = 'free';
+        const token = $('#cfg-token').value.trim();
+        if (token) {
+            state.token = token;
+            localStorage.setItem('vu_token', token);
+        }
+        localStorage.setItem('vu_mode', 'free');
+        showScreen('main');
+        if ($('#output').children.length === 0) renderWelcome();
+    }
+
+    function switchConfigTab(mode) {
+        $$('[data-cfg]').forEach(t => t.classList.toggle('active', t.dataset.cfg === mode));
+        $$('.cfg-panel').forEach(p => p.style.display = 'none');
+        const panel = $(`#cfg-${mode}`);
+        if (panel) panel.style.display = '';
     }
 
     function switchTab(name) {
@@ -668,10 +904,10 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         intro.innerHTML = `
             <div class="code-block">
                 <div class="gutter">${gutterLines(5)}</div>
-                <div class="code"><span class="s-cmt">// propose a candidate universal truth</span>
-<span class="s-cmt">// the system decomposes, scores, eliminates</span>
-<span class="s-cmt">// what survives gets integrated</span>
-<span class="s-cmt">// what doesn't shows you exactly why</span>
+                <div class="code"><span class="s-cmt">${t('welcome1')}</span>
+<span class="s-cmt">${t('welcome2')}</span>
+<span class="s-cmt">${t('welcome3')}</span>
+<span class="s-cmt">${t('welcome4')}</span>
 <span class="s-cmt">// &mdash;</span></div>
             </div>
             <div class="suggestions" id="suggestions"></div>
@@ -684,7 +920,8 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         const container = $('#suggestions');
         if (!container) return;
         container.innerHTML = '';
-        const picked = [...SUGGESTIONS].sort(() => Math.random() - 0.5).slice(0, 4);
+        const source = state.lang === 'es' ? SUGGESTIONS_ES : SUGGESTIONS;
+        const picked = [...source].sort(() => Math.random() - 0.5).slice(0, 4);
         picked.forEach(s => {
             const btn = document.createElement('button');
             btn.className = 'suggestion';
@@ -863,14 +1100,14 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         if (!item) return;
         state.challengeTarget = item;
         $('#input-ctx').textContent = `challenge #${item.num}: `;
-        $('#input').placeholder = 'provide territory evidence...';
+        $('#input').placeholder = t('challengePrompt');
         $('#input').focus();
     }
 
     function cancelChallenge() {
         state.challengeTarget = null;
         $('#input-ctx').textContent = '';
-        $('#input').placeholder = 'write your candidate...';
+        $('#input').placeholder = t('placeholder');
     }
 
     async function submitChallenge(evidence) {
@@ -924,22 +1161,42 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     async function callStreamingAPI(messages, onChunk) {
         state.controller = new AbortController();
-        const cleanKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': cleanKey,
-                'anthropic-version': '2023-06-01',
-                'anthropic-dangerous-direct-browser-access': 'true'
-            },
-            body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT, messages, stream: true }),
-            signal: state.controller.signal
-        });
+        let res;
+
+        if (state.mode === 'apikey' && state.apiKey) {
+            // Direct Anthropic API (own key)
+            const cleanKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
+            res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': cleanKey,
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
+                },
+                body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT, messages, stream: true }),
+                signal: state.controller.signal
+            });
+        } else {
+            // Worker proxy (free / credits mode)
+            const headers = { 'Content-Type': 'application/json' };
+            if (state.token) headers['X-Token'] = state.token;
+            res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ model: state.model, system: SYSTEM_PROMPT, messages, max_tokens: 4096, stream: true }),
+                signal: state.controller.signal
+            });
+        }
+
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
-            throw new Error(err.error?.message || `HTTP ${res.status}`);
+            const msg = err.error?.message || err.error || err.message || `HTTP ${res.status}`;
+            if (res.status === 402) throw new Error('no credits remaining — buy more with ⚡ Lightning BTC');
+            if (res.status === 429) throw new Error(err.message || 'free daily limit reached — buy credits or use your own API key');
+            throw new Error(msg);
         }
+
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buf = '';
@@ -962,6 +1219,91 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         state.controller = null;
     }
 
+    // ── Lightning BTC Payment Flow ──
+
+    async function buyPack(pack) {
+        try {
+            $$('.buy-pack').forEach(b => b.disabled = true);
+            $('#payment-status').innerHTML = '<span class="s-cmt">// creating invoice...</span>';
+            const res = await fetch(`${WORKER_URL}/api/invoice`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pack })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'failed to create invoice');
+
+            // Show invoice
+            $('#invoice-display').style.display = '';
+            $('#invoice-text').value = data.invoice;
+            $('#invoice-qr').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&bgcolor=0a0a0a&color=00ff87&data=${encodeURIComponent(data.invoice)}" alt="Lightning Invoice QR" style="border-radius:4px;image-rendering:pixelated" />`;
+            $('#payment-status').innerHTML = `<span class="s-yellow">${esc(data.label)}</span> <span class="s-cmt">— waiting for payment...</span>`;
+
+            // Start polling for payment confirmation
+            pollPaymentStatus(data.paymentId);
+        } catch (err) {
+            $('#payment-status').innerHTML = `<span class="s-err">// error: ${esc(err.message)}</span>`;
+        } finally {
+            $$('.buy-pack').forEach(b => b.disabled = false);
+        }
+    }
+
+    function pollPaymentStatus(paymentId) {
+        if (state.paymentPolling) clearInterval(state.paymentPolling);
+        state.paymentPolling = setInterval(async () => {
+            try {
+                const res = await fetch(`${WORKER_URL}/api/payment/${paymentId}`);
+                const data = await res.json();
+                if (data.paid) {
+                    clearInterval(state.paymentPolling);
+                    state.paymentPolling = null;
+                    $('#payment-status').innerHTML = '<span class="s-ok">// payment confirmed! redeeming credits...</span>';
+                    await redeemPayment(paymentId);
+                }
+            } catch {}
+        }, 3000);
+    }
+
+    async function redeemPayment(paymentId) {
+        try {
+            const res = await fetch(`${WORKER_URL}/api/redeem`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentId })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'redeem failed');
+
+            // Save token
+            state.token = data.token;
+            localStorage.setItem('vu_token', data.token);
+            $('#cfg-token').value = data.token;
+            $('#credits-token-row').style.display = '';
+            $('#payment-status').innerHTML = `<span class="s-ok">// ${data.credits} credits activated! token saved.</span>`;
+            setTimeout(() => { $('#invoice-display').style.display = 'none'; }, 3000);
+            refreshCredits();
+        } catch (err) {
+            $('#payment-status').innerHTML = `<span class="s-err">// redeem error: ${esc(err.message)}</span>`;
+        }
+    }
+
+    async function refreshCredits() {
+        const display = $('#credits-display');
+        if (!display) return;
+        try {
+            const params = state.token ? `?token=${state.token}` : '';
+            const res = await fetch(`${WORKER_URL}/api/credits${params}`);
+            const data = await res.json();
+            if (data.token) {
+                display.innerHTML = `<span class="s-green">credits:</span> <span class="s-bright">${data.credits}</span><span class="s-cmt"> remaining (token)</span>`;
+            } else if (data.free) {
+                display.innerHTML = `<span class="s-green">credits:</span> <span class="s-bright">${data.remaining}</span><span class="s-cmt"> / ${data.limit} free today</span>`;
+            }
+        } catch {
+            display.innerHTML = '<span class="s-cmt">// free mode — 3 analyses/day (worker offline)</span>';
+        }
+    }
+
     function createBlock(num, id) {
         const block = document.createElement('div');
         block.className = 'block';
@@ -975,24 +1317,24 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         const acts = document.createElement('div');
         acts.className = 'actions';
         const btnC = document.createElement('button');
-        btnC.className = 'btn btn-sm'; btnC.textContent = 'challenge';
+        btnC.className = 'btn btn-sm'; btnC.textContent = t('challenge');
         btnC.addEventListener('click', () => startChallenge(id));
         acts.appendChild(btnC);
         if (verdict === 'NAVIGABLE' || verdict === 'CLOSED' || verdict === 'PROVISIONAL') {
             const btnI = document.createElement('button');
-            btnI.className = 'btn btn-sm'; btnI.textContent = 'integrate';
+            btnI.className = 'btn btn-sm'; btnI.textContent = t('integrate');
             btnI.addEventListener('click', () => {
                 integrate(id);
-                btnI.textContent = 'integrated'; btnI.disabled = true;
+                btnI.textContent = state.lang === 'es' ? 'integrada' : 'integrated'; btnI.disabled = true;
                 btnI.style.color = 'var(--green)'; btnI.style.borderColor = '#1a3a1a';
             });
             acts.appendChild(btnI);
         }
         const btnCp = document.createElement('button');
-        btnCp.className = 'btn btn-sm'; btnCp.textContent = 'copy';
+        btnCp.className = 'btn btn-sm'; btnCp.textContent = t('copy');
         btnCp.addEventListener('click', () => {
             navigator.clipboard.writeText(fullText);
-            btnCp.textContent = 'copied'; setTimeout(() => btnCp.textContent = 'copy', 1500);
+            btnCp.textContent = t('copied'); setTimeout(() => btnCp.textContent = t('copy'), 1500);
         });
         acts.appendChild(btnCp);
         block.appendChild(acts);
@@ -1076,7 +1418,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     function renderHistory() {
         const c = $('#history-list');
-        if (!state.history.length) { c.innerHTML = '<div class="s-cmt" style="padding:8px 0">// no history yet</div>'; return; }
+        if (!state.history.length) { c.innerHTML = `<div class="s-cmt" style="padding:8px 0">${t('noHistory')}</div>`; return; }
         c.innerHTML = '';
         state.history.forEach(item => {
             const el = document.createElement('div'); el.className = 'list-item';
@@ -1090,7 +1432,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     function renderIntegrated() {
         const c = $('#integrated-list');
-        if (!state.integrated.length) { c.innerHTML = '<div class="s-cmt" style="padding:8px 0">// no integrated truths yet</div>'; return; }
+        if (!state.integrated.length) { c.innerHTML = `<div class="s-cmt" style="padding:8px 0">${t('noIntegrated')}</div>`; return; }
         c.innerHTML = '';
         state.integrated.forEach((item, i) => {
             const el = document.createElement('div'); el.className = 'list-item';
@@ -1118,6 +1460,11 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     document.addEventListener('DOMContentLoaded', init);
     })();
+
+    // Service Worker registration
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
     </script>
 </body>
 </html>
