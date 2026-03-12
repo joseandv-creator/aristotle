@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>motives — universal truths</title>
+    <meta name="description" content="Why this project exists. Discover universal truths, use them to solve real problems, audit information, and build the subject that operates them.">
+    <meta property="og:title" content="Motives — Universal Truths">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #0f0f0f;
+            --border: #1a1a1a;
+            --text: #e0e0e0;
+            --text-bright: #ffffff;
+            --text-dim: #444;
+            --comment: #636363;
+            --blue: #00d4ff;
+            --green: #00ff87;
+            --purple: #bf5fff;
+            --yellow: #ffee00;
+            --red: #ff3e3e;
+            --cyan: #00ffcc;
+            --orange: #ff9500;
+            --font: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+
+        html, body {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 13px;
+            line-height: 1.85;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
+
+        .page {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-title {
+            color: var(--cyan);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(0,255,204,0.3);
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 16px; }
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+        .nav-links a:hover { color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
+        .nav-links a.active { color: var(--text-bright); }
+
+        .section { margin-bottom: 48px; }
+        .section-title {
+            color: var(--cyan);
+            font-size: 13px;
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(0,255,204,0.3);
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        p { color: var(--text); margin-bottom: 14px; }
+        p.dim { color: var(--comment); }
+        .highlight { color: var(--text-bright); }
+        .kw { color: var(--blue); text-shadow: 0 0 8px rgba(0,212,255,0.2); }
+        .str { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.2); }
+        .cmt { color: var(--comment); }
+
+        .code-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            margin: 16px 0;
+            line-height: 1.75;
+            overflow-x: auto;
+        }
+
+        /* ── data tabs ── */
+        .data-tabs {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0 12px;
+        }
+        .data-tab {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 2px 0;
+            border-bottom: 1px solid transparent;
+            transition: all 0.15s;
+        }
+        .data-tab:hover { color: var(--text-bright); }
+        .data-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
+
+        .data-panel { display: none; }
+        .data-panel.active { display: block; }
+
+        /* ── truth list ── */
+        .truth-list { list-style: none; counter-reset: truth; }
+        .truth-list li {
+            counter-increment: truth;
+            padding: 10px 0;
+            border-bottom: 1px solid #111;
+            display: flex;
+            gap: 12px;
+        }
+        .truth-list li::before {
+            content: counter(truth, decimal-leading-zero);
+            color: #2a2a2a;
+            font-size: 11px;
+            min-width: 20px;
+            padding-top: 2px;
+        }
+        .truth-text { color: var(--text-bright); font-size: 12.5px; }
+        .truth-meta { color: var(--comment); font-size: 10px; margin-top: 2px; }
+
+        /* ── history items ── */
+        .hist-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #111;
+        }
+        .hist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: color 0.1s;
+        }
+        .hist-header:hover { color: var(--text-bright); }
+        .hist-candidate { font-size: 12.5px; color: var(--text); }
+        .hist-meta { color: var(--comment); font-size: 10px; }
+        .hist-toggle {
+            color: var(--text-dim);
+            font-size: 10px;
+            transition: color 0.1s;
+        }
+        .hist-header:hover .hist-toggle { color: var(--cyan); }
+        .hist-analysis {
+            display: none;
+            margin-top: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            font-size: 12px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-x: auto;
+        }
+        .hist-analysis.open { display: block; animation: fadeUp 0.2s ease; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* syntax classes for analysis display */
+        .s-kw { color: var(--blue); text-shadow: 0 0 8px rgba(0,212,255,0.3); }
+        .s-str { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.25); }
+        .s-num { color: var(--purple); text-shadow: 0 0 8px rgba(191,95,255,0.3); }
+        .s-cmt { color: var(--comment); }
+        .s-err { color: var(--red); text-shadow: 0 0 8px rgba(255,62,62,0.35); }
+        .s-warn { color: var(--yellow); text-shadow: 0 0 8px rgba(255,238,0,0.25); }
+        .s-ok { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.25); }
+        .s-section { color: var(--cyan); font-weight: 500; text-shadow: 0 0 10px rgba(0,255,204,0.3); }
+        .s-verdict-ok { color: var(--green); font-weight: 500; text-shadow: 0 0 12px rgba(0,255,135,0.4); }
+        .s-verdict-warn { color: var(--yellow); font-weight: 500; text-shadow: 0 0 12px rgba(255,238,0,0.35); }
+        .s-verdict-fail { color: var(--red); font-weight: 500; text-shadow: 0 0 12px rgba(255,62,62,0.4); }
+        .s-orange { color: var(--orange); text-shadow: 0 0 8px rgba(255,149,0,0.3); }
+        .s-blue { color: var(--blue); }
+        .s-op { color: #666; }
+
+        .rule-ref {
+            color: var(--cyan);
+            cursor: help;
+            position: relative;
+            text-shadow: 0 0 8px rgba(0,255,204,0.3);
+        }
+        .rule-ref:hover { text-shadow: 0 0 14px rgba(0,255,204,0.6); }
+        .rule-ref:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 0;
+            background: #111;
+            color: var(--text-bright);
+            padding: 6px 12px;
+            border: 1px solid #2a2a2a;
+            font-size: 11px;
+            z-index: 10;
+            max-width: 400px;
+            white-space: normal;
+        }
+
+        /* ── pillars ── */
+        .pillars {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .pillar {
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            transition: border-color 0.15s;
+        }
+        .pillar:hover { border-color: #2a2a2a; }
+        .pillar-title {
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 500;
+            text-shadow: 0 0 8px rgba(0,212,255,0.2);
+            margin-bottom: 6px;
+        }
+        .pillar-desc { color: var(--comment); font-size: 11px; line-height: 1.6; }
+
+        .donate-box {
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-top: 16px;
+        }
+        .donate-box p { margin-bottom: 10px; }
+
+        .sep { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+        }
+        .footer-sig {
+            color: #1e1e1e;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+        .footer-sig:hover { color: var(--comment); }
+
+        @media (max-width: 600px) {
+            .page { padding: 20px 14px 40px; }
+            .pillars { grid-template-columns: 1fr; }
+            .nav { flex-direction: column; gap: 8px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <nav class="nav">
+            <a href="index.html" class="nav-title">UNIVERSAL TRUTHS</a>
+            <div class="nav-links">
+                <a href="index.html">tool</a>
+                <a href="motivos.html" class="active">motives</a>
+            </div>
+        </nav>
+
+        <!-- what is this -->
+        <div class="section">
+            <div class="section-title">// WHAT IS THIS</div>
+            <p>
+                A protocol for discovering what is true regardless of who observes it.
+                Not a collection of opinions. Not a forum. <span class="highlight">A filter.</span>
+            </p>
+            <p>
+                Anyone can propose a candidate universal truth. The system decomposes it,
+                scores its fidelity to reality, tests it across multiple domains, and delivers a verdict.
+                What survives gets integrated. What doesn't shows you exactly why it failed.
+            </p>
+            <p class="dim">
+                // the goal is not to be right. it's to see more clearly.
+            </p>
+        </div>
+
+        <!-- what for -->
+        <div class="section">
+            <div class="section-title">// WHAT IS IT FOR</div>
+            <p>
+                Truths are not the end. They are the tool.
+            </p>
+            <p>
+                The end is that <span class="highlight">each subject reaches their object across any time horizon</span>.
+                The long term dominates the short — that is universal truth.
+                But <span class="highlight">which</span> long term is yours to decide — that is will.
+                Where those two variables cross, real navigation is born:
+                structure tells you what to prioritize, you decide where to go.
+            </p>
+
+            <div class="pillars">
+                <div class="pillar">
+                    <div class="pillar-title">SOLVE PROBLEMS</div>
+                    <div class="pillar-desc">If a principle operates in physics, biology, and economics, it operates in your problem too. Universal truths are levers that work in any domain.</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title">AUDIT INFORMATION</div>
+                    <div class="pillar-desc">Filter what you receive from the world. Separate signal from noise. Detect inherited maps you never audited. See when someone sells you their map as if it were territory.</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title">MAKE DECISIONS</div>
+                    <div class="pillar-desc">Decide from principles, not from impulse. Every integrated truth is a permanent instrument that doesn't expire with circumstances.</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-title">BUILD THE SUBJECT</div>
+                    <div class="pillar-desc">The ultimate end. The integral construction of the self. That each person knows what they want, why they want it, and has the instruments to reach it. Not as philosophy. As engineering.</div>
+                </div>
+            </div>
+
+            <p class="dim">
+                // truths are the tool. the subject is the end.
+            </p>
+        </div>
+
+        <!-- how it works -->
+        <div class="section">
+            <div class="section-title">// HOW IT WORKS</div>
+            <div class="code-section">
+<span class="cmt">// the protocol operates in 6 steps</span>
+
+<span class="kw">1. DECOMPOSITION</span>
+   your candidate is separated into: subject, object, relation, value sought
+
+<span class="kw">2. SCORING</span>
+   each component is scored from 0.0 to 1.0
+   the total score is the product — if anything is zero, everything collapses
+
+<span class="kw">3. UNIVERSALITY</span>
+   tested across 4+ unrelated domains
+   if it doesn't survive in biology, economics, physics AND psychology
+   it's not universal — it's local
+
+<span class="kw">4. INHERITANCE</span>
+   where does this idea come from? did you derive it or inherit it?
+   a belief repeated a thousand times is not a truth
+
+<span class="kw">5. REDUNDANCY</span>
+   does this truth already exist in another form?
+   if so, does your formulation add something new?
+
+<span class="kw">6. VERDICT</span>
+   <span style="color:var(--red)">COLLAPSE</span>     = rejected
+   <span style="color:var(--yellow)">PARTIAL</span>      = dangerous, looks true but fails under pressure
+   <span style="color:var(--yellow)">PROVISIONAL</span>  = viable, needs more territory
+   <span style="color:var(--green)">NAVIGABLE</span>    = solid, ready to use
+   <span style="color:var(--green)">CLOSED</span>       = its negation destroys itself
+            </div>
+            <p class="dim">
+                // you can challenge any verdict with territory evidence.
+                // territory always wins.
+            </p>
+        </div>
+
+        <hr class="sep">
+
+        <!-- integrated truths -->
+        <div class="section">
+            <div class="section-title">// INTEGRATED TRUTHS</div>
+            <p>
+                These are the truths that have survived the full protocol.
+                Public and transparent. If you can refute them, <a href="index.html" style="color:var(--cyan);text-decoration:none;">do it</a>.
+            </p>
+
+            <div class="data-tabs">
+                <button class="data-tab active" data-target="tab-foundational">foundational</button>
+                <button class="data-tab" data-target="tab-discovered">discovered</button>
+                <button class="data-tab" data-target="tab-history">history</button>
+            </div>
+
+            <!-- foundational -->
+            <div id="tab-foundational" class="data-panel active">
+                <div class="code-section" style="margin-bottom:12px">
+                    <span class="cmt">// foundational truths of the system</span>
+                    <span class="cmt">// derived from territory observation across multiple domains</span>
+                </div>
+                <ul class="truth-list" id="foundational-list"></ul>
+            </div>
+
+            <!-- discovered by users -->
+            <div id="tab-discovered" class="data-panel">
+                <div id="discovered-list"></div>
+            </div>
+
+            <!-- full history with expandable analyses -->
+            <div id="tab-history" class="data-panel">
+                <div id="history-view"></div>
+            </div>
+
+            <p class="dim" style="margin-top:16px">
+                // this list grows when candidates survive the protocol.
+                // every analysis is public and expandable.
+            </p>
+        </div>
+
+        <hr class="sep">
+
+        <!-- principles -->
+        <div class="section">
+            <div class="section-title">// PRINCIPLES</div>
+            <div class="code-section">
+<span class="cmt">// rules that govern this project</span>
+
+<span class="str">total_transparency</span> = true
+<span class="cmt">// integrated truths are public. the process is visible.</span>
+<span class="cmt">// if something can't withstand light, it's not truth.</span>
+
+<span class="str">territory_wins</span> = true
+<span class="cmt">// reality always has the last word.</span>
+<span class="cmt">// no argument overcomes a fact.</span>
+
+<span class="str">no_authority</span> = true
+<span class="cmt">// it doesn't matter who said it. what matters is if it survives elimination.</span>
+<span class="cmt">// einstein, your neighbor, or a 10-year-old — same protocol.</span>
+
+<span class="str">subject_first</span> = true
+<span class="cmt">// the end is not to accumulate truths. it's to build the subject</span>
+<span class="cmt">// that operates them. every truth is an instrument, not a trophy.</span>
+            </div>
+        </div>
+
+        <!-- support -->
+        <div class="section">
+            <div class="section-title">// SUPPORT THE PROJECT</div>
+            <p>
+                This project is free and open.
+                If it expands your map, you can support its development.
+            </p>
+            <div class="donate-box">
+                <p class="dim">// coming soon: support methods</p>
+                <p class="dim">// the project aims to sustain itself by the value it generates,</p>
+                <p class="dim">// not by the persuasion of asking for it.</p>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <div class="footer">
+            <span class="footer-sig">J.A. Deschamps V.</span>
+        </div>
+
+    </div>
+
+    <script>
+    (function() {
+        const RULES = {
+            G1:'Persistence: something invariant under transformation',
+            G2:'Entropy: disorder grows without work',
+            G3:'Selection: variation + differential survival',
+            G4:'Feedback: output becomes input',
+            G5:'Emergence: simple rules iterated = complexity',
+            G6:'Constraint gives form',
+            G7:'Symmetry reveals structure',
+            G8:'Information has cost',
+            G9:'Self-reference has limits',
+            G10:'Gradual accumulation, sudden qualitative change',
+            U1:'Nothing comes from nothing — conservation',
+            U2:'Order costs energy',
+            U3:'Effects follow causes with delay',
+            U4:'Small constant forces dominate large sporadic ones',
+            U5:'Displaced systems generate restoring force',
+            U6:'Majority of effects come from few causes',
+            U7:'Extremes revert to the mean',
+            U8:'Connections scale faster than nodes',
+            U9:'Some transformations are irreversible',
+            H1:'Incentives govern behavior, not intentions',
+            H2:'Every choice costs what you didn\'t choose',
+            H3:'The next unit matters, not the average',
+            H4:'Without consequences, signals are noise',
+            H5:'Observe what they do, not what they say',
+            H6:'Losing hurts twice as much as gaining pleases',
+            H7:'Humans optimize relative position, not absolute',
+            H8:'Humans need narratives; reality doesn\'t provide them',
+            H9:'Whoever acts for you optimizes for themselves first',
+            H10:'Capacity to delay gratification predicts almost everything',
+            H11:'Cooperation in repeated games; defection in one-shot',
+            H12:'Information asymmetry creates power'
+        };
+
+        const FOUNDATIONAL = [
+            { text: "Something is invariant under transformation", tag: "G1 — persistence" },
+            { text: "Disorder grows without work", tag: "G2 — entropy" },
+            { text: "Variation + differential survival = directed change", tag: "G3 — selection" },
+            { text: "Output becomes input", tag: "G4 — feedback" },
+            { text: "Simple rules iterated produce irreducible complexity", tag: "G5 — emergence" },
+            { text: "Constraint gives form — optimization within limits", tag: "G6 — constraint" },
+            { text: "What is invariant under transformation is more fundamental", tag: "G7 — symmetry" },
+            { text: "Knowing changes capacity to act. Measuring is not free", tag: "G8 — information" },
+            { text: "Systems that model themselves hit irreducible boundaries", tag: "G9 — self-reference" },
+            { text: "Gradual accumulation produces sudden qualitative change", tag: "G10 — threshold" },
+            { text: "Nothing comes from nothing — everything transforms, nothing is created or destroyed", tag: "U1 — conservation" },
+            { text: "Maintaining any structure requires continuous work", tag: "U2 — order costs energy" },
+            { text: "Incentives govern behavior, not intentions", tag: "H1 — incentives" },
+            { text: "Every choice costs what you didn't choose", tag: "H2 — opportunity cost" },
+            { text: "Without consequences, signals are noise", tag: "H4 — skin in the game" },
+            { text: "Observe what they do, not what they say", tag: "H5 — revealed preference" },
+            { text: "The capacity to delay gratification predicts almost everything", tag: "H10 — time preference" },
+        ];
+
+        const userIntegrated = JSON.parse(localStorage.getItem('vu_integrated') || '[]');
+        const userHistory = JSON.parse(localStorage.getItem('vu_history') || '[]');
+
+        // ── data tabs ──
+        document.querySelectorAll('.data-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.data-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.data-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.target).classList.add('active');
+            });
+        });
+
+        // ── foundational list ──
+        const fList = document.getElementById('foundational-list');
+        FOUNDATIONAL.forEach(t => {
+            const li = document.createElement('li');
+            li.innerHTML = `<div><div class="truth-text">"${t.text}"</div><div class="truth-meta">${t.tag}</div></div>`;
+            fList.appendChild(li);
+        });
+
+        // ── discovered (user-integrated) ──
+        const dList = document.getElementById('discovered-list');
+        if (userIntegrated.length === 0) {
+            dList.innerHTML = '<div class="s-cmt" style="padding:12px 0">// no user-discovered truths yet. <a href="index.html" style="color:var(--cyan);text-decoration:none;">be the first</a>.</div>';
+        } else {
+            const ul = document.createElement('ul');
+            ul.className = 'truth-list';
+            userIntegrated.forEach(t => {
+                const li = document.createElement('li');
+                const sc = t.score !== null ? t.score.toFixed(2) : '?';
+                li.innerHTML = `<div><div class="truth-text">"${esc(t.candidate)}"</div><div class="truth-meta">C=${sc} &middot; ${t.verdict} &middot; ${new Date(t.date).toLocaleDateString()}</div></div>`;
+                ul.appendChild(li);
+            });
+            dList.appendChild(ul);
+        }
+
+        // ── history with expandable analyses ──
+        const hView = document.getElementById('history-view');
+        if (userHistory.length === 0) {
+            hView.innerHTML = '<div class="s-cmt" style="padding:12px 0">// no analysis history yet. <a href="index.html" style="color:var(--cyan);text-decoration:none;">start discovering</a>.</div>';
+        } else {
+            userHistory.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'hist-item';
+
+                const verdictClass = item.verdict === 'NAVIGABLE' || item.verdict === 'CLOSED' ? 's-ok'
+                    : item.verdict === 'PROVISIONAL' ? 's-warn' : 's-err';
+                const sc = item.score !== null ? item.score.toFixed(2) : '?';
+
+                const header = document.createElement('div');
+                header.className = 'hist-header';
+                header.innerHTML = `
+                    <div>
+                        <div class="hist-candidate">"${esc(item.candidate)}"</div>
+                        <div class="hist-meta">#${item.num} &middot; C=${sc} &middot; <span class="${verdictClass}">${item.verdict || '?'}</span> &middot; ${new Date(item.date).toLocaleDateString()}</div>
+                    </div>
+                    <span class="hist-toggle">expand</span>
+                `;
+
+                const analysis = document.createElement('div');
+                analysis.className = 'hist-analysis';
+                analysis.innerHTML = highlightText(item.analysis || '');
+
+                header.addEventListener('click', () => {
+                    const isOpen = analysis.classList.toggle('open');
+                    header.querySelector('.hist-toggle').textContent = isOpen ? 'collapse' : 'expand';
+                });
+
+                div.appendChild(header);
+                div.appendChild(analysis);
+                hView.appendChild(div);
+            });
+        }
+
+        // ── syntax highlighting (same as index.html) ──
+        function highlightText(text) { return text.split('\n').map(l => highlightLine(l)).join('\n'); }
+
+        function highlightLine(raw) {
+            let line = esc(raw);
+            if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|LIMITS)\b/.test(line))
+                return `<span class="s-section">${line}</span>`;
+            if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
+            let mainPart = line, commentPart = '';
+            const ci = line.indexOf('//');
+            if (ci > 0) { mainPart = line.substring(0, ci); commentPart = `<span class="s-cmt">${line.substring(ci)}</span>`; }
+            mainPart = mainPart.replace(/\b(S|O|R)\(v\)/g, '<span class="s-kw">$&</span>');
+            mainPart = mainPart.replace(/\bVB\b/g, '<span class="s-kw">VB</span>');
+            mainPart = mainPart.replace(/\bC\s{0,3}=/g, m => `<span class="s-kw">C</span>` + m.slice(1));
+            mainPart = mainPart.replace(/\b(status|reason|action|origin|source|distortion|rule|text|novelty|correction):/g, '<span class="s-blue">$1</span>:');
+            mainPart = mainPart.replace(/\b(NAVIGABLE|CLOSED)\b/g, '<span class="s-verdict-ok">$1</span>');
+            mainPart = mainPart.replace(/\bPROVISIONAL\b/g, '<span class="s-verdict-warn">$1</span>');
+            mainPart = mainPart.replace(/\b(COLLAPSE|PARTIAL)\b/g, '<span class="s-verdict-fail">$1</span>');
+            mainPart = mainPart.replace(/\b(integrate)\b/g, '<span class="s-ok">$1</span>');
+            mainPart = mainPart.replace(/\b(reject)\b/g, '<span class="s-err">$1</span>');
+            mainPart = mainPart.replace(/\b(revise)\b/g, '<span class="s-warn">$1</span>');
+            mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
+            mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
+            mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
+            mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2})\b/g, m => {
+                const tip = RULES[m] || m;
+                return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
+            });
+            mainPart = mainPart.replace(/\b(\d+\.\d+)\b/g, '<span class="s-num">$1</span>');
+            mainPart = mainPart.replace(/"([^"]*)"/g, '"<span class="s-str">$1</span>"');
+            mainPart = mainPart.replace(/-&gt;/g, '<span class="s-op">-&gt;</span>');
+            mainPart = mainPart.replace(/\bok\b/g, '<span class="s-ok">ok</span>');
+            mainPart = mainPart.replace(/\bno\b(?!\s*=)/g, '<span class="s-err">no</span>');
+            return mainPart + commentPart;
+        }
+
+        function esc(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+    })();
+    </script>
+</body>
+</html>

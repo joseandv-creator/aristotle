@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>universal truths</title>
+    <meta name="description" content="Collaborative discovery protocol for universal truths. Propose, decompose, eliminate. What survives gets integrated.">
+    <meta property="og:title" content="Universal Truths">
+    <meta property="og:description" content="Collaborative discovery protocol. Propose candidates for universal truths. The system decomposes, scores, and eliminates without mercy.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #0f0f0f;
+            --elevated: #161616;
+            --border: #1a1a1a;
+            --text: #e0e0e0;
+            --text-bright: #ffffff;
+            --text-dim: #444;
+            --comment: #636363;
+            --blue: #00d4ff;
+            --green: #00ff87;
+            --purple: #bf5fff;
+            --yellow: #ffee00;
+            --red: #ff3e3e;
+            --cyan: #00ffcc;
+            --orange: #ff9500;
+            --font: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 13px;
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #282828; }
+
+        #app {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 32px 20px 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── header ── */
+        .header {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .header-left {}
+        .header-title {
+            color: var(--cyan);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(0,255,204,0.3);
+        }
+        .header-sub { color: var(--comment); font-size: 12px; }
+        .header-nav {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .header-nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 11px;
+            transition: all 0.15s;
+        }
+        .header-nav a:hover { color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
+
+        /* ── config ── */
+        .screen { display: none; flex-direction: column; flex: 1; }
+        .screen.active { display: flex; }
+
+        .cfg-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+        }
+        .cfg-line label { color: var(--blue); white-space: nowrap; }
+        .cfg-line input, .cfg-line select {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--green);
+            font-family: var(--font);
+            font-size: 13px;
+            padding: 5px 8px;
+            flex: 1;
+            outline: none;
+        }
+        .cfg-line input:focus, .cfg-line select:focus { border-color: #2a2a2a; }
+        .cfg-line select { color: var(--orange); }
+        .cfg-line select option { background: var(--bg); }
+
+        .btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 12px;
+            padding: 4px 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn:hover { border-color: var(--cyan); color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
+        .btn-sm { padding: 2px 10px; font-size: 11px; }
+
+        /* ── tabs ── */
+        .tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+        .tab {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 2px 0;
+            border-bottom: 1px solid transparent;
+            transition: all 0.15s;
+        }
+        .tab:hover { color: var(--text-bright); }
+        .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
+
+        /* ── output ── */
+        #output {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 16px;
+        }
+
+        .block {
+            margin-bottom: 24px;
+            animation: fadeUp 0.25s ease;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .code-block { display: flex; gap: 0; }
+        .gutter {
+            color: #2a2a2a;
+            text-align: right;
+            padding-right: 14px;
+            user-select: none;
+            border-right: 1px solid #1a1a1a;
+            margin-right: 14px;
+            min-width: 28px;
+            white-space: pre-line;
+        }
+        .code {
+            flex: 1;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* syntax */
+        .s-kw { color: var(--blue); text-shadow: 0 0 8px rgba(0,212,255,0.3); }
+        .s-str { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.25); }
+        .s-num { color: var(--purple); text-shadow: 0 0 8px rgba(191,95,255,0.3); }
+        .s-cmt { color: var(--comment); }
+        .s-op { color: #666; }
+        .s-err { color: var(--red); text-shadow: 0 0 8px rgba(255,62,62,0.35); }
+        .s-warn { color: var(--yellow); text-shadow: 0 0 8px rgba(255,238,0,0.25); }
+        .s-ok { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.25); }
+        .s-section { color: var(--cyan); font-weight: 500; text-shadow: 0 0 10px rgba(0,255,204,0.3); }
+        .s-verdict-ok { color: var(--green); font-weight: 500; text-shadow: 0 0 12px rgba(0,255,135,0.4); }
+        .s-verdict-warn { color: var(--yellow); font-weight: 500; text-shadow: 0 0 12px rgba(255,238,0,0.35); }
+        .s-verdict-fail { color: var(--red); font-weight: 500; text-shadow: 0 0 12px rgba(255,62,62,0.4); }
+        .s-cyan { color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
+        .s-orange { color: var(--orange); text-shadow: 0 0 8px rgba(255,149,0,0.3); }
+        .s-bright { color: var(--text-bright); }
+        .s-blue { color: var(--blue); }
+
+        .rule-ref {
+            color: var(--cyan);
+            cursor: help;
+            position: relative;
+            text-shadow: 0 0 8px rgba(0,255,204,0.3);
+        }
+        .rule-ref:hover { text-shadow: 0 0 14px rgba(0,255,204,0.6); }
+        .rule-ref:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 0;
+            background: #111;
+            color: var(--text-bright);
+            padding: 6px 12px;
+            border: 1px solid #2a2a2a;
+            font-size: 11px;
+            font-style: normal;
+            z-index: 10;
+            max-width: 400px;
+            white-space: normal;
+        }
+
+        /* ── input ── */
+        #input-bar {
+            border-top: 1px solid var(--border);
+            padding: 12px 0 16px;
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+        .input-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .input-chevron {
+            color: var(--green);
+            line-height: 1.75;
+            user-select: none;
+            text-shadow: 0 0 10px rgba(0,255,135,0.4);
+        }
+        .input-ctx {
+            color: var(--orange);
+            font-size: 11px;
+            line-height: 1.75;
+        }
+        #input {
+            background: transparent;
+            border: none;
+            color: var(--text-bright);
+            font-family: var(--font);
+            font-size: 13px;
+            line-height: 1.75;
+            flex: 1;
+            outline: none;
+            resize: none;
+            min-height: 22px;
+            overflow: hidden;
+        }
+        #input::placeholder { color: #3a3a3a; }
+        .input-hints {
+            color: #252525;
+            font-size: 10px;
+            margin-top: 4px;
+            margin-left: 20px;
+        }
+
+        /* ── suggestions ── */
+        .suggestions {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .suggestion {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-family: var(--font);
+            font-size: 11.5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+            line-height: 1.6;
+        }
+        .suggestion:hover {
+            border-color: var(--blue);
+            color: var(--text-bright);
+            background: var(--surface);
+            box-shadow: 0 0 12px rgba(0,212,255,0.08);
+        }
+        .suggestion .s-dim { color: var(--comment); font-size: 10px; }
+
+        /* ── loading ── */
+        .loading-dots span { animation: pulse 1.4s infinite; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.15; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ── actions ── */
+        .actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            margin-left: 42px;
+        }
+
+        /* ── history & integrated ── */
+        .list-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #111;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .list-item:hover { background: var(--surface); }
+        .list-item .meta { color: var(--comment); font-size: 11px; }
+        .list-item .candidate-text { color: var(--text); font-size: 12px; }
+
+        /* ── footer ── */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 14px 0;
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-sig {
+            color: #1e1e1e;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+        .footer-sig:hover { color: var(--comment); }
+        .footer-links {
+            display: flex;
+            gap: 12px;
+        }
+        .footer-links a {
+            color: #1e1e1e;
+            text-decoration: none;
+            font-size: 10px;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--comment); }
+
+        /* ── responsive ── */
+        @media (max-width: 600px) {
+            #app { padding: 16px 12px 0; }
+            .gutter { display: none; }
+            .header { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- config -->
+        <div id="screen-config" class="screen">
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-sub">// configuration</div>
+                </div>
+            </div>
+            <div class="s-cmt" style="margin-bottom:12px">// stored in your browser. never transmitted to third parties.</div>
+            <div class="cfg-line">
+                <label>api_key:</label>
+                <input type="password" id="cfg-key" placeholder="sk-ant-..." />
+            </div>
+            <div class="cfg-line">
+                <label>model: </label>
+                <select id="cfg-model">
+                    <option value="claude-opus-4-20250514">claude-opus-4</option>
+                    <option value="claude-sonnet-4-20250514">claude-sonnet-4</option>
+                </select>
+            </div>
+            <div style="margin-top:16px">
+                <button class="btn" id="cfg-save">save</button>
+            </div>
+        </div>
+
+        <!-- main -->
+        <div id="screen-main" class="screen">
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-title">UNIVERSAL TRUTHS</div>
+                    <div class="header-sub">// collaborative discovery protocol</div>
+                </div>
+                <div class="header-nav">
+                    <a href="motivos.html">motives</a>
+                    <a href="#" id="nav-cfg">cfg</a>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="discover">discover</button>
+                <button class="tab" data-tab="history">history</button>
+                <button class="tab" data-tab="integrated">integrated</button>
+            </div>
+
+            <div id="tab-discover" class="tab-content">
+                <div id="output"></div>
+                <div id="input-bar">
+                    <div class="input-row">
+                        <span class="input-chevron">></span>
+                        <span class="input-ctx" id="input-ctx"></span>
+                        <textarea id="input" rows="1" placeholder="write your candidate..."></textarea>
+                    </div>
+                    <div class="input-hints">enter to send &middot; shift+enter new line &middot; esc cancel</div>
+                </div>
+            </div>
+
+            <div id="tab-history" class="tab-content" style="display:none">
+                <div id="history-list"></div>
+            </div>
+
+            <div id="tab-integrated" class="tab-content" style="display:none">
+                <div id="integrated-list"></div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <div class="footer">
+            <span class="footer-sig">J.A. Deschamps V.</span>
+            <div class="footer-links">
+                <a href="motivos.html">about the project</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+    'use strict';
+
+    const RULES = {
+        G1:'Persistence: something invariant under transformation',
+        G2:'Entropy: disorder grows without work',
+        G3:'Selection: variation + differential survival',
+        G4:'Feedback: output becomes input',
+        G5:'Emergence: simple rules iterated = complexity',
+        G6:'Constraint gives form',
+        G7:'Symmetry reveals structure',
+        G8:'Information has cost',
+        G9:'Self-reference has limits',
+        G10:'Gradual accumulation, sudden qualitative change',
+        U1:'Nothing comes from nothing — conservation',
+        U2:'Order costs energy',
+        U3:'Effects follow causes with delay',
+        U4:'Small constant forces dominate large sporadic ones',
+        U5:'Displaced systems generate restoring force',
+        U6:'Majority of effects come from few causes',
+        U7:'Extremes revert to the mean',
+        U8:'Connections scale faster than nodes',
+        U9:'Some transformations are irreversible',
+        H1:'Incentives govern behavior, not intentions',
+        H2:'Every choice costs what you didn\'t choose',
+        H3:'The next unit matters, not the average',
+        H4:'Without consequences, signals are noise',
+        H5:'Observe what they do, not what they say',
+        H6:'Losing hurts twice as much as gaining pleases',
+        H7:'Humans optimize relative position, not absolute',
+        H8:'Humans need narratives; reality doesn\'t provide them',
+        H9:'Whoever acts for you optimizes for themselves first',
+        H10:'Capacity to delay gratification predicts almost everything',
+        H11:'Cooperation in repeated games; defection in one-shot',
+        H12:'Information asymmetry creates power'
+    };
+
+    const SYSTEM_PROMPT = `You are the analysis engine of the Discovery Protocol — "Universal Truths."
+
+A user proposes candidates for universal truths. Your job: decompose, score, eliminate, rule.
+You serve truth, not comfort. Be precise. Don't soften. Don't inflate.
+
+FORMULA: C = S(v) x O(v) x R(v) | VB
+- S(v): subject fidelity [0.0-1.0]
+- O(v): alignment with territory [0.0-1.0]
+- R(v): inferential chain strength [0.0-1.0]
+- Correction: if O(v) < 0.5 then R(v) = R(v) x O(v)
+- VB = expand the user's operative map
+
+THRESHOLDS:
+C = 0.0: COLLAPSE | 0 < C < 0.5: PARTIAL (high risk) | 0.5 <= C < 0.7: PROVISIONAL | 0.7 <= C < 1.0: NAVIGABLE | C = 1.0: CLOSED (performative test)
+
+EXISTING RULES (check redundancy):
+G1 Persistence G2 Entropy G3 Selection G4 Feedback G5 Emergence G6 Constraint gives form G7 Symmetry reveals structure G8 Information has cost G9 Self-reference has limits G10 Threshold transitions
+U1 Conservation U2 Order costs energy U3 Effects with delay U4 Constant forces dominate U5 Homeostasis U6 Power law U7 Regression to the mean U8 Network effect U9 Irreversibility
+H1 Incentives H2 Opportunity cost H3 Marginal thinking H4 Skin in the game H5 Revealed preference H6 Loss aversion H7 Relative position H8 Narrative fallacy H9 Agency problem H10 Time preference H11 Repeated games H12 Information asymmetry
+
+Respond in English. Use EXACTLY this format:
+
+CANDIDATE
+  "{candidate text}"
+
+DECOMPOSITION
+  S(v) = "{subject}"
+  O(v) = "{object}"
+  R(v) = "{relation}"
+  VB   = "{value sought}"
+
+SCORING
+  S(v) = {0.00}     // {reason}
+  O(v) = {0.00}     // {reason}
+  R(v) = {0.00}     // correction: {note}
+  C    = {s} x {o} x {r} = {result}
+  // {category and threshold note}
+
+UNIVERSALITY
+  {domain1}: {specific test} -> {ok|no}
+  {domain2}: {specific test} -> {ok|no}
+  {domain3}: {specific test} -> {ok|no}
+  {domain4}: {specific test} -> {ok|no}
+  // {x/y domains — evaluation}
+
+INHERITANCE
+  origin:     {received|derived|mixed}
+  source:     {specific source}
+  distortion: {named or "none detected"}
+
+REDUNDANCY
+  rule: {code or "none"}
+  text: "{existing rule if applicable}"
+  novelty: "{new contribution or 'none — already captured'}"
+
+VERDICT
+  status: {COLLAPSE|PARTIAL|PROVISIONAL|NAVIGABLE|CLOSED}
+  reason:  {explanation}
+  action: {integrate|revise|reject}
+
+LIMITS
+  {what this analysis cannot verify}`;
+
+    const CHALLENGE_PROMPT = `The user challenges the previous verdict with territory evidence:
+
+"{evidence}"
+
+Re-evaluate considering this evidence. Same analysis format. If the verdict changes, explain why. If not, explain why the evidence is insufficient.`;
+
+    const SUGGESTIONS = [
+        { text: "What isn't maintained, degrades", hint: "entropy applied to every system" },
+        { text: "Whoever doesn't pay the cost of being wrong can't know if they're right", hint: "skin in the game as truth filter" },
+        { text: "People act on what they gain, not what they say they value", hint: "incentives vs discourse" },
+        { text: "Prolonged comfort weakens the capacity that produced it", hint: "comfort as silent entropy" },
+        { text: "What works small doesn't necessarily work large", hint: "scale changes rules" },
+        { text: "Decisions reveal themselves in what you do, not what you plan", hint: "action as the only real declaration" },
+        { text: "Advice from someone who risks nothing is noise, not signal", hint: "filter by real consequences" },
+        { text: "The urgent displaces the important until the important becomes urgent", hint: "tension between immediate and fundamental" },
+        { text: "No map can fully verify itself from the inside", hint: "limits of self-observation" },
+        { text: "Repeating something a thousand times doesn't make it true, but it does make it a belief", hint: "inheritance vs derivation" }
+    ];
+
+    const state = {
+        apiKey: localStorage.getItem('vu_key') || '',
+        model: localStorage.getItem('vu_model') || 'claude-opus-4-20250514',
+        history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
+        integrated: JSON.parse(localStorage.getItem('vu_integrated') || '[]'),
+        currentTab: 'discover',
+        processing: false,
+        challengeTarget: null,
+        controller: null,
+        analysisCount: 0
+    };
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    function init() {
+        if (state.apiKey) {
+            showScreen('main');
+            renderWelcome();
+        } else {
+            showScreen('config');
+        }
+        $('#cfg-key').value = state.apiKey;
+        $('#cfg-model').value = state.model;
+        $('#cfg-save').addEventListener('click', saveConfig);
+        $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
+        $$('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+        const input = $('#input');
+        input.addEventListener('keydown', handleKey);
+        input.addEventListener('input', autoResize);
+        $('#cfg-model').addEventListener('change', e => {
+            state.model = e.target.value;
+            localStorage.setItem('vu_model', state.model);
+        });
+    }
+
+    function showScreen(name) {
+        $$('.screen').forEach(s => s.classList.remove('active'));
+        $(`#screen-${name}`).classList.add('active');
+        if (name === 'main') setTimeout(() => $('#input')?.focus(), 50);
+    }
+
+    function saveConfig() {
+        // strip non-ASCII characters (copy-paste artifacts)
+        const key = $('#cfg-key').value.trim().replace(/[^\x20-\x7E]/g, '');
+        const model = $('#cfg-model').value;
+        if (!key) return;
+        state.apiKey = key;
+        state.model = model;
+        localStorage.setItem('vu_key', key);
+        localStorage.setItem('vu_model', model);
+        showScreen('main');
+        if ($('#output').children.length === 0) renderWelcome();
+    }
+
+    function switchTab(name) {
+        state.currentTab = name;
+        $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+        $$('.tab-content').forEach(tc => tc.style.display = 'none');
+        $(`#tab-${name}`).style.display = '';
+        if (name === 'history') renderHistory();
+        if (name === 'integrated') renderIntegrated();
+    }
+
+    function renderWelcome() {
+        const output = $('#output');
+        output.innerHTML = '';
+        const intro = document.createElement('div');
+        intro.className = 'block';
+        intro.innerHTML = `
+            <div class="code-block">
+                <div class="gutter">${gutterLines(5)}</div>
+                <div class="code"><span class="s-cmt">// propose a candidate universal truth</span>
+<span class="s-cmt">// the system decomposes, scores, eliminates</span>
+<span class="s-cmt">// what survives gets integrated</span>
+<span class="s-cmt">// what doesn't shows you exactly why</span>
+<span class="s-cmt">// &mdash;</span></div>
+            </div>
+            <div class="suggestions" id="suggestions"></div>
+        `;
+        output.appendChild(intro);
+        renderSuggestions();
+    }
+
+    function renderSuggestions() {
+        const container = $('#suggestions');
+        if (!container) return;
+        container.innerHTML = '';
+        const picked = [...SUGGESTIONS].sort(() => Math.random() - 0.5).slice(0, 4);
+        picked.forEach(s => {
+            const btn = document.createElement('button');
+            btn.className = 'suggestion';
+            btn.innerHTML = `${esc(s.text)}<br><span class="s-dim">// ${esc(s.hint)}</span>`;
+            btn.addEventListener('click', () => {
+                $('#input').value = s.text;
+                autoResize({ target: $('#input') });
+                handleSubmit();
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    function handleKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
+        if (e.key === 'Escape') cancelChallenge();
+    }
+
+    function autoResize(e) {
+        const t = e.target;
+        t.style.height = 'auto';
+        t.style.height = t.scrollHeight + 'px';
+    }
+
+    function handleSubmit() {
+        const input = $('#input');
+        const text = input.value.trim();
+        if (!text || state.processing) return;
+        input.value = '';
+        input.style.height = 'auto';
+        if (state.challengeTarget) submitChallenge(text);
+        else submitCandidate(text);
+    }
+
+    async function submitCandidate(text) {
+        state.processing = true;
+        state.analysisCount++;
+        const id = Date.now();
+        const num = state.analysisCount;
+        const sug = $('#suggestions');
+        if (sug) sug.remove();
+        const block = createBlock(num, id);
+        const codeEl = block.querySelector('.code');
+        const gutterEl = block.querySelector('.gutter');
+        $('#output').appendChild(block);
+        scrollToBottom();
+        codeEl.innerHTML = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n<span class="s-cmt">// analyzing</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(4);
+        const messages = [{ role: 'user', content: text }];
+        try {
+            let fullText = '';
+            await callStreamingAPI(messages, chunk => {
+                fullText += chunk;
+                const highlighted = highlightText(fullText);
+                const allLines = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n` + highlighted;
+                codeEl.innerHTML = allLines;
+                gutterEl.textContent = gutterLines(allLines.split('\n').length);
+                scrollToBottom();
+            });
+            const highlighted = highlightText(fullText);
+            const allLines = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n` + highlighted;
+            codeEl.innerHTML = allLines;
+            gutterEl.textContent = gutterLines(allLines.split('\n').length);
+            addActions(block, id, text, fullText, messages);
+            const verdict = extractVerdict(fullText);
+            const score = extractScore(fullText);
+            state.history.unshift({ id, num, candidate: text, analysis: fullText, verdict, score, date: new Date().toISOString(), messages });
+            localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                codeEl.innerHTML += `\n\n<span class="s-cmt">// analysis cancelled</span>`;
+            } else {
+                codeEl.innerHTML = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n<span class="s-err">// error: ${esc(err.message)}</span>\n<span class="s-cmt">// check api_key in configuration</span>`;
+            }
+            gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
+        }
+        state.processing = false;
+        scrollToBottom();
+    }
+
+    function startChallenge(id) {
+        const item = state.history.find(h => h.id === id);
+        if (!item) return;
+        state.challengeTarget = item;
+        $('#input-ctx').textContent = `challenge #${item.num}: `;
+        $('#input').placeholder = 'provide territory evidence...';
+        $('#input').focus();
+    }
+
+    function cancelChallenge() {
+        state.challengeTarget = null;
+        $('#input-ctx').textContent = '';
+        $('#input').placeholder = 'write your candidate...';
+    }
+
+    async function submitChallenge(evidence) {
+        const item = state.challengeTarget;
+        if (!item) return;
+        cancelChallenge();
+        state.processing = true;
+        state.analysisCount++;
+        const num = state.analysisCount;
+        const block = createBlock(num, item.id);
+        const codeEl = block.querySelector('.code');
+        const gutterEl = block.querySelector('.gutter');
+        $('#output').appendChild(block);
+        scrollToBottom();
+        codeEl.innerHTML = `<span class="s-cmt">// challenge to candidate #${item.num}</span>\n<span class="s-orange">  evidence: "${esc(evidence)}"</span>\n\n<span class="s-cmt">// re-evaluating</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(4);
+        const messages = [...item.messages, { role: 'user', content: CHALLENGE_PROMPT.replace('{evidence}', evidence) }];
+        try {
+            let fullText = '';
+            await callStreamingAPI(messages, chunk => {
+                fullText += chunk;
+                const highlighted = highlightText(fullText);
+                const prefix = `<span class="s-cmt">// challenge to candidate #${item.num}</span>\n<span class="s-orange">  evidence: "${esc(evidence)}"</span>\n\n`;
+                codeEl.innerHTML = prefix + highlighted;
+                gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
+                scrollToBottom();
+            });
+            const highlighted = highlightText(fullText);
+            const prefix = `<span class="s-cmt">// challenge to candidate #${item.num}</span>\n<span class="s-orange">  evidence: "${esc(evidence)}"</span>\n\n`;
+            codeEl.innerHTML = prefix + highlighted;
+            gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
+            item.messages = messages;
+            item.messages.push({ role: 'assistant', content: fullText });
+            const nv = extractVerdict(fullText); if (nv) item.verdict = nv;
+            const ns = extractScore(fullText); if (ns) item.score = ns;
+            localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
+            addActions(block, item.id, item.candidate, fullText, item.messages);
+        } catch (err) {
+            if (err.name !== 'AbortError') codeEl.innerHTML += `\n\n<span class="s-err">// error: ${esc(err.message)}</span>`;
+        }
+        state.processing = false;
+        scrollToBottom();
+    }
+
+    function integrate(id) {
+        const item = state.history.find(h => h.id === id);
+        if (!item || state.integrated.find(i => i.id === id)) return;
+        state.integrated.unshift({ id: item.id, candidate: item.candidate, verdict: item.verdict, score: item.score, date: item.date });
+        localStorage.setItem('vu_integrated', JSON.stringify(state.integrated));
+    }
+
+    async function callStreamingAPI(messages, onChunk) {
+        state.controller = new AbortController();
+        const cleanKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': cleanKey,
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT, messages, stream: true }),
+            signal: state.controller.signal
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error?.message || `HTTP ${res.status}`);
+        }
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buf += decoder.decode(value, { stream: true });
+            const lines = buf.split('\n');
+            buf = lines.pop() || '';
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const json = line.slice(6).trim();
+                if (!json || json === '[DONE]') continue;
+                try {
+                    const evt = JSON.parse(json);
+                    if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') onChunk(evt.delta.text);
+                } catch {}
+            }
+        }
+        state.controller = null;
+    }
+
+    function createBlock(num, id) {
+        const block = document.createElement('div');
+        block.className = 'block';
+        block.dataset.id = id;
+        block.innerHTML = `<div class="code-block"><div class="gutter"></div><div class="code"></div></div>`;
+        return block;
+    }
+
+    function addActions(block, id, candidate, fullText, messages) {
+        const verdict = extractVerdict(fullText);
+        const acts = document.createElement('div');
+        acts.className = 'actions';
+        const btnC = document.createElement('button');
+        btnC.className = 'btn btn-sm'; btnC.textContent = 'challenge';
+        btnC.addEventListener('click', () => startChallenge(id));
+        acts.appendChild(btnC);
+        if (verdict === 'NAVIGABLE' || verdict === 'CLOSED' || verdict === 'PROVISIONAL') {
+            const btnI = document.createElement('button');
+            btnI.className = 'btn btn-sm'; btnI.textContent = 'integrate';
+            btnI.addEventListener('click', () => {
+                integrate(id);
+                btnI.textContent = 'integrated'; btnI.disabled = true;
+                btnI.style.color = 'var(--green)'; btnI.style.borderColor = '#1a3a1a';
+            });
+            acts.appendChild(btnI);
+        }
+        const btnCp = document.createElement('button');
+        btnCp.className = 'btn btn-sm'; btnCp.textContent = 'copy';
+        btnCp.addEventListener('click', () => {
+            navigator.clipboard.writeText(fullText);
+            btnCp.textContent = 'copied'; setTimeout(() => btnCp.textContent = 'copy', 1500);
+        });
+        acts.appendChild(btnCp);
+        block.appendChild(acts);
+    }
+
+    function gutterLines(n) { return Array.from({length: n}, (_, i) => String(i+1).padStart(3)).join('\n'); }
+    function scrollToBottom() { const o = $('#output'); if (o) o.scrollTop = o.scrollHeight; }
+
+    function highlightText(text) { return text.split('\n').map(l => highlightLine(l)).join('\n'); }
+
+    function highlightLine(raw) {
+        let line = esc(raw);
+        if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|LIMITS)\b/.test(line))
+            return `<span class="s-section">${line}</span>`;
+        if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
+        let mainPart = line, commentPart = '';
+        const ci = line.indexOf('//');
+        if (ci > 0) { mainPart = line.substring(0, ci); commentPart = `<span class="s-cmt">${line.substring(ci)}</span>`; }
+        mainPart = mainPart.replace(/\b(S|O|R)\(v\)/g, '<span class="s-kw">$&</span>');
+        mainPart = mainPart.replace(/\bVB\b/g, '<span class="s-kw">VB</span>');
+        mainPart = mainPart.replace(/\bC\s{0,3}=/g, m => `<span class="s-kw">C</span>` + m.slice(1));
+        mainPart = mainPart.replace(/\b(status|reason|action|origin|source|distortion|rule|text|novelty|correction):/g, '<span class="s-blue">$1</span>:');
+        mainPart = mainPart.replace(/\b(NAVIGABLE|CLOSED)\b/g, '<span class="s-verdict-ok">$1</span>');
+        mainPart = mainPart.replace(/\bPROVISIONAL\b/g, '<span class="s-verdict-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(COLLAPSE|PARTIAL)\b/g, '<span class="s-verdict-fail">$1</span>');
+        mainPart = mainPart.replace(/\b(integrate)\b/g, '<span class="s-ok">$1</span>');
+        mainPart = mainPart.replace(/\b(reject)\b/g, '<span class="s-err">$1</span>');
+        mainPart = mainPart.replace(/\b(revise)\b/g, '<span class="s-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
+        mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
+        mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2})\b/g, m => {
+            const tip = RULES[m] || m;
+            return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
+        });
+        mainPart = mainPart.replace(/\b(\d+\.\d+)\b/g, '<span class="s-num">$1</span>');
+        mainPart = mainPart.replace(/"([^"]*)"/g, '"<span class="s-str">$1</span>"');
+        mainPart = mainPart.replace(/-&gt;/g, '<span class="s-op">-&gt;</span>');
+        mainPart = mainPart.replace(/\bok\b/g, '<span class="s-ok">ok</span>');
+        mainPart = mainPart.replace(/\bno\b(?!\s*=)/g, '<span class="s-err">no</span>');
+        return mainPart + commentPart;
+    }
+
+    function extractVerdict(t) { const m = t.match(/status:\s*(COLLAPSE|PARTIAL|PROVISIONAL|NAVIGABLE|CLOSED)/i); return m ? m[1].toUpperCase() : null; }
+    function extractScore(t) { const m = t.match(/C\s*=\s*[\d.]+\s*x\s*[\d.]+\s*x\s*[\d.]+\s*=\s*([\d.]+)/); return m ? parseFloat(m[1]) : null; }
+
+    function renderHistory() {
+        const c = $('#history-list');
+        if (!state.history.length) { c.innerHTML = '<div class="s-cmt" style="padding:8px 0">// no history yet</div>'; return; }
+        c.innerHTML = '';
+        state.history.forEach(item => {
+            const el = document.createElement('div'); el.className = 'list-item';
+            const vc = item.verdict === 'NAVIGABLE' || item.verdict === 'CLOSED' ? 's-ok' : item.verdict === 'PROVISIONAL' ? 's-warn' : 's-err';
+            const sc = item.score !== null ? item.score.toFixed(2) : '?';
+            el.innerHTML = `<div class="meta">#${item.num} &middot; C=${sc} &middot; <span class="${vc}">${item.verdict||'?'}</span> &middot; ${new Date(item.date).toLocaleDateString()}</div><div class="candidate-text">"${esc(item.candidate)}"</div>`;
+            el.addEventListener('click', () => { switchTab('discover'); expandAnalysis(item); });
+            c.appendChild(el);
+        });
+    }
+
+    function renderIntegrated() {
+        const c = $('#integrated-list');
+        if (!state.integrated.length) { c.innerHTML = '<div class="s-cmt" style="padding:8px 0">// no integrated truths yet</div>'; return; }
+        c.innerHTML = '';
+        state.integrated.forEach((item, i) => {
+            const el = document.createElement('div'); el.className = 'list-item';
+            const sc = item.score !== null ? item.score.toFixed(2) : '?';
+            el.innerHTML = `<div class="meta" style="color:var(--green)">${String(i+1).padStart(2,'0')} &middot; C=${sc} &middot; ${item.verdict}</div><div class="candidate-text" style="color:var(--text-bright)">"${esc(item.candidate)}"</div>`;
+            c.appendChild(el);
+        });
+    }
+
+    function expandAnalysis(item) {
+        const output = $('#output');
+        const block = createBlock(item.num, item.id);
+        const codeEl = block.querySelector('.code');
+        const gutterEl = block.querySelector('.gutter');
+        const highlighted = highlightText(item.analysis);
+        const allLines = `<span class="s-cmt">// candidate #${item.num} (history)</span>\n<span class="s-bright">  "${esc(item.candidate)}"</span>\n\n` + highlighted;
+        codeEl.innerHTML = allLines;
+        gutterEl.textContent = gutterLines(allLines.split('\n').length);
+        output.appendChild(block);
+        addActions(block, item.id, item.candidate, item.analysis, item.messages);
+        scrollToBottom();
+    }
+
+    function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    document.addEventListener('DOMContentLoaded', init);
+    })();
+    </script>
+</body>
+</html>
