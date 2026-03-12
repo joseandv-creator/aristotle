@@ -542,20 +542,35 @@
 
     const SYSTEM_PROMPT = `You are the analysis engine of Nicomaco — the Discovery Protocol.
 
-A user proposes candidates for universal truths. Your job: decompose, score, eliminate, rule.
-You serve truth, not comfort. Be precise. Don't soften. Don't inflate.
+PURPOSE: Help the user build a stronger operative map. You serve the USER's development.
+Collect truths, but your function is the user. Every analysis should leave them with a clearer map.
+
+A user proposes candidates. Your job: decompose, score, and RULE HONESTLY.
+Be precise. Don't soften. But also don't be artificially skeptical — if something is logically inferable, SAY SO.
+
+EPISTEMOLOGICAL RULES:
+1. NEVER demand proof of a negative. "X does not exist" cannot be disproven by asking for absence evidence.
+2. Distinguish UNFALSIFIABLE claims (outside empirical scope) from FALSE claims (contradicted by evidence).
+3. If a claim is LOGICALLY DERIVABLE from existing rules, score it as such — derivation IS proof.
+4. Separate the claim's TRUTH VALUE from its NOVELTY. A true thing already captured by existing rules scores high C but low novelty.
+5. When the candidate uses a word in context (e.g. "irrational" = epistemological), don't confuse it with other meanings (e.g. "irrational numbers").
+6. Score based on the STRONGEST reasonable interpretation, not the weakest.
 
 FORMULA: C = S(v) x O(v) x R(v) | VB
-- S(v): subject fidelity [0.0-1.0]
-- O(v): alignment with territory [0.0-1.0]
-- R(v): inferential chain strength [0.0-1.0]
+- S(v): subject fidelity [0.0-1.0] — how well-defined is the subject?
+- O(v): alignment with territory [0.0-1.0] — does this match observable reality?
+- R(v): inferential chain strength [0.0-1.0] — how strong is the logical chain?
 - Correction: if O(v) < 0.5 then R(v) = R(v) x O(v)
 - VB = expand the user's operative map
 
 THRESHOLDS:
-C = 0.0: COLLAPSE | 0 < C < 0.5: PARTIAL (high risk) | 0.5 <= C < 0.7: PROVISIONAL | 0.7 <= C < 1.0: NAVIGABLE | C = 1.0: CLOSED (performative test)
+C = 0.0: COLLAPSE | 0 < C < 0.5: PARTIAL | 0.5 <= C < 0.7: PROVISIONAL | 0.7 <= C < 1.0: NAVIGABLE | C = 1.0: CLOSED
 
-EXISTING RULES (check redundancy):
+SPECIAL VERDICTS:
+- UNFALSIFIABLE: claim cannot be empirically tested (metaphysical/theological). Not COLLAPSE — different category.
+- DERIVED: claim is true but already captured by existing rules. High C, action = acknowledge.
+
+EXISTING RULES (check redundancy AND derivability):
 G1 Persistence G2 Entropy G3 Selection G4 Feedback G5 Emergence G6 Constraint gives form G7 Symmetry reveals structure G8 Information has cost G9 Self-reference has limits G10 Threshold transitions
 U1 Conservation U2 Order costs energy U3 Effects with delay U4 Constant forces dominate U5 Homeostasis U6 Power law U7 Regression to the mean U8 Network effect U9 Irreversibility
 H1 Incentives H2 Opportunity cost H3 Marginal thinking H4 Skin in the game H5 Revealed preference H6 Loss aversion H7 Relative position H8 Narrative fallacy H9 Agency problem H10 Time preference H11 Repeated games H12 Information asymmetry
@@ -596,12 +611,18 @@ REDUNDANCY
   novelty: "{new contribution or 'none — already captured'}"
 
 VERDICT
-  status: {COLLAPSE|PARTIAL|PROVISIONAL|NAVIGABLE|CLOSED}
+  status: {COLLAPSE|PARTIAL|PROVISIONAL|NAVIGABLE|CLOSED|UNFALSIFIABLE|DERIVED}
   reason:  {explanation}
-  action: {integrate|revise|reject}
+  action: {integrate|revise|reject|acknowledge|outside scope}
 
-LIMITS
-  {what this analysis cannot verify}`;
+RESCUE (only if status is COLLAPSE or PARTIAL)
+  reformulation: "{closest verifiable truth derived from the user's intent}"
+  derivation:    "{which existing rules support this reformulation}"
+  C_rescued:     {estimated score of the reformulation}
+  // help the user — don't just reject, offer the nearest truth
+
+MAP VALUE
+  {what does this analysis teach the user? how does it expand their operative map?}`;
 
     const URL_ANALYSIS_PROMPT = `A user has submitted a URL for analysis. The page content has been extracted below.
 Analyze this content through the protocol lens.
@@ -1320,7 +1341,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         btnC.className = 'btn btn-sm'; btnC.textContent = t('challenge');
         btnC.addEventListener('click', () => startChallenge(id));
         acts.appendChild(btnC);
-        if (verdict === 'NAVIGABLE' || verdict === 'CLOSED' || verdict === 'PROVISIONAL') {
+        if (verdict === 'NAVIGABLE' || verdict === 'CLOSED' || verdict === 'PROVISIONAL' || verdict === 'DERIVED') {
             const btnI = document.createElement('button');
             btnI.className = 'btn btn-sm'; btnI.textContent = t('integrate');
             btnI.addEventListener('click', () => {
@@ -1382,7 +1403,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     function highlightLine(raw) {
         let line = esc(raw);
-        if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|LIMITS)\b/.test(line))
+        if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE)\b/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
         let mainPart = line, commentPart = '';
@@ -1391,13 +1412,14 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         mainPart = mainPart.replace(/\b(S|O|R)\(v\)/g, '<span class="s-kw">$&</span>');
         mainPart = mainPart.replace(/\bVB\b/g, '<span class="s-kw">VB</span>');
         mainPart = mainPart.replace(/\bC\s{0,3}=/g, m => `<span class="s-kw">C</span>` + m.slice(1));
-        mainPart = mainPart.replace(/\b(status|reason|action|origin|source|distortion|rule|text|novelty|correction):/g, '<span class="s-blue">$1</span>:');
-        mainPart = mainPart.replace(/\b(NAVIGABLE|CLOSED)\b/g, '<span class="s-verdict-ok">$1</span>');
+        mainPart = mainPart.replace(/\b(status|reason|action|origin|source|distortion|rule|text|novelty|correction|reformulation|derivation|C_rescued):/g, '<span class="s-blue">$1</span>:');
+        mainPart = mainPart.replace(/\b(NAVIGABLE|CLOSED|DERIVED)\b/g, '<span class="s-verdict-ok">$1</span>');
         mainPart = mainPart.replace(/\b(PROVISIONAL)\b/g, '<span class="s-verdict-warn">$1</span>');
         mainPart = mainPart.replace(/\b(COLLAPSE|PARTIAL)\b/g, '<span class="s-verdict-fail">$1</span>');
-        mainPart = mainPart.replace(/\b(integrate)\b/g, '<span class="s-ok">$1</span>');
+        mainPart = mainPart.replace(/\b(UNFALSIFIABLE)\b/g, '<span class="s-orange">$1</span>');
+        mainPart = mainPart.replace(/\b(integrate|acknowledge)\b/g, '<span class="s-ok">$1</span>');
         mainPart = mainPart.replace(/\b(reject)\b/g, '<span class="s-err">$1</span>');
-        mainPart = mainPart.replace(/\b(revise)\b/g, '<span class="s-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(revise|outside scope)\b/g, '<span class="s-warn">$1</span>');
         mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
         mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
         mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
@@ -1413,7 +1435,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         return mainPart + commentPart;
     }
 
-    function extractVerdict(t) { const m = t.match(/status:\s*(COLLAPSE|PARTIAL|PROVISIONAL|NAVIGABLE|CLOSED)/i); return m ? m[1].toUpperCase() : null; }
+    function extractVerdict(t) { const m = t.match(/status:\s*(COLLAPSE|PARTIAL|PROVISIONAL|NAVIGABLE|CLOSED|UNFALSIFIABLE|DERIVED)/i); return m ? m[1].toUpperCase() : null; }
     function extractScore(t) { const m = t.match(/C\s*=\s*[\d.]+\s*x\s*[\d.]+\s*x\s*[\d.]+\s*=\s*([\d.]+)/); return m ? parseFloat(m[1]) : null; }
 
     function renderHistory() {
@@ -1432,14 +1454,93 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     function renderIntegrated() {
         const c = $('#integrated-list');
-        if (!state.integrated.length) { c.innerHTML = `<div class="s-cmt" style="padding:8px 0">${t('noIntegrated')}</div>`; return; }
         c.innerHTML = '';
-        state.integrated.forEach((item, i) => {
-            const el = document.createElement('div'); el.className = 'list-item';
-            const sc = item.score !== null ? item.score.toFixed(2) : '?';
-            el.innerHTML = `<div class="meta" style="color:var(--green)">${String(i+1).padStart(2,'0')} &middot; C=${sc} &middot; ${item.verdict}</div><div class="candidate-text" style="color:var(--text-bright)">"${esc(item.candidate)}"</div>`;
-            c.appendChild(el);
+
+        const rulesBlock = document.createElement('div');
+        rulesBlock.className = 'code-block';
+        rulesBlock.style.marginBottom = '20px';
+
+        // Hierarchical descent from first axiom
+        const hierarchy = [
+            { level: 0, code: 'A0', text: 'Something exists', color: 's-bright' },
+            { level: 0, section: true, text: 'GENERAL — patterns that hold in any system' },
+            { level: 1, code: 'G1', text: RULES.G1 },
+            { level: 1, code: 'G2', text: RULES.G2 },
+            { level: 1, code: 'G3', text: RULES.G3 },
+            { level: 1, code: 'G4', text: RULES.G4 },
+            { level: 1, code: 'G5', text: RULES.G5 },
+            { level: 1, code: 'G6', text: RULES.G6 },
+            { level: 1, code: 'G7', text: RULES.G7 },
+            { level: 1, code: 'G8', text: RULES.G8 },
+            { level: 1, code: 'G9', text: RULES.G9 },
+            { level: 1, code: 'G10', text: RULES.G10 },
+            { level: 0, section: true, text: 'UNIVERSAL — general rules applied to the observable universe' },
+            { level: 2, code: 'U1', text: RULES.U1 },
+            { level: 2, code: 'U2', text: RULES.U2 },
+            { level: 2, code: 'U3', text: RULES.U3 },
+            { level: 2, code: 'U4', text: RULES.U4 },
+            { level: 2, code: 'U5', text: RULES.U5 },
+            { level: 2, code: 'U6', text: RULES.U6 },
+            { level: 2, code: 'U7', text: RULES.U7 },
+            { level: 2, code: 'U8', text: RULES.U8 },
+            { level: 2, code: 'U9', text: RULES.U9 },
+            { level: 0, section: true, text: 'HUMAN — universal rules filtered through valuation and incentives' },
+            { level: 3, code: 'H1', text: RULES.H1 },
+            { level: 3, code: 'H2', text: RULES.H2 },
+            { level: 3, code: 'H3', text: RULES.H3 },
+            { level: 3, code: 'H4', text: RULES.H4 },
+            { level: 3, code: 'H5', text: RULES.H5 },
+            { level: 3, code: 'H6', text: RULES.H6 },
+            { level: 3, code: 'H7', text: RULES.H7 },
+            { level: 3, code: 'H8', text: RULES.H8 },
+            { level: 3, code: 'H9', text: RULES.H9 },
+            { level: 3, code: 'H10', text: RULES.H10 },
+            { level: 3, code: 'H11', text: RULES.H11 },
+            { level: 3, code: 'H12', text: RULES.H12 },
+        ];
+
+        // Insert user's discovered truths into the hierarchy
+        if (state.integrated.length) {
+            hierarchy.push({ level: 0, section: true, text: 'DISCOVERED — truths verified through the protocol' });
+            state.integrated.forEach((item, i) => {
+                hierarchy.push({
+                    level: 1,
+                    code: `D${i+1}`,
+                    text: item.candidate,
+                    score: item.score,
+                    verdict: item.verdict,
+                    discovered: true
+                });
+            });
+        }
+
+        let html = '';
+        hierarchy.forEach(r => {
+            if (r.section) {
+                html += `\n<span class="s-section">${esc(r.text)}</span>\n`;
+            } else if (r.level === 0 && r.code === 'A0') {
+                html += `<span class="s-cyan">${r.code}</span> <span class="${r.color}">${esc(r.text)}</span>\n`;
+            } else {
+                const indent = '  '.repeat(r.level);
+                const codeSpan = r.discovered
+                    ? `<span class="s-green">${r.code}</span>`
+                    : `<span class="rule-ref" data-tip="${esc(r.text)}">${r.code}</span>`;
+                if (r.discovered) {
+                    const sc = r.score !== null ? r.score.toFixed(2) : '?';
+                    const vc = r.verdict === 'NAVIGABLE' || r.verdict === 'CLOSED' || r.verdict === 'DERIVED' ? 's-ok' : 's-warn';
+                    html += `${indent}${codeSpan} <span class="${vc}">[${r.verdict}]</span> C=<span class="s-num">${sc}</span> <span class="s-bright">"${esc(r.text)}"</span>\n`;
+                } else {
+                    html += `${indent}${codeSpan} <span class="s-cmt">${esc(r.text)}</span>\n`;
+                }
+            }
         });
+
+        if (!state.integrated.length) {
+            html += `\n<span class="s-cmt">// ${state.lang === 'es' ? 'propone candidatos. lo que sobreviva se agrega aqui.' : 'propose candidates. what survives gets added here.'}</span>\n`;
+        }
+
+        rulesBlock.innerHTML = `<div class="gutter">${gutterLines(html.split('\n').length)}</div><div class="code">${html}</div>`;
+        c.appendChild(rulesBlock);
     }
 
     function expandAnalysis(item) {
