@@ -533,6 +533,7 @@
                 </div>
                 <div class="header-nav">
                     <a href="motivos.html" id="nav-motives">motives</a>
+                    <a href="economics.html" id="nav-economics">economics</a>
                     <a href="#" id="nav-cfg">cfg</a>
                     <a href="#" id="nav-lang" style="color:var(--comment)">ES</a>
                 </div>
@@ -945,6 +946,8 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         // Update UI strings
         $('.header-sub').textContent = t('subtitle');
         $('#nav-motives').textContent = t('motives');
+        const econLink = $('#nav-economics');
+        if (econLink) econLink.textContent = state.lang === 'es' ? 'economia' : 'economics';
         $$('[data-tab="discover"]').forEach(el => el.textContent = t('discover'));
         $$('[data-tab="history"]').forEach(el => el.textContent = t('history'));
         $$('[data-tab="integrated"]').forEach(el => el.textContent = t('integrated'));
