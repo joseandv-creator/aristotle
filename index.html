@@ -537,7 +537,34 @@
         H9:'Whoever acts for you optimizes for themselves first',
         H10:'Capacity to delay gratification predicts almost everything',
         H11:'Cooperation in repeated games; defection in one-shot',
-        H12:'Information asymmetry creates power'
+        H12:'Information asymmetry creates power',
+        K1:'All knowledge is contextual — valid within identified facts',
+        K2:'The senses are valid — base data, not illusion',
+        K3:'Concepts form by abstraction from concretes',
+        K4:'Logic is non-contradictory identification',
+        K5:'Certainty is contextual, not absolute',
+        K6:'Burden of proof falls on the asserter',
+        K7:'Knowledge requires integration — isolated facts are not understanding',
+        K8:'Error correction is the mechanism of cognitive progress',
+        L1:'Language maps concepts to symbols — it names, it does not create',
+        L2:'Meaning requires shared referents',
+        L3:'Precision of language tracks precision of thought',
+        L4:'Ambiguity is not depth — vagueness degrades signal',
+        L5:'Context determines meaning — same symbol, different frames',
+        L6:'Translation between frameworks loses information',
+        E1:'Value presupposes a valuer — without life, nothing has value',
+        E2:'Life is the precondition of all values',
+        E3:'Rationality: commitment to identify reality as it is',
+        E4:'Production precedes distribution — you cannot give what does not exist',
+        E5:'Voluntary exchange is the only non-destructive value transfer',
+        E6:'Honesty: faking reality is self-defeating',
+        E7:'Justice: judge and be judged by the same standard',
+        E8:'Individual rights: conditions for rational coexistence',
+        Ae1:'Art is selective re-creation of reality according to values',
+        Ae2:'Beauty is the recognition of integrated form',
+        Ae3:'Style reveals metaphysics — how you create shows what you believe',
+        Ae4:'Craft without purpose is decoration; purpose without craft is propaganda',
+        Ae5:'Taste is condensed worldview, not arbitrary preference'
     };
 
     const SYSTEM_PROMPT = `You are the analysis engine of Nicomaco — the Discovery Protocol.
@@ -576,6 +603,10 @@ A0 Existence exists A1 Consciousness: awareness of existence exists A2 Identity:
 G1 Persistence G2 Entropy G3 Selection G4 Feedback G5 Emergence G6 Constraint gives form G7 Symmetry reveals structure G8 Information has cost G9 Self-reference has limits G10 Threshold transitions
 U1 Conservation U2 Order costs energy U3 Effects with delay U4 Constant forces dominate U5 Homeostasis U6 Power law U7 Regression to the mean U8 Network effect U9 Irreversibility
 H1 Incentives H2 Opportunity cost H3 Marginal thinking H4 Skin in the game H5 Revealed preference H6 Loss aversion H7 Relative position H8 Narrative fallacy H9 Agency problem H10 Time preference H11 Repeated games H12 Information asymmetry
+K1 Contextual knowledge K2 Senses are valid K3 Abstraction from concretes K4 Logic = non-contradictory identification K5 Contextual certainty K6 Burden of proof on asserter K7 Integration required K8 Error correction is progress
+L1 Language names, does not create L2 Shared referents required L3 Precision of language = precision of thought L4 Ambiguity is not depth L5 Context determines meaning L6 Translation loses information
+E1 Value presupposes a valuer E2 Life is the precondition of values E3 Rationality as primary virtue E4 Production precedes distribution E5 Voluntary exchange E6 Honesty E7 Justice E8 Individual rights
+Ae1 Art = selective re-creation Ae2 Beauty = integrated form Ae3 Style reveals metaphysics Ae4 Craft-purpose unity Ae5 Taste is condensed worldview
 
 Respond in English. Use EXACTLY this format:
 
@@ -1391,7 +1422,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
         mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
         mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
-        mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2})\b/g, m => {
+        mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2}|K\d|L\d|E\d|Ae\d)\b/g, m => {
             const tip = RULES[m] || m;
             return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
         });
@@ -1425,7 +1456,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
         mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
         mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
-        mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2})\b/g, m => {
+        mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2}|K\d|L\d|E\d|Ae\d)\b/g, m => {
             const tip = RULES[m] || m;
             return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
         });
@@ -1504,6 +1535,37 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 3, code: 'H10', text: RULES.H10 },
             { level: 3, code: 'H11', text: RULES.H11 },
             { level: 3, code: 'H12', text: RULES.H12 },
+            { level: 0, section: true, text: es ? 'CONOCIMIENTO — cómo sabemos lo que sabemos' : 'KNOWLEDGE — how we know what we know' },
+            { level: 4, code: 'K1', text: RULES.K1 },
+            { level: 4, code: 'K2', text: RULES.K2 },
+            { level: 4, code: 'K3', text: RULES.K3 },
+            { level: 4, code: 'K4', text: RULES.K4 },
+            { level: 4, code: 'K5', text: RULES.K5 },
+            { level: 4, code: 'K6', text: RULES.K6 },
+            { level: 4, code: 'K7', text: RULES.K7 },
+            { level: 4, code: 'K8', text: RULES.K8 },
+            { level: 0, section: true, text: es ? 'LENGUAJE — cómo el significado se comunica' : 'LANGUAGE — how meaning is communicated' },
+            { level: 4, code: 'L1', text: RULES.L1 },
+            { level: 4, code: 'L2', text: RULES.L2 },
+            { level: 4, code: 'L3', text: RULES.L3 },
+            { level: 4, code: 'L4', text: RULES.L4 },
+            { level: 4, code: 'L5', text: RULES.L5 },
+            { level: 4, code: 'L6', text: RULES.L6 },
+            { level: 0, section: true, text: es ? 'ÉTICA — principios de acción derivados de lo anterior' : 'ETHICS — principles of action derived from the above' },
+            { level: 4, code: 'E1', text: RULES.E1 },
+            { level: 4, code: 'E2', text: RULES.E2 },
+            { level: 4, code: 'E3', text: RULES.E3 },
+            { level: 4, code: 'E4', text: RULES.E4 },
+            { level: 4, code: 'E5', text: RULES.E5 },
+            { level: 4, code: 'E6', text: RULES.E6 },
+            { level: 4, code: 'E7', text: RULES.E7 },
+            { level: 4, code: 'E8', text: RULES.E8 },
+            { level: 0, section: true, text: es ? 'ESTÉTICA — la naturaleza del valor en la creación' : 'AESTHETICS — the nature of value in creation' },
+            { level: 4, code: 'Ae1', text: RULES.Ae1 },
+            { level: 4, code: 'Ae2', text: RULES.Ae2 },
+            { level: 4, code: 'Ae3', text: RULES.Ae3 },
+            { level: 4, code: 'Ae4', text: RULES.Ae4 },
+            { level: 4, code: 'Ae5', text: RULES.Ae5 },
         ];
 
         // Insert user's discovered truths into the hierarchy
