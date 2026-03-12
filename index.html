@@ -269,6 +269,105 @@
             margin-left: 20px;
         }
 
+        /* ── reward notification ── */
+        .reward-banner {
+            margin: 8px 0 0 42px;
+            padding: 10px 14px;
+            border: 1px solid #1a3a1a;
+            background: rgba(0,255,135,0.03);
+            animation: fadeUp 0.3s ease;
+        }
+        .reward-banner .reward-title {
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 500;
+            text-shadow: 0 0 10px rgba(0,255,135,0.3);
+        }
+        .reward-banner .reward-detail {
+            color: var(--comment);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        .reward-banner .reward-detail span { color: var(--text-bright); }
+        .reward-banner .btn-claim {
+            margin-top: 8px;
+            background: none;
+            border: 1px solid var(--green);
+            color: var(--green);
+            font-family: var(--font);
+            font-size: 11px;
+            padding: 4px 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .reward-banner .btn-claim:hover {
+            background: rgba(0,255,135,0.08);
+            text-shadow: 0 0 8px rgba(0,255,135,0.4);
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── bounty claim modal ── */
+        .bounty-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeUp 0.2s ease;
+        }
+        .bounty-modal-inner {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 24px;
+            max-width: 420px;
+            width: 90%;
+        }
+        .bounty-modal-inner h3 {
+            color: var(--green);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(0,255,135,0.3);
+        }
+        .bounty-modal-inner p {
+            color: var(--comment);
+            font-size: 11px;
+            margin-bottom: 12px;
+        }
+        .bounty-modal-inner input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-bright);
+            font-family: var(--font);
+            font-size: 11px;
+            padding: 8px 12px;
+            outline: none;
+            margin-bottom: 12px;
+        }
+        .bounty-modal-inner input:focus { border-color: var(--green); }
+        .bounty-modal-inner .modal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ── pool display ── */
+        .pool-display {
+            color: var(--comment);
+            font-size: 10px;
+            transition: color 0.15s;
+        }
+        .pool-display:hover { color: var(--text); }
+        .pool-sats {
+            color: var(--green);
+            text-shadow: 0 0 6px rgba(0,255,135,0.2);
+        }
+
         /* ── loading ── */
         .loading-dots span { animation: pulse 1.4s infinite; }
         .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -473,8 +572,9 @@
         <!-- footer -->
         <div class="footer">
             <span class="footer-sig">J.A. Deschamps V.</span>
+            <span class="pool-display" id="pool-display"></span>
             <div class="footer-links">
-                <a href="motivos.html">about the project</a>
+                <a href="motivos.html" id="footer-motives">motives</a>
             </div>
         </div>
     </div>
@@ -771,6 +871,15 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             noIntegrated: '// no integrated truths yet',
             welcome1: '// A is A',
             challengePrompt: 'provide territory evidence...',
+            rewardNav: 'NAVIGABLE — +{n} credits',
+            rewardClosed: 'CLOSED — +{n} credits + bounty eligible',
+            bountyAvailable: 'BTC bounty: {n} sats',
+            claimBounty: 'claim bounty',
+            claimTitle: 'CLAIM BTC BOUNTY',
+            claimDesc: 'paste a Lightning invoice for {n} sats',
+            claimBtn: 'pay me',
+            claimCancel: 'cancel',
+            poolLabel: 'pool',
         },
         es: {
             subtitle: '// filtro racional',
@@ -795,6 +904,15 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             noIntegrated: '// sin verdades integradas a\u00fan',
             welcome1: '// A es A',
             challengePrompt: 'proporciona evidencia de territorio...',
+            rewardNav: 'NAVEGABLE — +{n} creditos',
+            rewardClosed: 'CERRADA — +{n} creditos + elegible para bounty',
+            bountyAvailable: 'bounty BTC: {n} sats',
+            claimBounty: 'reclamar bounty',
+            claimTitle: 'RECLAMAR BOUNTY BTC',
+            claimDesc: 'pega una factura Lightning por {n} sats',
+            claimBtn: 'pagame',
+            claimCancel: 'cancelar',
+            poolLabel: 'pool',
         }
     };
 
@@ -837,6 +955,9 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         $$('[data-cfg="apikey"]').forEach(el => el.textContent = t('apikeyTab'));
         $('#cfg-save').textContent = t('save');
         $('#cfg-save-free').textContent = t('start');
+        // Footer
+        const fmLink = $('#footer-motives');
+        if (fmLink) fmLink.textContent = t('motives');
         // Re-render welcome if visible
         if ($('#output').children.length <= 1) renderWelcome();
     }
@@ -909,6 +1030,9 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
         // Load credits display if in free mode
         if (state.mode === 'free') refreshCredits();
+
+        // Load pool display
+        fetchPool();
     }
 
     function showScreen(name) {
@@ -963,12 +1087,30 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
     function renderWelcome() {
         const output = $('#output');
         output.innerHTML = '';
+        const es = state.lang === 'es';
+        const lines = es ? [
+            '<span class="s-section">A es A</span>',
+            '',
+            '<span class="s-cmt">// un filtro racional contra el territorio.</span>',
+            '<span class="s-cmt">// lo que entra se descompone, se puntua, se elimina.</span>',
+            '<span class="s-cmt">// lo que sobrevive se convierte en instrumento.</span>',
+            '<span class="s-cmt">// la verdad no es el fin — es la herramienta</span>',
+            '<span class="s-cmt">// para que cada sujeto alcance su objeto.</span>',
+        ] : [
+            '<span class="s-section">A is A</span>',
+            '',
+            '<span class="s-cmt">// a rational filter against territory.</span>',
+            '<span class="s-cmt">// what enters is decomposed, scored, eliminated.</span>',
+            '<span class="s-cmt">// what survives becomes an instrument.</span>',
+            '<span class="s-cmt">// truth is not the end — it is the tool</span>',
+            '<span class="s-cmt">// for each subject to reach their object.</span>',
+        ];
         const intro = document.createElement('div');
         intro.className = 'block';
         intro.innerHTML = `
             <div class="code-block">
-                <div class="gutter">${gutterLines(1)}</div>
-                <div class="code"><span class="s-cmt">// A is A</span></div>
+                <div class="gutter">${gutterLines(lines.length)}</div>
+                <div class="code">${lines.join('\n')}</div>
             </div>
         `;
         output.appendChild(intro);
@@ -1392,6 +1534,118 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         });
         acts.appendChild(btnSh);
         block.appendChild(acts);
+
+        // Report verdict to worker for bounty system
+        if ((verdict === 'NAVIGABLE' || verdict === 'CLOSED') && state.token) {
+            reportVerdict(verdict, candidate, extractScore(fullText), block);
+        }
+    }
+
+    // ── Bounty system functions ──
+    async function reportVerdict(verdict, candidate, score, block) {
+        try {
+            const res = await fetch(`${WORKER_URL}/api/report-verdict`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Token': state.token },
+                body: JSON.stringify({ verdict, candidate, score }),
+            });
+            const data = await res.json();
+            if (data.rewarded) {
+                showRewardBanner(block, data);
+                refreshCredits();
+                fetchPool();
+            }
+        } catch (err) {
+            // Silent — reward reporting is non-critical
+        }
+    }
+
+    function showRewardBanner(block, data) {
+        const banner = document.createElement('div');
+        banner.className = 'reward-banner';
+        const es = state.lang === 'es';
+
+        let title, detail = '';
+        if (data.verdict === 'CLOSED') {
+            title = (es ? t('rewardClosed') : t('rewardClosed')).replace('{n}', data.bonusCredits);
+            if (data.bountyEligible && data.bountyAmount > 0) {
+                detail = `<div class="reward-detail">${(es ? t('bountyAvailable') : t('bountyAvailable')).replace('{n}', data.bountyAmount)}</div>`;
+                detail += `<button class="btn-claim" data-discovery="${data.discoveryId}" data-amount="${data.bountyAmount}">${t('claimBounty')}</button>`;
+            }
+        } else {
+            title = (es ? t('rewardNav') : t('rewardNav')).replace('{n}', data.bonusCredits);
+        }
+
+        banner.innerHTML = `<div class="reward-title">${title}</div>${detail}`;
+
+        // Wire up claim button
+        const claimBtn = banner.querySelector('.btn-claim');
+        if (claimBtn) {
+            claimBtn.addEventListener('click', () => {
+                showClaimModal(claimBtn.dataset.discovery, parseInt(claimBtn.dataset.amount));
+            });
+        }
+
+        block.appendChild(banner);
+    }
+
+    function showClaimModal(discoveryId, amount) {
+        const es = state.lang === 'es';
+        const modal = document.createElement('div');
+        modal.className = 'bounty-modal';
+        modal.innerHTML = `
+            <div class="bounty-modal-inner">
+                <h3>${t('claimTitle')}</h3>
+                <p>${t('claimDesc').replace('{n}', amount)}</p>
+                <input type="text" id="bolt11-input" placeholder="lnbc..." autocomplete="off" spellcheck="false" />
+                <div class="modal-actions">
+                    <button class="btn btn-sm" id="btn-claim-pay" style="border-color:var(--green);color:var(--green)">${t('claimBtn')}</button>
+                    <button class="btn btn-sm" id="btn-claim-cancel">${t('claimCancel')}</button>
+                </div>
+                <div id="claim-status" style="margin-top:8px;font-size:11px"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        modal.querySelector('#btn-claim-cancel').addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+        modal.querySelector('#btn-claim-pay').addEventListener('click', async () => {
+            const invoice = modal.querySelector('#bolt11-input').value.trim();
+            if (!invoice) return;
+            const status = modal.querySelector('#claim-status');
+            status.innerHTML = '<span class="s-cmt">// processing...</span>';
+            try {
+                const res = await fetch(`${WORKER_URL}/api/claim-bounty`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Token': state.token },
+                    body: JSON.stringify({ discoveryId, invoice }),
+                });
+                const data = await res.json();
+                if (data.paid) {
+                    const method = data.method === 'lightning' ? 'Lightning' : (es ? 'creditos' : 'credits');
+                    status.innerHTML = `<span class="s-ok">// paid ${data.sats} sats via ${method}</span>`;
+                    refreshCredits();
+                    fetchPool();
+                    setTimeout(() => modal.remove(), 3000);
+                } else {
+                    status.innerHTML = `<span class="s-err">// ${esc(data.error || 'failed')}</span>`;
+                }
+            } catch (err) {
+                status.innerHTML = `<span class="s-err">// ${esc(err.message)}</span>`;
+            }
+        });
+    }
+
+    async function fetchPool() {
+        try {
+            const res = await fetch(`${WORKER_URL}/api/treasury`);
+            const data = await res.json();
+            const display = $('#pool-display');
+            if (display && data.availablePool !== undefined) {
+                display.innerHTML = `${t('poolLabel')}: <span class="pool-sats">${data.availablePool}</span> sats`;
+            }
+        } catch { /* silent */ }
     }
 
     function gutterLines(n) { return Array.from({length: n}, (_, i) => String(i+1).padStart(3)).join('\n'); }
