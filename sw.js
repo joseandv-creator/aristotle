@@ -1,9 +1,9 @@
-const CACHE_NAME = 'nicomaco-v1';
+const CACHE_NAME = 'nicomaco-v2';
 const ASSETS = [
-  '/nicomaco/',
-  '/nicomaco/index.html',
-  '/nicomaco/motivos.html',
-  '/nicomaco/manifest.json',
+  '/',
+  '/index.html',
+  '/motivos.html',
+  '/manifest.json',
   'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap'
 ];
 
