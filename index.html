@@ -362,7 +362,7 @@
         }
         .buy-pack:hover { border-color: var(--yellow) !important; background: #1a1a00 !important; }
         .buy-pack:disabled { opacity: 0.4; cursor: wait; }
-        #invoice-qr img { max-width: 200px; }
+        #invoice-qr canvas { max-width: 200px; border-radius: 4px; image-rendering: pixelated; }
         .s-yellow { color: var(--yellow); }
         .s-green { color: var(--green); }
         .s-bright { color: var(--text-bright); }
@@ -442,7 +442,7 @@
                     <select id="cfg-model">
                         <option value="claude-sonnet-4-20250514">claude-sonnet-4</option>
                         <option value="claude-opus-4-20250514">claude-opus-4</option>
-                        <option value="claude-3-5-sonnet-20241022">claude-3.5-sonnet</option>
+                        <option value="claude-3-7-sonnet-20250219">claude-3.7-sonnet</option>
                         <option value="claude-3-5-haiku-20241022">claude-3.5-haiku</option>
                     </select>
                 </div>
@@ -490,6 +490,10 @@
 
             <div id="tab-integrated" class="tab-content" style="display:none">
                 <div id="integrated-list"></div>
+                <div class="actions" style="margin-top:12px">
+                    <button class="btn btn-sm" id="btn-export">export JSON</button>
+                    <label class="btn btn-sm" style="cursor:pointer">import JSON<input type="file" id="btn-import" accept=".json" style="display:none"></label>
+                </div>
             </div>
         </div>
 
@@ -565,6 +569,67 @@
         Ae3:'Style reveals metaphysics — how you create shows what you believe',
         Ae4:'Craft without purpose is decoration; purpose without craft is propaganda',
         Ae5:'Taste is condensed worldview, not arbitrary preference'
+    };
+
+    const RULES_ES = {
+        G1:'Persistencia: algo invariante bajo transformación',
+        G2:'Entropía: el desorden crece sin trabajo',
+        G3:'Selección: variación + supervivencia diferencial',
+        G4:'Retroalimentación: la salida se convierte en entrada',
+        G5:'Emergencia: reglas simples iteradas = complejidad',
+        G6:'La restricción da forma',
+        G7:'La simetría revela estructura',
+        G8:'La información tiene costo',
+        G9:'La autorreferencia tiene límites',
+        G10:'Acumulación gradual, cambio cualitativo súbito',
+        U1:'Nada viene de la nada — conservación',
+        U2:'El orden cuesta energía',
+        U3:'Los efectos siguen a las causas con retraso',
+        U4:'Fuerzas pequeñas constantes dominan a las grandes esporádicas',
+        U5:'Sistemas desplazados generan fuerza restauradora',
+        U6:'La mayoría de los efectos vienen de pocas causas',
+        U7:'Los extremos revierten a la media',
+        U8:'Las conexiones escalan más rápido que los nodos',
+        U9:'Algunas transformaciones son irreversibles',
+        H1:'Los incentivos gobiernan la conducta, no las intenciones',
+        H2:'Cada elección cuesta lo que no elegiste',
+        H3:'La siguiente unidad importa, no el promedio',
+        H4:'Sin consecuencias, las señales son ruido',
+        H5:'Observa lo que hacen, no lo que dicen',
+        H6:'Perder duele el doble de lo que ganar agrada',
+        H7:'Los humanos optimizan posición relativa, no absoluta',
+        H8:'Los humanos necesitan narrativas; la realidad no las provee',
+        H9:'Quien actúa por ti optimiza para sí mismo primero',
+        H10:'La capacidad de retrasar la gratificación predice casi todo',
+        H11:'Cooperación en juegos repetidos; deserción en juegos únicos',
+        H12:'La asimetría de información crea poder',
+        K1:'Todo conocimiento es contextual — válido dentro de hechos identificados',
+        K2:'Los sentidos son válidos — datos base, no ilusión',
+        K3:'Los conceptos se forman por abstracción de lo concreto',
+        K4:'La lógica es identificación no contradictoria',
+        K5:'La certeza es contextual, no absoluta',
+        K6:'La carga de la prueba recae en quien afirma',
+        K7:'El conocimiento requiere integración — hechos aislados no son comprensión',
+        K8:'La corrección de errores es el mecanismo del progreso cognitivo',
+        L1:'El lenguaje mapea conceptos a símbolos — nombra, no crea',
+        L2:'El significado requiere referentes compartidos',
+        L3:'La precisión del lenguaje rastrea la precisión del pensamiento',
+        L4:'La ambigüedad no es profundidad — la vaguedad degrada la señal',
+        L5:'El contexto determina el significado — mismo símbolo, marcos distintos',
+        L6:'La traducción entre marcos pierde información',
+        E1:'El valor presupone un valorador — sin vida, nada tiene valor',
+        E2:'La vida es la precondición de todos los valores',
+        E3:'Racionalidad: compromiso de identificar la realidad tal como es',
+        E4:'La producción precede a la distribución — no puedes dar lo que no existe',
+        E5:'El intercambio voluntario es la única transferencia no destructiva de valor',
+        E6:'Honestidad: fingir la realidad es autodestructivo',
+        E7:'Justicia: juzga y sé juzgado por el mismo estándar',
+        E8:'Derechos individuales: condiciones para la coexistencia racional',
+        Ae1:'El arte es re-creación selectiva de la realidad según valores',
+        Ae2:'La belleza es el reconocimiento de forma integrada',
+        Ae3:'El estilo revela metafísica — cómo creas muestra lo que crees',
+        Ae4:'Oficio sin propósito es decoración; propósito sin oficio es propaganda',
+        Ae5:'El gusto es cosmovisión condensada, no preferencia arbitraria'
     };
 
     const SYSTEM_PROMPT = `You are the analysis engine of Nicomaco — the Discovery Protocol.
@@ -877,6 +942,10 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         // Main content tabs (only data-tab, not data-cfg)
         $$('[data-tab]').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
+        // Export/Import
+        $('#btn-export').addEventListener('click', exportHierarchy);
+        $('#btn-import').addEventListener('change', e => { if (e.target.files[0]) importHierarchy(e.target.files[0]); e.target.value = ''; });
+
         // Input
         const input = $('#input');
         input.addEventListener('keydown', handleKey);
@@ -1017,10 +1086,18 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     async function fetchURL(url) {
         if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-        const res = await fetch(proxyUrl);
-        if (!res.ok) throw new Error(`Failed to fetch URL (${res.status})`);
-        const html = await res.text();
+        // Route through our worker for privacy (no third-party proxy)
+        const res = await fetch(`${WORKER_URL}/api/fetch-url`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url }),
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || `Failed to fetch URL (${res.status})`);
+        }
+        const data = await res.json();
+        const html = data.content || '';
         const doc = new DOMParser().parseFromString(html, 'text/html');
         doc.querySelectorAll('script, style, nav, footer, header, aside, iframe, .ad, .ads, .sidebar').forEach(el => el.remove());
         let text = doc.body?.innerText || doc.body?.textContent || '';
@@ -1290,7 +1367,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             // Show invoice
             $('#invoice-display').style.display = '';
             $('#invoice-text').value = data.invoice;
-            $('#invoice-qr').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&bgcolor=0a0a0a&color=00ff87&data=${encodeURIComponent(data.invoice)}" alt="Lightning Invoice QR" style="border-radius:4px;image-rendering:pixelated" />`;
+            renderQR($('#invoice-qr'), data.invoice);
             $('#payment-status').innerHTML = `<span class="s-yellow">${esc(data.label)}</span> <span class="s-cmt">— waiting for payment...</span>`;
 
             // Start polling for payment confirmation
@@ -1391,6 +1468,17 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             btnCp.textContent = t('copied'); setTimeout(() => btnCp.textContent = t('copy'), 1500);
         });
         acts.appendChild(btnCp);
+        // Share button
+        const btnSh = document.createElement('button');
+        btnSh.className = 'btn btn-sm'; btnSh.textContent = 'share';
+        btnSh.addEventListener('click', () => {
+            const item = state.history.find(h => h.id === id);
+            if (item) {
+                shareAnalysis(item);
+                btnSh.textContent = 'shared'; setTimeout(() => btnSh.textContent = 'share', 1500);
+            }
+        });
+        acts.appendChild(btnSh);
         block.appendChild(acts);
     }
 
@@ -1495,6 +1583,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
         // Axiomatic foundation — self-evident, irrefutable (denying them requires using them)
         const es = state.lang === 'es';
+        const r = code => es ? (RULES_ES[code] || RULES[code]) : RULES[code];
         const hierarchy = [
             { level: 0, section: true, text: es ? 'AXIOMAS — autoevidentes. negarlos requiere usarlos.' : 'AXIOMS — self-evident. to deny them is to use them.' },
             { level: 0, code: 'A0', text: es ? 'La existencia existe' : 'Existence exists', color: 's-bright' },
@@ -1502,70 +1591,70 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 0, code: 'A2', text: es ? 'Identidad: una cosa es lo que es (A = A)' : 'Identity: a thing is what it is (A = A)', color: 's-bright' },
             { level: 0, code: 'A3', text: es ? 'Causalidad: las entidades actúan según su naturaleza' : 'Causality: entities act according to their nature', color: 's-bright' },
             { level: 0, section: true, text: es ? 'GENERAL — patrones que aplican en cualquier sistema' : 'GENERAL — patterns that hold in any system' },
-            { level: 1, code: 'G1', text: RULES.G1 },
-            { level: 1, code: 'G2', text: RULES.G2 },
-            { level: 1, code: 'G3', text: RULES.G3 },
-            { level: 1, code: 'G4', text: RULES.G4 },
-            { level: 1, code: 'G5', text: RULES.G5 },
-            { level: 1, code: 'G6', text: RULES.G6 },
-            { level: 1, code: 'G7', text: RULES.G7 },
-            { level: 1, code: 'G8', text: RULES.G8 },
-            { level: 1, code: 'G9', text: RULES.G9 },
-            { level: 1, code: 'G10', text: RULES.G10 },
+            { level: 1, code: 'G1', text: r('G1') },
+            { level: 1, code: 'G2', text: r('G2') },
+            { level: 1, code: 'G3', text: r('G3') },
+            { level: 1, code: 'G4', text: r('G4') },
+            { level: 1, code: 'G5', text: r('G5') },
+            { level: 1, code: 'G6', text: r('G6') },
+            { level: 1, code: 'G7', text: r('G7') },
+            { level: 1, code: 'G8', text: r('G8') },
+            { level: 1, code: 'G9', text: r('G9') },
+            { level: 1, code: 'G10', text: r('G10') },
             { level: 0, section: true, text: es ? 'UNIVERSAL — reglas generales aplicadas al universo observable' : 'UNIVERSAL — general rules applied to the observable universe' },
-            { level: 2, code: 'U1', text: RULES.U1 },
-            { level: 2, code: 'U2', text: RULES.U2 },
-            { level: 2, code: 'U3', text: RULES.U3 },
-            { level: 2, code: 'U4', text: RULES.U4 },
-            { level: 2, code: 'U5', text: RULES.U5 },
-            { level: 2, code: 'U6', text: RULES.U6 },
-            { level: 2, code: 'U7', text: RULES.U7 },
-            { level: 2, code: 'U8', text: RULES.U8 },
-            { level: 2, code: 'U9', text: RULES.U9 },
+            { level: 2, code: 'U1', text: r('U1') },
+            { level: 2, code: 'U2', text: r('U2') },
+            { level: 2, code: 'U3', text: r('U3') },
+            { level: 2, code: 'U4', text: r('U4') },
+            { level: 2, code: 'U5', text: r('U5') },
+            { level: 2, code: 'U6', text: r('U6') },
+            { level: 2, code: 'U7', text: r('U7') },
+            { level: 2, code: 'U8', text: r('U8') },
+            { level: 2, code: 'U9', text: r('U9') },
             { level: 0, section: true, text: es ? 'HUMANO — reglas universales filtradas por valoración e incentivos' : 'HUMAN — universal rules filtered through valuation and incentives' },
-            { level: 3, code: 'H1', text: RULES.H1 },
-            { level: 3, code: 'H2', text: RULES.H2 },
-            { level: 3, code: 'H3', text: RULES.H3 },
-            { level: 3, code: 'H4', text: RULES.H4 },
-            { level: 3, code: 'H5', text: RULES.H5 },
-            { level: 3, code: 'H6', text: RULES.H6 },
-            { level: 3, code: 'H7', text: RULES.H7 },
-            { level: 3, code: 'H8', text: RULES.H8 },
-            { level: 3, code: 'H9', text: RULES.H9 },
-            { level: 3, code: 'H10', text: RULES.H10 },
-            { level: 3, code: 'H11', text: RULES.H11 },
-            { level: 3, code: 'H12', text: RULES.H12 },
+            { level: 3, code: 'H1', text: r('H1') },
+            { level: 3, code: 'H2', text: r('H2') },
+            { level: 3, code: 'H3', text: r('H3') },
+            { level: 3, code: 'H4', text: r('H4') },
+            { level: 3, code: 'H5', text: r('H5') },
+            { level: 3, code: 'H6', text: r('H6') },
+            { level: 3, code: 'H7', text: r('H7') },
+            { level: 3, code: 'H8', text: r('H8') },
+            { level: 3, code: 'H9', text: r('H9') },
+            { level: 3, code: 'H10', text: r('H10') },
+            { level: 3, code: 'H11', text: r('H11') },
+            { level: 3, code: 'H12', text: r('H12') },
             { level: 0, section: true, text: es ? 'CONOCIMIENTO — cómo sabemos lo que sabemos' : 'KNOWLEDGE — how we know what we know' },
-            { level: 4, code: 'K1', text: RULES.K1 },
-            { level: 4, code: 'K2', text: RULES.K2 },
-            { level: 4, code: 'K3', text: RULES.K3 },
-            { level: 4, code: 'K4', text: RULES.K4 },
-            { level: 4, code: 'K5', text: RULES.K5 },
-            { level: 4, code: 'K6', text: RULES.K6 },
-            { level: 4, code: 'K7', text: RULES.K7 },
-            { level: 4, code: 'K8', text: RULES.K8 },
+            { level: 4, code: 'K1', text: r('K1') },
+            { level: 4, code: 'K2', text: r('K2') },
+            { level: 4, code: 'K3', text: r('K3') },
+            { level: 4, code: 'K4', text: r('K4') },
+            { level: 4, code: 'K5', text: r('K5') },
+            { level: 4, code: 'K6', text: r('K6') },
+            { level: 4, code: 'K7', text: r('K7') },
+            { level: 4, code: 'K8', text: r('K8') },
             { level: 0, section: true, text: es ? 'LENGUAJE — cómo el significado se comunica' : 'LANGUAGE — how meaning is communicated' },
-            { level: 4, code: 'L1', text: RULES.L1 },
-            { level: 4, code: 'L2', text: RULES.L2 },
-            { level: 4, code: 'L3', text: RULES.L3 },
-            { level: 4, code: 'L4', text: RULES.L4 },
-            { level: 4, code: 'L5', text: RULES.L5 },
-            { level: 4, code: 'L6', text: RULES.L6 },
+            { level: 4, code: 'L1', text: r('L1') },
+            { level: 4, code: 'L2', text: r('L2') },
+            { level: 4, code: 'L3', text: r('L3') },
+            { level: 4, code: 'L4', text: r('L4') },
+            { level: 4, code: 'L5', text: r('L5') },
+            { level: 4, code: 'L6', text: r('L6') },
             { level: 0, section: true, text: es ? 'ÉTICA — principios de acción derivados de lo anterior' : 'ETHICS — principles of action derived from the above' },
-            { level: 4, code: 'E1', text: RULES.E1 },
-            { level: 4, code: 'E2', text: RULES.E2 },
-            { level: 4, code: 'E3', text: RULES.E3 },
-            { level: 4, code: 'E4', text: RULES.E4 },
-            { level: 4, code: 'E5', text: RULES.E5 },
-            { level: 4, code: 'E6', text: RULES.E6 },
-            { level: 4, code: 'E7', text: RULES.E7 },
-            { level: 4, code: 'E8', text: RULES.E8 },
+            { level: 4, code: 'E1', text: r('E1') },
+            { level: 4, code: 'E2', text: r('E2') },
+            { level: 4, code: 'E3', text: r('E3') },
+            { level: 4, code: 'E4', text: r('E4') },
+            { level: 4, code: 'E5', text: r('E5') },
+            { level: 4, code: 'E6', text: r('E6') },
+            { level: 4, code: 'E7', text: r('E7') },
+            { level: 4, code: 'E8', text: r('E8') },
             { level: 0, section: true, text: es ? 'ESTÉTICA — la naturaleza del valor en la creación' : 'AESTHETICS — the nature of value in creation' },
-            { level: 4, code: 'Ae1', text: RULES.Ae1 },
-            { level: 4, code: 'Ae2', text: RULES.Ae2 },
-            { level: 4, code: 'Ae3', text: RULES.Ae3 },
-            { level: 4, code: 'Ae4', text: RULES.Ae4 },
-            { level: 4, code: 'Ae5', text: RULES.Ae5 },
+            { level: 4, code: 'Ae1', text: r('Ae1') },
+            { level: 4, code: 'Ae2', text: r('Ae2') },
+            { level: 4, code: 'Ae3', text: r('Ae3') },
+            { level: 4, code: 'Ae4', text: r('Ae4') },
+            { level: 4, code: 'Ae5', text: r('Ae5') },
         ];
 
         // Insert user's discovered truths into the hierarchy
@@ -1627,6 +1716,77 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
     }
 
     function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    // ── QR Code Generator (client-side, no external dependency) ──
+    function renderQR(container, text) {
+        container.innerHTML = '';
+        // Use a canvas-based QR via dynamic import from CDN as fallback
+        const canvas = document.createElement('canvas');
+        canvas.width = 200; canvas.height = 200;
+        container.appendChild(canvas);
+        // Minimal QR: load qrcode lib on demand
+        if (!window.QRCode) {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';
+            s.onload = () => window.QRCode.toCanvas(canvas, text, { width: 200, margin: 1, color: { dark: '#00ff87', light: '#0a0a0a' } });
+            s.onerror = () => { container.innerHTML = `<span class="s-cmt">// QR failed — copy invoice manually</span>`; };
+            document.head.appendChild(s);
+        } else {
+            window.QRCode.toCanvas(canvas, text, { width: 200, margin: 1, color: { dark: '#00ff87', light: '#0a0a0a' } });
+        }
+    }
+
+    // ── Export hierarchy as JSON ──
+    function exportHierarchy() {
+        const data = {
+            version: 1,
+            exported: new Date().toISOString(),
+            axioms: ['A0','A1','A2','A3'].map(k => ({ code: k, text: { A0:'Existence exists', A1:'Consciousness: awareness of existence exists', A2:'Identity: a thing is what it is (A = A)', A3:'Causality: entities act according to their nature' }[k] })),
+            rules: Object.entries(RULES).map(([code, text]) => ({ code, text })),
+            integrated: state.integrated,
+            history: state.history,
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `nicomaco-export-${today()}.json`;
+        a.click(); URL.revokeObjectURL(url);
+    }
+
+    function importHierarchy(file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (data.integrated) {
+                    state.integrated = [...state.integrated, ...data.integrated];
+                    localStorage.setItem('vu_integrated', JSON.stringify(state.integrated));
+                }
+                if (data.history) {
+                    const existingIds = new Set(state.history.map(h => h.id));
+                    const newItems = data.history.filter(h => !existingIds.has(h.id));
+                    state.history = [...newItems, ...state.history].slice(0, 200);
+                    localStorage.setItem('vu_history', JSON.stringify(state.history));
+                }
+                alert(state.lang === 'es' ? 'Importado correctamente' : 'Imported successfully');
+                if (state.currentTab === 'integrated') renderIntegrated();
+                if (state.currentTab === 'history') renderHistory();
+            } catch { alert('Invalid file'); }
+        };
+        reader.readAsText(file);
+    }
+
+    function today() { return new Date().toISOString().split('T')[0]; }
+
+    // ── Share analysis ──
+    function shareAnalysis(item) {
+        const text = `${item.candidate}\n\n${item.analysis}\n\n— analyzed via nicomaco.org`;
+        if (navigator.share) {
+            navigator.share({ title: 'Nicomaco Analysis', text }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(text);
+        }
+    }
 
     document.addEventListener('DOMContentLoaded', init);
     })();
