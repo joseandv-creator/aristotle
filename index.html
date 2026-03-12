@@ -858,7 +858,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
     ];
 
     const state = {
-        lang: localStorage.getItem('vu_lang') || 'en',
+        lang: localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
         mode: localStorage.getItem('vu_mode') || 'free', // 'free' | 'apikey'
         apiKey: localStorage.getItem('vu_key') || '',
         token: localStorage.getItem('vu_token') || '',
@@ -897,7 +897,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         $('#cfg-save').textContent = t('save');
         $('#cfg-save-free').textContent = t('start');
         // Re-render welcome if visible
-        if ($('#suggestions')) renderWelcome();
+        if ($('#output').children.length <= 1) renderWelcome();
     }
 
     function init() {
@@ -1026,36 +1026,11 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         intro.className = 'block';
         intro.innerHTML = `
             <div class="code-block">
-                <div class="gutter">${gutterLines(5)}</div>
-                <div class="code"><span class="s-cmt">${t('welcome1')}</span>
-<span class="s-cmt">${t('welcome2')}</span>
-<span class="s-cmt">${t('welcome3')}</span>
-<span class="s-cmt">${t('welcome4')}</span>
-<span class="s-cmt">// &mdash;</span></div>
+                <div class="gutter">${gutterLines(1)}</div>
+                <div class="code"><span class="s-cmt">// A is A</span></div>
             </div>
-            <div class="suggestions" id="suggestions"></div>
         `;
         output.appendChild(intro);
-        renderSuggestions();
-    }
-
-    function renderSuggestions() {
-        const container = $('#suggestions');
-        if (!container) return;
-        container.innerHTML = '';
-        const source = state.lang === 'es' ? SUGGESTIONS_ES : SUGGESTIONS;
-        const picked = [...source].sort(() => Math.random() - 0.5).slice(0, 4);
-        picked.forEach(s => {
-            const btn = document.createElement('button');
-            btn.className = 'suggestion';
-            btn.innerHTML = `${esc(s.text)}<br><span class="s-dim">// ${esc(s.hint)}</span>`;
-            btn.addEventListener('click', () => {
-                $('#input').value = s.text;
-                autoResize({ target: $('#input') });
-                handleSubmit();
-            });
-            container.appendChild(btn);
-        });
     }
 
     function handleKey(e) {
@@ -1112,8 +1087,6 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         state.analysisCount++;
         const id = Date.now();
         const num = state.analysisCount;
-        const sug = $('#suggestions');
-        if (sug) sug.remove();
         const block = createBlock(num, id);
         const codeEl = block.querySelector('.code');
         const gutterEl = block.querySelector('.gutter');
@@ -1178,8 +1151,6 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         state.analysisCount++;
         const id = Date.now();
         const num = state.analysisCount;
-        const sug = $('#suggestions');
-        if (sug) sug.remove();
         const block = createBlock(num, id);
         const codeEl = block.querySelector('.code');
         const gutterEl = block.querySelector('.gutter');
