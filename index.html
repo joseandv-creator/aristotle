@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>nicomaco</title>
-    <meta name="description" content="Discovery protocol. Propose candidates for universal truths. The system decomposes, scores, and eliminates. What survives gets integrated.">
+    <meta name="description" content="Rational filter for navigating territory. Test any claim against reality. What survives becomes an instrument.">
     <meta property="og:title" content="Nicomaco">
-    <meta property="og:description" content="Discovery protocol. Propose candidates for universal truths. The system decomposes, scores, and eliminates without mercy.">
+    <meta property="og:description" content="Rational filter for navigating territory. Test any claim against reality. A is A.">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -269,33 +269,6 @@
             margin-left: 20px;
         }
 
-        /* ── suggestions ── */
-        .suggestions {
-            margin-top: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .suggestion {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-            font-family: var(--font);
-            font-size: 11.5px;
-            padding: 6px 12px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.15s;
-            line-height: 1.6;
-        }
-        .suggestion:hover {
-            border-color: var(--blue);
-            color: var(--text-bright);
-            background: var(--surface);
-            box-shadow: 0 0 12px rgba(0,212,255,0.08);
-        }
-        .suggestion .s-dim { color: var(--comment); font-size: 10px; }
-
         /* ── loading ── */
         .loading-dots span { animation: pulse 1.4s infinite; }
         .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -478,9 +451,9 @@
                     <div class="input-row">
                         <span class="input-chevron">></span>
                         <span class="input-ctx" id="input-ctx"></span>
-                        <textarea id="input" rows="1" placeholder="write a candidate or paste a URL..."></textarea>
+                        <textarea id="input" rows="1" placeholder="test a claim, filter a URL..."></textarea>
                     </div>
-                    <div class="input-hints">enter to send &middot; shift+enter new line &middot; paste URL to analyze &middot; esc cancel</div>
+                    <div class="input-hints">enter to send &middot; shift+enter new line &middot; paste URL to filter &middot; esc cancel</div>
                 </div>
             </div>
 
@@ -772,30 +745,17 @@ EXTRACTED TRUTHS
 
 Re-evaluate considering this evidence. Same analysis format. If the verdict changes, explain why. If not, explain why the evidence is insufficient.`;
 
-    const SUGGESTIONS = [
-        { text: "What isn't maintained, degrades", hint: "entropy applied to every system" },
-        { text: "Whoever doesn't pay the cost of being wrong can't know if they're right", hint: "skin in the game as truth filter" },
-        { text: "People act on what they gain, not what they say they value", hint: "incentives vs discourse" },
-        { text: "Prolonged comfort weakens the capacity that produced it", hint: "comfort as silent entropy" },
-        { text: "What works small doesn't necessarily work large", hint: "scale changes rules" },
-        { text: "Decisions reveal themselves in what you do, not what you plan", hint: "action as the only real declaration" },
-        { text: "Advice from someone who risks nothing is noise, not signal", hint: "filter by real consequences" },
-        { text: "The urgent displaces the important until the important becomes urgent", hint: "tension between immediate and fundamental" },
-        { text: "No map can fully verify itself from the inside", hint: "limits of self-observation" },
-        { text: "Repeating something a thousand times doesn't make it true, but it does make it a belief", hint: "inheritance vs derivation" }
-    ];
-
     const WORKER_URL = 'https://nicomaco-api.joseandv.workers.dev';
 
     const I18N = {
         en: {
-            subtitle: '// discovery protocol',
+            subtitle: '// rational filter',
             motives: 'motives',
             discover: 'discover',
             history: 'history',
             integrated: 'integrated',
-            placeholder: 'write a candidate or paste a URL...',
-            hints: 'enter to send \u00b7 shift+enter new line \u00b7 paste URL to analyze \u00b7 esc cancel',
+            placeholder: 'test a claim, filter a URL...',
+            hints: 'enter to send \u00b7 shift+enter new line \u00b7 paste URL to filter \u00b7 esc cancel',
             challenge: 'challenge',
             integrate: 'integrate',
             copy: 'copy',
@@ -809,20 +769,17 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             apikeyHint: '// stored in your browser. never transmitted to third parties.',
             noHistory: '// no history yet',
             noIntegrated: '// no integrated truths yet',
-            welcome1: '// propose a candidate universal truth',
-            welcome2: '// the system decomposes, scores, eliminates',
-            welcome3: '// what survives gets integrated',
-            welcome4: '// what doesn\'t shows you exactly why',
+            welcome1: '// A is A',
             challengePrompt: 'provide territory evidence...',
         },
         es: {
-            subtitle: '// protocolo de descubrimiento',
+            subtitle: '// filtro racional',
             motives: 'motivos',
             discover: 'descubrir',
             history: 'historial',
             integrated: 'integradas',
-            placeholder: 'escribe un candidato o pega una URL...',
-            hints: 'enter para enviar \u00b7 shift+enter nueva l\u00ednea \u00b7 pega URL para analizar \u00b7 esc cancelar',
+            placeholder: 'filtra una afirmacion, pega una URL...',
+            hints: 'enter para enviar \u00b7 shift+enter nueva linea \u00b7 pega URL para filtrar \u00b7 esc cancelar',
             challenge: 'desafiar',
             integrate: 'integrar',
             copy: 'copiar',
@@ -836,26 +793,10 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             apikeyHint: '// guardado en tu navegador. nunca se transmite a terceros.',
             noHistory: '// sin historial a\u00fan',
             noIntegrated: '// sin verdades integradas a\u00fan',
-            welcome1: '// propone un candidato a verdad universal',
-            welcome2: '// el sistema descompone, puntua, elimina',
-            welcome3: '// lo que sobrevive se integra',
-            welcome4: '// lo que no, te muestra exactamente por qu\u00e9',
+            welcome1: '// A es A',
             challengePrompt: 'proporciona evidencia de territorio...',
         }
     };
-
-    const SUGGESTIONS_ES = [
-        { text: "Lo que no se mantiene, se degrada", hint: "entrop\u00eda aplicada a todo sistema" },
-        { text: "Quien no paga el costo de equivocarse no puede saber si acierta", hint: "skin in the game como filtro de verdad" },
-        { text: "La gente act\u00faa por lo que gana, no por lo que dice valorar", hint: "incentivos vs discurso" },
-        { text: "La comodidad prolongada debilita la capacidad que la produjo", hint: "comodidad como entrop\u00eda silenciosa" },
-        { text: "Lo que funciona en peque\u00f1o no necesariamente funciona en grande", hint: "la escala cambia las reglas" },
-        { text: "Las decisiones se revelan en lo que haces, no en lo que planeas", hint: "la acci\u00f3n como \u00fanica declaraci\u00f3n real" },
-        { text: "Consejo de quien no arriesga nada es ruido, no se\u00f1al", hint: "filtrar por consecuencias reales" },
-        { text: "Lo urgente desplaza a lo importante hasta que lo importante se vuelve urgente", hint: "tensi\u00f3n entre lo inmediato y lo fundamental" },
-        { text: "Ning\u00fan mapa puede verificarse completamente desde adentro", hint: "l\u00edmites de la auto-observaci\u00f3n" },
-        { text: "Repetir algo mil veces no lo hace verdad, pero s\u00ed lo hace creencia", hint: "herencia vs derivaci\u00f3n" }
-    ];
 
     const state = {
         lang: localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
@@ -1665,7 +1606,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         });
 
         if (!state.integrated.length) {
-            html += `\n<span class="s-cmt">// ${state.lang === 'es' ? 'propone candidatos. lo que sobreviva se agrega aqui.' : 'propose candidates. what survives gets added here.'}</span>\n`;
+            html += `\n<span class="s-cmt">// ${state.lang === 'es' ? 'filtra afirmaciones. lo que sobreviva se agrega aqui.' : 'filter claims. what survives gets added here.'}</span>\n`;
         }
 
         rulesBlock.innerHTML = `<div class="gutter">${gutterLines(html.split('\n').length)}</div><div class="code">${html}</div>`;
