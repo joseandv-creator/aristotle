@@ -666,7 +666,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         { text: "Repeating something a thousand times doesn't make it true, but it does make it a belief", hint: "inheritance vs derivation" }
     ];
 
-    const WORKER_URL = 'https://nicomaco-api.joseandv-creator.workers.dev';
+    const WORKER_URL = 'https://nicomaco-api.joseandv.workers.dev';
 
     const I18N = {
         en: {
@@ -1393,7 +1393,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         mainPart = mainPart.replace(/\bC\s{0,3}=/g, m => `<span class="s-kw">C</span>` + m.slice(1));
         mainPart = mainPart.replace(/\b(status|reason|action|origin|source|distortion|rule|text|novelty|correction):/g, '<span class="s-blue">$1</span>:');
         mainPart = mainPart.replace(/\b(NAVIGABLE|CLOSED)\b/g, '<span class="s-verdict-ok">$1</span>');
-        mainPart = mainPart.replace(/\bPROVISIONAL\b/g, '<span class="s-verdict-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(PROVISIONAL)\b/g, '<span class="s-verdict-warn">$1</span>');
         mainPart = mainPart.replace(/\b(COLLAPSE|PARTIAL)\b/g, '<span class="s-verdict-fail">$1</span>');
         mainPart = mainPart.replace(/\b(integrate)\b/g, '<span class="s-ok">$1</span>');
         mainPart = mainPart.replace(/\b(reject)\b/g, '<span class="s-err">$1</span>');
