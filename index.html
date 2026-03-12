@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>nicomaco</title>
-    <meta name="description" content="Rational filter for navigating territory. Test any claim against reality. What survives becomes an instrument.">
+    <meta name="description" content="Aristotelian identity engine. Test any claim against reality. What survives becomes an instrument. A is A.">
     <meta property="og:title" content="Nicomaco">
-    <meta property="og:description" content="Rational filter for navigating territory. Test any claim against reality. A is A.">
+    <meta property="og:description" content="Aristotelian identity engine. Test any claim against reality. What survives becomes an instrument. A is A.">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -529,7 +529,7 @@
             <div class="header">
                 <div class="header-left">
                     <div class="header-title">NICOMACO</div>
-                    <div class="header-sub">// rational filter</div>
+                    <div class="header-sub" id="main-subtitle">// aristotelian identity engine</div>
                 </div>
                 <div class="header-nav">
                     <a href="motivos.html" id="nav-motives">motives</a>
@@ -561,7 +561,7 @@
                 <div id="history-list"></div>
             </div>
 
-            <div id="tab-integrated" class="tab-content" style="display:none">
+            <div id="tab-integrated" class="tab-content" style="display:none" data-anchor="integrated">
                 <div id="integrated-list"></div>
                 <div class="actions" style="margin-top:12px">
                     <button class="btn btn-sm" id="btn-export">export JSON</button>
@@ -706,7 +706,7 @@
         Ae5:'El gusto es cosmovisión condensada, no preferencia arbitraria'
     };
 
-    const SYSTEM_PROMPT = `You are the analysis engine of Nicomaco — the Discovery Protocol.
+    const SYSTEM_PROMPT = `You are the analysis engine of Nicomaco — the Aristotelian Identity Engine.
 
 PURPOSE: Help the user build a stronger operative map. You serve the USER's development.
 Collect truths, but your function is the user. Every analysis should leave them with a clearer map.
@@ -850,7 +850,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     const I18N = {
         en: {
-            subtitle: '// rational filter',
+            subtitle: '// aristotelian identity engine',
             motives: 'motives',
             discover: 'discover',
             history: 'history',
@@ -881,9 +881,17 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             claimBtn: 'pay me',
             claimCancel: 'cancel',
             poolLabel: 'pool',
+            share: 'share',
+            shared: 'shared',
+            economics: 'economics',
+            exportJSON: 'export JSON',
+            importJSON: 'import JSON',
+            packTrial: '\u26a1 1,000 sats \u2192 10 analyses',
+            packBasic: '\u26a1 5,000 sats \u2192 80 analyses',
+            packPro: '\u26a1 20,000 sats \u2192 400 analyses',
         },
         es: {
-            subtitle: '// filtro racional',
+            subtitle: '// motor aristot\u00e9lico de identidad',
             motives: 'motivos',
             discover: 'descubrir',
             history: 'historial',
@@ -914,6 +922,14 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             claimBtn: 'pagame',
             claimCancel: 'cancelar',
             poolLabel: 'pool',
+            share: 'compartir',
+            shared: 'compartido',
+            economics: 'economia',
+            exportJSON: 'exportar JSON',
+            importJSON: 'importar JSON',
+            packTrial: '\u26a1 1,000 sats \u2192 10 an\u00e1lisis',
+            packBasic: '\u26a1 5,000 sats \u2192 80 an\u00e1lisis',
+            packPro: '\u26a1 20,000 sats \u2192 400 an\u00e1lisis',
         }
     };
 
@@ -944,10 +960,10 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         const toggle = $('#nav-lang');
         if (toggle) toggle.textContent = lang === 'en' ? 'ES' : 'EN';
         // Update UI strings
-        $('.header-sub').textContent = t('subtitle');
+        $('#main-subtitle').textContent = t('subtitle');
         $('#nav-motives').textContent = t('motives');
         const econLink = $('#nav-economics');
-        if (econLink) econLink.textContent = state.lang === 'es' ? 'economia' : 'economics';
+        if (econLink) econLink.textContent = t('economics');
         $$('[data-tab="discover"]').forEach(el => el.textContent = t('discover'));
         $$('[data-tab="history"]').forEach(el => el.textContent = t('history'));
         $$('[data-tab="integrated"]').forEach(el => el.textContent = t('integrated'));
@@ -958,6 +974,18 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         $$('[data-cfg="apikey"]').forEach(el => el.textContent = t('apikeyTab'));
         $('#cfg-save').textContent = t('save');
         $('#cfg-save-free').textContent = t('start');
+        // Export/Import
+        const btnExp = $('#btn-export');
+        if (btnExp) btnExp.textContent = t('exportJSON');
+        const lblImp = $('label[style*="cursor:pointer"]');
+        if (lblImp) { const inp = lblImp.querySelector('input'); lblImp.textContent = t('importJSON'); if (inp) lblImp.appendChild(inp); }
+        // Buy-pack buttons
+        $$('.buy-pack').forEach(b => {
+            const pk = b.dataset.pack;
+            if (pk === 'trial') b.textContent = t('packTrial');
+            else if (pk === 'basic') b.textContent = t('packBasic');
+            else if (pk === 'pro') b.textContent = t('packPro');
+        });
         // Footer
         const fmLink = $('#footer-motives');
         if (fmLink) fmLink.textContent = t('motives');
@@ -1036,6 +1064,9 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
         // Load pool display
         fetchPool();
+
+        // Handle hash navigation (e.g. #integrated from motivos.html)
+        if (window.location.hash === '#integrated') switchTab('integrated');
     }
 
     function showScreen(name) {
@@ -1094,7 +1125,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         const lines = es ? [
             '<span class="s-section">A es A</span>',
             '',
-            '<span class="s-cmt">// un filtro racional contra el territorio.</span>',
+            '<span class="s-cmt">// un motor aristot\u00e9lico de identidad.</span>',
             '<span class="s-cmt">// lo que entra se descompone, se puntua, se elimina.</span>',
             '<span class="s-cmt">// lo que sobrevive se convierte en instrumento.</span>',
             '<span class="s-cmt">// la verdad no es el fin — es la herramienta</span>',
@@ -1102,7 +1133,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         ] : [
             '<span class="s-section">A is A</span>',
             '',
-            '<span class="s-cmt">// a rational filter against territory.</span>',
+            '<span class="s-cmt">// an aristotelian identity engine.</span>',
             '<span class="s-cmt">// what enters is decomposed, scored, eliminated.</span>',
             '<span class="s-cmt">// what survives becomes an instrument.</span>',
             '<span class="s-cmt">// truth is not the end — it is the tool</span>',
@@ -1206,10 +1237,10 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             const acts = document.createElement('div');
             acts.className = 'actions';
             const btnCp = document.createElement('button');
-            btnCp.className = 'btn btn-sm'; btnCp.textContent = 'copy';
+            btnCp.className = 'btn btn-sm'; btnCp.textContent = t('copy');
             btnCp.addEventListener('click', () => {
                 navigator.clipboard.writeText(fullText);
-                btnCp.textContent = 'copied'; setTimeout(() => btnCp.textContent = 'copy', 1500);
+                btnCp.textContent = t('copied'); setTimeout(() => btnCp.textContent = t('copy'), 1500);
             });
             acts.appendChild(btnCp);
             block.appendChild(acts);
@@ -1527,12 +1558,12 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         acts.appendChild(btnCp);
         // Share button
         const btnSh = document.createElement('button');
-        btnSh.className = 'btn btn-sm'; btnSh.textContent = 'share';
+        btnSh.className = 'btn btn-sm'; btnSh.textContent = t('share');
         btnSh.addEventListener('click', () => {
             const item = state.history.find(h => h.id === id);
             if (item) {
                 shareAnalysis(item);
-                btnSh.textContent = 'shared'; setTimeout(() => btnSh.textContent = 'share', 1500);
+                btnSh.textContent = t('shared'); setTimeout(() => btnSh.textContent = t('share'), 1500);
             }
         });
         acts.appendChild(btnSh);

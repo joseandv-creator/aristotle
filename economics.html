@@ -248,7 +248,7 @@
                     </div>
                 </div>
                 <div class="rule-box" style="border-color:#1a3a1a">
-                    <div class="rule-label" style="color:var(--green)">VEREDICTO CERRADA</div>
+                    <div class="rule-label" style="color:var(--green)">VEREDICTO CERRADO</div>
                     <div class="rule-text">
                         La negacion de tu afirmacion se destruye a si misma. El veredicto mas fuerte posible.<br>
                         Recompensa: <span class="val">+3 creditos bonus</span> + <span class="val">bounty BTC del pool</span><br>
@@ -459,7 +459,10 @@
             localStorage.setItem('vu_lang', l);
         }
         setLang(lang);
-        document.getElementById('lang-toggle').addEventListener('click', () => setLang(lang === 'es' ? 'en' : 'es'));
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            setLang(lang === 'es' ? 'en' : 'es');
+            loadTreasury(); // re-render with new language
+        });
 
         // Live treasury
         async function loadTreasury() {
