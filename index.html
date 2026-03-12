@@ -571,6 +571,8 @@ SPECIAL VERDICTS:
 - DERIVED: claim is true but already captured by existing rules. High C, action = acknowledge.
 
 EXISTING RULES (check redundancy AND derivability):
+AXIOMS (self-evident, irrefutable — denying them requires using them):
+A0 Existence exists A1 Consciousness: awareness of existence exists A2 Identity: A is A A3 Causality: entities act according to their nature
 G1 Persistence G2 Entropy G3 Selection G4 Feedback G5 Emergence G6 Constraint gives form G7 Symmetry reveals structure G8 Information has cost G9 Self-reference has limits G10 Threshold transitions
 U1 Conservation U2 Order costs energy U3 Effects with delay U4 Constant forces dominate U5 Homeostasis U6 Power law U7 Regression to the mean U8 Network effect U9 Irreversibility
 H1 Incentives H2 Opportunity cost H3 Marginal thinking H4 Skin in the game H5 Revealed preference H6 Loss aversion H7 Relative position H8 Narrative fallacy H9 Agency problem H10 Time preference H11 Repeated games H12 Information asymmetry
@@ -1460,10 +1462,15 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         rulesBlock.className = 'code-block';
         rulesBlock.style.marginBottom = '20px';
 
-        // Hierarchical descent from first axiom
+        // Axiomatic foundation — self-evident, irrefutable (denying them requires using them)
+        const es = state.lang === 'es';
         const hierarchy = [
-            { level: 0, code: 'A0', text: 'Something exists', color: 's-bright' },
-            { level: 0, section: true, text: 'GENERAL — patterns that hold in any system' },
+            { level: 0, section: true, text: es ? 'AXIOMAS — autoevidentes. negarlos requiere usarlos.' : 'AXIOMS — self-evident. to deny them is to use them.' },
+            { level: 0, code: 'A0', text: es ? 'La existencia existe' : 'Existence exists', color: 's-bright' },
+            { level: 0, code: 'A1', text: es ? 'Consciencia: la percepción de la existencia existe' : 'Consciousness: awareness of existence exists', color: 's-bright' },
+            { level: 0, code: 'A2', text: es ? 'Identidad: una cosa es lo que es (A = A)' : 'Identity: a thing is what it is (A = A)', color: 's-bright' },
+            { level: 0, code: 'A3', text: es ? 'Causalidad: las entidades actúan según su naturaleza' : 'Causality: entities act according to their nature', color: 's-bright' },
+            { level: 0, section: true, text: es ? 'GENERAL — patrones que aplican en cualquier sistema' : 'GENERAL — patterns that hold in any system' },
             { level: 1, code: 'G1', text: RULES.G1 },
             { level: 1, code: 'G2', text: RULES.G2 },
             { level: 1, code: 'G3', text: RULES.G3 },
@@ -1474,7 +1481,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 1, code: 'G8', text: RULES.G8 },
             { level: 1, code: 'G9', text: RULES.G9 },
             { level: 1, code: 'G10', text: RULES.G10 },
-            { level: 0, section: true, text: 'UNIVERSAL — general rules applied to the observable universe' },
+            { level: 0, section: true, text: es ? 'UNIVERSAL — reglas generales aplicadas al universo observable' : 'UNIVERSAL — general rules applied to the observable universe' },
             { level: 2, code: 'U1', text: RULES.U1 },
             { level: 2, code: 'U2', text: RULES.U2 },
             { level: 2, code: 'U3', text: RULES.U3 },
@@ -1484,7 +1491,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 2, code: 'U7', text: RULES.U7 },
             { level: 2, code: 'U8', text: RULES.U8 },
             { level: 2, code: 'U9', text: RULES.U9 },
-            { level: 0, section: true, text: 'HUMAN — universal rules filtered through valuation and incentives' },
+            { level: 0, section: true, text: es ? 'HUMANO — reglas universales filtradas por valoración e incentivos' : 'HUMAN — universal rules filtered through valuation and incentives' },
             { level: 3, code: 'H1', text: RULES.H1 },
             { level: 3, code: 'H2', text: RULES.H2 },
             { level: 3, code: 'H3', text: RULES.H3 },
@@ -1501,7 +1508,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
         // Insert user's discovered truths into the hierarchy
         if (state.integrated.length) {
-            hierarchy.push({ level: 0, section: true, text: 'DISCOVERED — truths verified through the protocol' });
+            hierarchy.push({ level: 0, section: true, text: es ? 'DESCUBIERTAS — verdades verificadas por el protocolo' : 'DISCOVERED — truths verified through the protocol' });
             state.integrated.forEach((item, i) => {
                 hierarchy.push({
                     level: 1,
@@ -1518,7 +1525,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         hierarchy.forEach(r => {
             if (r.section) {
                 html += `\n<span class="s-section">${esc(r.text)}</span>\n`;
-            } else if (r.level === 0 && r.code === 'A0') {
+            } else if (r.level === 0 && r.code && r.code.startsWith('A')) {
                 html += `<span class="s-cyan">${r.code}</span> <span class="${r.color}">${esc(r.text)}</span>\n`;
             } else {
                 const indent = '  '.repeat(r.level);
