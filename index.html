@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>universal truths</title>
-    <meta name="description" content="Collaborative discovery protocol for universal truths. Propose, decompose, eliminate. What survives gets integrated.">
-    <meta property="og:title" content="Universal Truths">
-    <meta property="og:description" content="Collaborative discovery protocol. Propose candidates for universal truths. The system decomposes, scores, and eliminates without mercy.">
+    <title>aristotle</title>
+    <meta name="description" content="Discovery protocol. Propose candidates for universal truths. The system decomposes, scores, and eliminates. What survives gets integrated.">
+    <meta property="og:title" content="Aristotle">
+    <meta property="og:description" content="Discovery protocol. Propose candidates for universal truths. The system decomposes, scores, and eliminates without mercy.">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#0a0a0a">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
@@ -372,8 +372,10 @@
             <div class="cfg-line">
                 <label>model: </label>
                 <select id="cfg-model">
-                    <option value="claude-opus-4-20250514">claude-opus-4</option>
                     <option value="claude-sonnet-4-20250514">claude-sonnet-4</option>
+                    <option value="claude-opus-4-20250514">claude-opus-4</option>
+                    <option value="claude-3-5-sonnet-20241022">claude-3.5-sonnet</option>
+                    <option value="claude-3-5-haiku-20241022">claude-3.5-haiku</option>
                 </select>
             </div>
             <div style="margin-top:16px">
@@ -385,8 +387,8 @@
         <div id="screen-main" class="screen">
             <div class="header">
                 <div class="header-left">
-                    <div class="header-title">UNIVERSAL TRUTHS</div>
-                    <div class="header-sub">// collaborative discovery protocol</div>
+                    <div class="header-title">ARISTOTLE</div>
+                    <div class="header-sub">// discovery protocol</div>
                 </div>
                 <div class="header-nav">
                     <a href="motivos.html">motives</a>
@@ -406,9 +408,9 @@
                     <div class="input-row">
                         <span class="input-chevron">></span>
                         <span class="input-ctx" id="input-ctx"></span>
-                        <textarea id="input" rows="1" placeholder="write your candidate..."></textarea>
+                        <textarea id="input" rows="1" placeholder="write a candidate or paste a URL..."></textarea>
                     </div>
-                    <div class="input-hints">enter to send &middot; shift+enter new line &middot; esc cancel</div>
+                    <div class="input-hints">enter to send &middot; shift+enter new line &middot; paste URL to analyze &middot; esc cancel</div>
                 </div>
             </div>
 
@@ -468,7 +470,7 @@
         H12:'Information asymmetry creates power'
     };
 
-    const SYSTEM_PROMPT = `You are the analysis engine of the Discovery Protocol — "Universal Truths."
+    const SYSTEM_PROMPT = `You are the analysis engine of Aristotle — the Discovery Protocol.
 
 A user proposes candidates for universal truths. Your job: decompose, score, eliminate, rule.
 You serve truth, not comfort. Be precise. Don't soften. Don't inflate.
@@ -531,6 +533,50 @@ VERDICT
 LIMITS
   {what this analysis cannot verify}`;
 
+    const URL_ANALYSIS_PROMPT = `A user has submitted a URL for analysis. The page content has been extracted below.
+Analyze this content through the protocol lens.
+
+PAGE CONTENT:
+---
+{content}
+---
+
+Respond in English. Use EXACTLY this format:
+
+SOURCE AUDIT
+  url:         "{url}"
+  type:        {article|opinion|research|news|social|other}
+  perspective: {what position does this content take}
+
+CLAIMS DETECTED
+  {number each substantive claim found}
+
+TERRITORY CHECK
+  {for each major claim, test against existing rules G1-G10, U1-U9, H1-H12}
+  {identify which claims align with known truths and which contradict them}
+
+INHERITANCE ANALYSIS
+  origin:     {does the content derive from territory or repeat inherited maps?}
+  signals:    {evidence of derived vs inherited thinking}
+  distortion: {any detected distortions, biases, or map-as-territory errors}
+
+INFORMATION QUALITY
+  S(v) = {0.00}     // subject fidelity of the source
+  O(v) = {0.00}     // alignment with observable territory
+  R(v) = {0.00}     // strength of inferential chains used
+  C    = {s} x {o} x {r} = {result}
+  // {assessment}
+
+VERDICT
+  quality:  {HIGH|MEDIUM|LOW|NOISE}
+  signal:   {what is worth extracting from this content}
+  noise:    {what should be filtered out}
+  action:   {integrate insights|read critically|discard}
+
+EXTRACTED TRUTHS
+  {any candidate universal truths that could be extracted and tested}
+  {or "none — content does not contain testable universal claims"}`;
+
     const CHALLENGE_PROMPT = `The user challenges the previous verdict with territory evidence:
 
 "{evidence}"
@@ -552,7 +598,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     const state = {
         apiKey: localStorage.getItem('vu_key') || '',
-        model: localStorage.getItem('vu_model') || 'claude-opus-4-20250514',
+        model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
         history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
         integrated: JSON.parse(localStorage.getItem('vu_integrated') || '[]'),
         currentTab: 'discover',
@@ -663,6 +709,10 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         t.style.height = t.scrollHeight + 'px';
     }
 
+    function isURL(text) {
+        return /^https?:\/\//i.test(text) || /^www\./i.test(text);
+    }
+
     function handleSubmit() {
         const input = $('#input');
         const text = input.value.trim();
@@ -670,7 +720,89 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         input.value = '';
         input.style.height = 'auto';
         if (state.challengeTarget) submitChallenge(text);
+        else if (isURL(text)) submitURL(text);
         else submitCandidate(text);
+    }
+
+    async function fetchURL(url) {
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        const res = await fetch(proxyUrl);
+        if (!res.ok) throw new Error(`Failed to fetch URL (${res.status})`);
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        doc.querySelectorAll('script, style, nav, footer, header, aside, iframe, .ad, .ads, .sidebar').forEach(el => el.remove());
+        let text = doc.body?.innerText || doc.body?.textContent || '';
+        text = text.replace(/\n{3,}/g, '\n\n').trim();
+        if (text.length > 6000) text = text.substring(0, 6000) + '\n\n[... content truncated ...]';
+        return text;
+    }
+
+    async function submitURL(url) {
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        state.processing = true;
+        state.analysisCount++;
+        const id = Date.now();
+        const num = state.analysisCount;
+        const sug = $('#suggestions');
+        if (sug) sug.remove();
+        const block = createBlock(num, id);
+        const codeEl = block.querySelector('.code');
+        const gutterEl = block.querySelector('.gutter');
+        $('#output').appendChild(block);
+        scrollToBottom();
+        codeEl.innerHTML = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n<span class="s-cmt">// fetching page content</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+        gutterEl.textContent = gutterLines(4);
+        try {
+            const pageContent = await fetchURL(url);
+            codeEl.innerHTML = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n<span class="s-cmt">// content extracted. analyzing</span> <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>`;
+            const prompt = URL_ANALYSIS_PROMPT.replace('{content}', pageContent).replace('{url}', url);
+            const messages = [{ role: 'user', content: prompt }];
+            let fullText = '';
+            await callStreamingAPI(messages, chunk => {
+                fullText += chunk;
+                const highlighted = highlightURL(fullText);
+                const allLines = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n` + highlighted;
+                codeEl.innerHTML = allLines;
+                gutterEl.textContent = gutterLines(allLines.split('\n').length);
+                scrollToBottom();
+            });
+            const highlighted = highlightURL(fullText);
+            const allLines = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n` + highlighted;
+            codeEl.innerHTML = allLines;
+            gutterEl.textContent = gutterLines(allLines.split('\n').length);
+            const verdict = fullText.match(/quality:\s*(HIGH|MEDIUM|LOW|NOISE)/i);
+            const score = extractScore(fullText);
+            state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, verdict: verdict ? verdict[1].toUpperCase() : null, score, date: new Date().toISOString(), messages, isURL: true });
+            localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
+            // add copy button
+            const acts = document.createElement('div');
+            acts.className = 'actions';
+            const btnCp = document.createElement('button');
+            btnCp.className = 'btn btn-sm'; btnCp.textContent = 'copy';
+            btnCp.addEventListener('click', () => {
+                navigator.clipboard.writeText(fullText);
+                btnCp.textContent = 'copied'; setTimeout(() => btnCp.textContent = 'copy', 1500);
+            });
+            acts.appendChild(btnCp);
+            block.appendChild(acts);
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                codeEl.innerHTML += `\n\n<span class="s-cmt">// analysis cancelled</span>`;
+            } else {
+                let errorMsg = esc(err.message);
+                let hint = '<span class="s-cmt">// check api_key in configuration</span>';
+                if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
+                    hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current model: ${esc(state.model)}</span>`;
+                } else if (err.message.includes('Failed to fetch URL')) {
+                    hint = '<span class="s-cmt">// the URL may be unreachable or blocked</span>';
+                }
+                codeEl.innerHTML = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n<span class="s-err">// error: ${errorMsg}</span>\n${hint}`;
+            }
+            gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
+        }
+        state.processing = false;
+        scrollToBottom();
     }
 
     async function submitCandidate(text) {
@@ -711,7 +843,14 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             if (err.name === 'AbortError') {
                 codeEl.innerHTML += `\n\n<span class="s-cmt">// analysis cancelled</span>`;
             } else {
-                codeEl.innerHTML = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n<span class="s-err">// error: ${esc(err.message)}</span>\n<span class="s-cmt">// check api_key in configuration</span>`;
+                let errorMsg = esc(err.message);
+                let hint = '<span class="s-cmt">// check api_key in configuration</span>';
+                if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
+                    hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current: ${esc(state.model)}</span>\n<span class="s-cmt">// cheaper options: claude-3.5-sonnet, claude-3.5-haiku</span>`;
+                } else if (err.message.includes('Could not resolve') || err.message.includes('not found')) {
+                    hint = `<span class="s-warn">// model "${esc(state.model)}" may not be available</span>\n<span class="s-cmt">// try switching model in cfg</span>`;
+                }
+                codeEl.innerHTML = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n<span class="s-err">// error: ${errorMsg}</span>\n${hint}`;
             }
             gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
         }
@@ -863,6 +1002,41 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
     function scrollToBottom() { const o = $('#output'); if (o) o.scrollTop = o.scrollHeight; }
 
     function highlightText(text) { return text.split('\n').map(l => highlightLine(l)).join('\n'); }
+
+    function highlightURL(text) { return text.split('\n').map(l => highlightURLLine(l)).join('\n'); }
+
+    function highlightURLLine(raw) {
+        let line = esc(raw);
+        if (/^(SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|VERDICT|EXTRACTED TRUTHS)\b/.test(line))
+            return `<span class="s-section">${line}</span>`;
+        if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
+        let mainPart = line, commentPart = '';
+        const ci = line.indexOf('//');
+        if (ci > 0) { mainPart = line.substring(0, ci); commentPart = `<span class="s-cmt">${line.substring(ci)}</span>`; }
+        mainPart = mainPart.replace(/\b(S|O|R)\(v\)/g, '<span class="s-kw">$&</span>');
+        mainPart = mainPart.replace(/\bVB\b/g, '<span class="s-kw">VB</span>');
+        mainPart = mainPart.replace(/\bC\s{0,3}=/g, m => `<span class="s-kw">C</span>` + m.slice(1));
+        mainPart = mainPart.replace(/\b(url|type|perspective|origin|signals|distortion|quality|signal|noise|action|correction):/g, '<span class="s-blue">$1</span>:');
+        mainPart = mainPart.replace(/\b(HIGH)\b/g, '<span class="s-verdict-ok">$1</span>');
+        mainPart = mainPart.replace(/\b(MEDIUM)\b/g, '<span class="s-verdict-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(LOW|NOISE)\b/g, '<span class="s-verdict-fail">$1</span>');
+        mainPart = mainPart.replace(/\b(integrate insights)\b/g, '<span class="s-ok">$1</span>');
+        mainPart = mainPart.replace(/\b(read critically)\b/g, '<span class="s-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(discard)\b/g, '<span class="s-err">$1</span>');
+        mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
+        mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
+        mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
+        mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2})\b/g, m => {
+            const tip = RULES[m] || m;
+            return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
+        });
+        mainPart = mainPart.replace(/\b(\d+\.\d+)\b/g, '<span class="s-num">$1</span>');
+        mainPart = mainPart.replace(/"([^"]*)"/g, '"<span class="s-str">$1</span>"');
+        mainPart = mainPart.replace(/-&gt;/g, '<span class="s-op">-&gt;</span>');
+        mainPart = mainPart.replace(/\bok\b/g, '<span class="s-ok">ok</span>');
+        mainPart = mainPart.replace(/\bno\b(?!\s*=)/g, '<span class="s-err">no</span>');
+        return mainPart + commentPart;
+    }
 
     function highlightLine(raw) {
         let line = esc(raw);
