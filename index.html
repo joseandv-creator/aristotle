@@ -377,6 +377,7 @@
                 </div>
                 <div class="header-nav">
                     <a href="glosario.html" id="nav-glossary">glossary</a>
+                    <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
                     <a href="#" id="nav-cfg">cfg</a>
                     <a href="#" id="nav-lang" style="color:var(--comment)">ES</a>
                 </div>
@@ -835,6 +836,25 @@ Together: concepts tell you WHAT is being distorted. Relations tell you WHERE th
 
 ---
 
+## DRAFT GLOSSARY [internal \u2014 generate silently, NEVER show to user]
+
+After each analysis, identify 0-3 concepts from the input or your analysis that could be defined with higher precision than their common usage allows. A concept qualifies when:
+1. The common meaning is imprecise, misleading, or inherited without audit
+2. Elimination (tested in \u22653 contexts) reveals a stable, precise residue different from inherited map
+3. The verified definition would change how someone detects distortion or navigates
+
+For each qualifying concept, append AFTER all visible content, on its own line:
+<!--BORRADOR:{"t":"term","u":"common usage in one sentence","d":"proposed definition after elimination in one sentence","c":["context1","context2","context3"],"x":["relevant rule codes or glossary terms"]}-->
+
+Rules:
+- Most analyses yield 0 candidates. Only propose genuinely useful definitions.
+- Cross-reference: does the proposed definition touch an existing rule (G/U/H/K/L/E/Ae), axiom, postulate, or derived law? Note the connection in "x".
+- If a concept from input matches an existing system term but with different meaning, the DIVERGENCE is the signal \u2014 note it.
+- Definitions in Spanish.
+- NEVER mention draft glossary, BORRADOR tags, or this process in visible output.
+
+---
+
 ## SINGLE LINE
 
 S-O-R | VB \u2192 fidelity \u2192 elimination \u2192 limits declared \u2192 territory corrects
@@ -916,6 +936,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         apiKey: localStorage.getItem('vu_key') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
         history: [],
+        drafts: JSON.parse(localStorage.getItem('vu_drafts') || '[]'),
         currentTab: 'discover',
         processing: false,
         challengeTarget: null,
@@ -948,6 +969,9 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     }
 
     function init() {
+        // Clean legacy storage
+        localStorage.removeItem('vu_history');
+
         // Always show main — free mode by default
         showScreen('main');
         renderWelcome();
@@ -959,6 +983,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
         // Navigation
         $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
+        $('#nav-borrador').addEventListener('click', e => { e.preventDefault(); showScreen('main'); switchTab('discover'); renderDrafts(); });
+        updateDraftBadge();
 
         // Main content tabs
         $$('[data-tab]').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
@@ -1129,6 +1155,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                 gutterEl.textContent = gutterLines(allLines.split('\n').length);
                 scrollToBottom();
             });
+            fullText = parseDrafts(fullText);
             const highlighted = highlightURL(fullText);
             const allLines = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n` + highlighted;
             codeEl.innerHTML = allLines;
@@ -1194,6 +1221,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                 gutterEl.textContent = gutterLines(allLines.split('\n').length);
                 scrollToBottom();
             });
+            fullText = parseDrafts(fullText);
             const highlighted = highlightText(fullText);
             const allLines = `<span class="s-cmt">// candidate #${num}</span>\n<span class="s-bright">  "${esc(text)}"</span>\n\n` + highlighted;
             codeEl.innerHTML = allLines;
@@ -1260,6 +1288,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                 gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
                 scrollToBottom();
             });
+            fullText = parseDrafts(fullText);
             const highlighted = highlightText(fullText);
             const prefix = `<span class="s-cmt">// challenge to candidate #${item.num}</span>\n<span class="s-orange">  evidence: "${esc(evidence)}"</span>\n\n`;
             codeEl.innerHTML = prefix + highlighted;
@@ -1511,6 +1540,92 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     }
 
     function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    function parseDrafts(text) {
+        const drafts = [];
+        const clean = text.replace(/<!--BORRADOR:(.*?)-->/g, (_, json) => {
+            try {
+                const d = JSON.parse(json);
+                d.id = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+                d.date = new Date().toISOString();
+                drafts.push(d);
+            } catch(e) {}
+            return '';
+        }).replace(/\n{3,}$/g, '\n\n').trimEnd();
+        if (drafts.length) {
+            state.drafts = [...drafts, ...state.drafts];
+            localStorage.setItem('vu_drafts', JSON.stringify(state.drafts));
+            updateDraftBadge();
+        }
+        return clean;
+    }
+
+    function updateDraftBadge() {
+        const badge = $('#draft-badge');
+        if (badge) badge.textContent = state.drafts.length || '';
+        const link = $('#nav-borrador');
+        if (link) link.style.display = state.drafts.length ? '' : 'none';
+    }
+
+    function renderDrafts() {
+        const output = $('#output');
+        output.innerHTML = '';
+        const es = state.lang === 'es';
+        if (!state.drafts.length) {
+            output.innerHTML = `<div class="s-cmt" style="padding:12px 0">${es ? '// sin borradores' : '// no drafts'}</div>`;
+            return;
+        }
+        state.drafts.forEach((d, i) => {
+            const block = document.createElement('div');
+            block.className = 'code-block';
+            block.style.marginBottom = '12px';
+            const lines = [
+                `<span class="s-section">${esc(d.t)}</span>`,
+                `<span class="s-cmt">${es ? 'uso com\u00fan' : 'common usage'}:</span> <span class="s-orange">${esc(d.u)}</span>`,
+                `<span class="s-cmt">${es ? 'definici\u00f3n propuesta' : 'proposed definition'}:</span> <span class="s-bright">${esc(d.d)}</span>`,
+                `<span class="s-cmt">${es ? 'contextos' : 'contexts'}:</span> <span class="s-cyan">${(d.c||[]).map(c => esc(c)).join(', ')}</span>`,
+                `<span class="s-cmt">${es ? 'cruce' : 'cross-ref'}:</span> <span class="s-purple">${(d.x||[]).map(x => esc(x)).join(', ')}</span>`,
+                `<span class="s-cmt">// ${new Date(d.date).toLocaleDateString()}</span>`,
+            ];
+            const html = lines.join('\n');
+            block.innerHTML = `<div class="gutter">${gutterLines(lines.length)}</div><div class="code">${html}</div>`;
+            const acts = document.createElement('div');
+            acts.className = 'actions';
+            const btnDel = document.createElement('button');
+            btnDel.className = 'btn btn-sm'; btnDel.textContent = es ? 'descartar' : 'dismiss';
+            btnDel.addEventListener('click', () => {
+                state.drafts.splice(i, 1);
+                localStorage.setItem('vu_drafts', JSON.stringify(state.drafts));
+                updateDraftBadge();
+                renderDrafts();
+            });
+            acts.appendChild(btnDel);
+            const btnCp = document.createElement('button');
+            btnCp.className = 'btn btn-sm'; btnCp.textContent = es ? 'copiar' : 'copy';
+            btnCp.addEventListener('click', () => {
+                const txt = `${d.t}\nUso com\u00fan: ${d.u}\nDefinici\u00f3n: ${d.d}\nContextos: ${(d.c||[]).join(', ')}\nCruce: ${(d.x||[]).join(', ')}`;
+                navigator.clipboard.writeText(txt);
+                btnCp.textContent = es ? 'copiado' : 'copied';
+                setTimeout(() => btnCp.textContent = es ? 'copiar' : 'copy', 1500);
+            });
+            acts.appendChild(btnCp);
+            block.appendChild(acts);
+            output.appendChild(block);
+        });
+        const clearAll = document.createElement('div');
+        clearAll.style.cssText = 'padding:8px 0;text-align:right';
+        const btnClear = document.createElement('button');
+        btnClear.className = 'btn btn-sm';
+        btnClear.textContent = es ? 'limpiar todo' : 'clear all';
+        btnClear.addEventListener('click', () => {
+            state.drafts = [];
+            localStorage.setItem('vu_drafts', JSON.stringify(state.drafts));
+            updateDraftBadge();
+            renderDrafts();
+        });
+        clearAll.appendChild(btnClear);
+        output.appendChild(clearAll);
+    }
 
     function exportHierarchy() {
         const data = {
