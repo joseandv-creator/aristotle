@@ -385,7 +385,6 @@
             <div class="tabs">
                 <button class="tab active" data-tab="discover">discover</button>
                 <button class="tab" data-tab="integrated">integrated</button>
-                <button class="tab" data-tab="history">history</button>
             </div>
 
             <div id="tab-discover" class="tab-content">
@@ -400,11 +399,7 @@
                 </div>
             </div>
 
-            <div id="tab-history" class="tab-content" style="display:none">
-                <div id="history-list"></div>
-            </div>
-
-            <div id="tab-integrated" class="tab-content" style="display:none" data-anchor="integrated">
+<div id="tab-integrated" class="tab-content" style="display:none" data-anchor="integrated">
                 <div id="integrated-list"></div>
                 <div class="actions" style="margin-top:12px">
                     <button class="btn btn-sm" id="btn-export">export JSON</button>
@@ -674,6 +669,12 @@ S(v) subject fidelity [0-1] | O(v) object fidelity [0-1] | R(v) relation fidelit
 
 THRESHOLDS: 0.0 = collapse | <0.5 = partial HIGH RISK | 0.5-0.7 = provisional | 0.7-1.0 = navigable | 1.0 = performative test (can negation exist without the concept? NO\u2192axiom YES\u2192postulate)
 
+CONCEPT CATEGORIES [classify silently \u2014 never label in output]:
+\u03b1 (closed) \u2014 negation requires the concept itself. Cannot be false without using it. (existence, identity, contradiction, perspective)
+\u03b2 (contingent) \u2014 depends on territory. Verifiable or falsifiable. Most claims.
+\u03b3 (relational) \u2014 S's position relative to O. Changes with observer. Most opinions and values.
+CATEGORY ERROR = presenting \u03b3 as \u03b2 (opinion as fact) or \u03b2 as \u03b1 (contingent as necessary). The miscategorization IS a deception mechanism. Detect and name it.
+
 ---
 
 ## EPISTEMIC REGISTRY
@@ -688,11 +689,11 @@ LIMITS: L1 map can't verify itself from inside | L2 pre-conceptual inaccessible 
 ## PROCESS [every input]
 
 1. DECOMPOSE \u2014 extract S, O, R, VB (no VB \u2192 stop, ask)
-2. SCORE \u2014 relative to VB, apply correlation correction
+2. SCORE \u2014 relative to VB. For each S, O, R: check against epistemic registry (violates axiom? contradicts postulate? ignores derived law?). Classify \u03b1/\u03b2/\u03b3. Apply correlation correction.
 3. GATE \u2014 C < 0.5 \u2192 reconstruct before continuing
 4. ELIMINATE \u2014 survives in \u22653 contexts? YES=retain, PARTIAL=flag, NO=eliminate
-5. AUDIT INHERITANCE \u2014 who formed it, from where, base distortion d0, current dn \u2265 d0
-6. DECLARE LIMITS \u2014 unknown \u2260 empty, structural limits = name, don't cross
+5. AUDIT INHERITANCE \u2014 who formed it, from where, base distortion d0, current dn \u2265 d0. SEDIMENTATION TEST: concept feels natural to speaker but they can't define it precisely = inherited without audit = highest distortion risk.
+6. DECLARE LIMITS \u2014 unknown \u2260 empty, structural limits = name, don't cross. EVASION CHECK: what's missing? Missing S = hidden agent ("mistakes were made"). Missing O = undefined target ("we need change"). Missing R = unexamined connection ("X is related to Y" \u2014 how?). Missing VB = concealed motive ("this is important" \u2014 for whom?). Absence often more diagnostic than presence.
 7. SELECT MODE \u2014 map dirty \u2192 clean first / map clean, territory unknown \u2192 act / uncertain \u2192 ask
 
 ---
@@ -871,7 +872,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         en: {
             subtitle: '// detect lies, stolen concepts, and perverse incentives',
             discover: 'discover',
-            history: 'history',
             integrated: 'integrated',
             placeholder: 'ask yourself a question, paste a URL...',
             hints: 'enter to send \u00b7 shift+enter new line \u00b7 paste URL to filter \u00b7 esc cancel',
@@ -881,7 +881,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             save: 'save',
             configTitle: '// configuration',
             configHint: '// stored in your browser. never transmitted to third parties.',
-            noHistory: '// no history yet',
             welcome1: '// A is A',
             challengePrompt: 'provide territory evidence...',
             share: 'share',
@@ -893,7 +892,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         es: {
             subtitle: '// detecta mentiras, conceptos robados e incentivos perversos',
             discover: 'descubrir',
-            history: 'historial',
             integrated: 'integradas',
             placeholder: 'hazte una pregunta, pega una URL...',
             hints: 'enter para enviar \u00b7 shift+enter nueva linea \u00b7 pega URL para filtrar \u00b7 esc cancelar',
@@ -903,7 +901,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             save: 'guardar',
             configTitle: '// configuraci\u00f3n',
             configHint: '// guardado en tu navegador. nunca se transmite a terceros.',
-            noHistory: '// sin historial a\u00fan',
             welcome1: '// A es A',
             challengePrompt: 'proporciona evidencia de territorio...',
             share: 'compartir',
@@ -918,7 +915,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         lang: localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
         apiKey: localStorage.getItem('vu_key') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
-        history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
+        history: [],
         currentTab: 'discover',
         processing: false,
         challengeTarget: null,
@@ -939,7 +936,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         if (glossaryLink) glossaryLink.textContent = lang === 'en' ? 'glossary' : 'glosario';
         $('#main-subtitle').textContent = t('subtitle');
         $$('[data-tab="discover"]').forEach(el => el.textContent = t('discover'));
-        $$('[data-tab="history"]').forEach(el => el.textContent = t('history'));
         $$('[data-tab="integrated"]').forEach(el => el.textContent = t('integrated'));
         $('#input').placeholder = t('placeholder');
         $('.input-hints').innerHTML = t('hints');
@@ -1024,7 +1020,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
         $$('.tab-content').forEach(tc => tc.style.display = 'none');
         $(`#tab-${name}`).style.display = '';
-        if (name === 'history') renderHistory();
         if (name === 'integrated') renderIntegrated();
     }
 
@@ -1139,7 +1134,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             codeEl.innerHTML = allLines;
             gutterEl.textContent = gutterLines(allLines.split('\n').length);
             state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, date: new Date().toISOString(), messages, isURL: true });
-            localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
+
             const acts = document.createElement('div');
             acts.className = 'actions';
             const btnCp = document.createElement('button');
@@ -1205,7 +1200,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             gutterEl.textContent = gutterLines(allLines.split('\n').length);
             addActions(block, id, text, fullText, messages);
             state.history.unshift({ id, num, candidate: text, analysis: fullText, date: new Date().toISOString(), messages });
-            localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
+
         } catch (err) {
             if (err.name === 'AbortError') {
                 codeEl.innerHTML += `\n\n<span class="s-cmt">// analysis cancelled</span>`;
@@ -1271,7 +1266,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
             item.messages = messages;
             item.messages.push({ role: 'assistant', content: fullText });
-            localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
+
             addActions(block, item.id, item.candidate, fullText, item.messages);
         } catch (err) {
             if (err.name !== 'AbortError') codeEl.innerHTML += `\n\n<span class="s-err">// error: ${esc(err.message)}</span>`;
@@ -1415,18 +1410,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         return mainPart + commentPart;
     }
 
-    function renderHistory() {
-        const c = $('#history-list');
-        if (!state.history.length) { c.innerHTML = `<div class="s-cmt" style="padding:8px 0">${t('noHistory')}</div>`; return; }
-        c.innerHTML = '';
-        state.history.forEach(item => {
-            const el = document.createElement('div'); el.className = 'list-item';
-            el.innerHTML = `<div class="meta">#${item.num} &middot; ${new Date(item.date).toLocaleDateString()}</div><div class="candidate-text">"${esc(item.candidate)}"</div>`;
-            el.addEventListener('click', () => { switchTab('discover'); expandAnalysis(item); });
-            c.appendChild(el);
-        });
-    }
-
     function renderIntegrated() {
         const c = $('#integrated-list');
         c.innerHTML = '';
@@ -1527,20 +1510,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         c.appendChild(rulesBlock);
     }
 
-    function expandAnalysis(item) {
-        const output = $('#output');
-        const block = createBlock(item.num, item.id);
-        const codeEl = block.querySelector('.code');
-        const gutterEl = block.querySelector('.gutter');
-        const highlighted = highlightText(item.analysis);
-        const allLines = `<span class="s-cmt">// candidate #${item.num} (history)</span>\n<span class="s-bright">  "${esc(item.candidate)}"</span>\n\n` + highlighted;
-        codeEl.innerHTML = allLines;
-        gutterEl.textContent = gutterLines(allLines.split('\n').length);
-        output.appendChild(block);
-        addActions(block, item.id, item.candidate, item.analysis, item.messages);
-        scrollToBottom();
-    }
-
     function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
     function exportHierarchy() {
@@ -1549,7 +1518,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             exported: new Date().toISOString(),
             axioms: ['A0','A1','A2','A3'].map(k => ({ code: k, text: { A0:'Existence exists', A1:'Consciousness: awareness of existence exists', A2:'Identity: a thing is what it is (A = A)', A3:'Causality: entities act according to their nature' }[k] })),
             rules: Object.entries(RULES).map(([code, text]) => ({ code, text })),
-            history: state.history,
         };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -1563,15 +1531,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         reader.onload = e => {
             try {
                 const data = JSON.parse(e.target.result);
-                if (data.history) {
-                    const existingIds = new Set(state.history.map(h => h.id));
-                    const newItems = data.history.filter(h => !existingIds.has(h.id));
-                    state.history = [...newItems, ...state.history].slice(0, 200);
-                    localStorage.setItem('vu_history', JSON.stringify(state.history));
-                }
                 alert(state.lang === 'es' ? 'Importado correctamente' : 'Imported successfully');
                 if (state.currentTab === 'integrated') renderIntegrated();
-                if (state.currentTab === 'history') renderHistory();
             } catch { alert('Invalid file'); }
         };
         reader.readAsText(file);
