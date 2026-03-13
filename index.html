@@ -346,11 +346,7 @@
             </div>
 
             <div class="cfg-panel">
-                <div class="s-cmt" style="margin-bottom:12px">// stored in your browser. never transmitted to third parties.</div>
-                <div class="cfg-line">
-                    <label>api_key:</label>
-                    <input type="password" id="cfg-key" placeholder="sk-ant-..." />
-                </div>
+                <div class="s-cmt" style="margin-bottom:12px">// model selection</div>
                 <div class="cfg-line">
                     <label>model: </label>
                     <select id="cfg-model">
@@ -360,6 +356,12 @@
                         <option value="claude-3-5-haiku-20241022">claude-3.5-haiku</option>
                     </select>
                 </div>
+                <div class="s-cmt" style="margin-top:20px;margin-bottom:8px">// optional: use your own API key</div>
+                <div class="cfg-line">
+                    <label>api_key:</label>
+                    <input type="password" id="cfg-key" placeholder="sk-ant-... (optional)" />
+                </div>
+                <div class="s-cmt" style="font-size:10px">// leave empty to use free mode. your key is never transmitted to third parties.</div>
                 <div style="margin-top:16px">
                     <button class="btn" id="cfg-save">save</button>
                 </div>
@@ -950,12 +952,9 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     }
 
     function init() {
-        if (state.apiKey) {
-            showScreen('main');
-            renderWelcome();
-        } else {
-            showScreen('config');
-        }
+        // Always show main — free mode by default
+        showScreen('main');
+        renderWelcome();
 
         // Config controls
         $('#cfg-key').value = state.apiKey;
@@ -1012,7 +1011,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     function saveConfig() {
         const key = $('#cfg-key').value.trim().replace(/[^\x20-\x7E]/g, '');
         const model = $('#cfg-model').value;
-        if (!key) return;
         state.apiKey = key;
         state.model = model;
         localStorage.setItem('vu_key', key);
@@ -1291,18 +1289,31 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     async function callStreamingAPI(messages, onChunk) {
         state.controller = new AbortController();
-        const cleanKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': cleanKey,
-                'anthropic-version': '2023-06-01',
-                'anthropic-dangerous-direct-browser-access': 'true'
-            },
-            body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT, messages, stream: true }),
-            signal: state.controller.signal
-        });
+        let res;
+
+        if (state.apiKey) {
+            // Own API key — direct to Anthropic
+            const cleanKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
+            res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': cleanKey,
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
+                },
+                body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT, messages, stream: true }),
+                signal: state.controller.signal
+            });
+        } else {
+            // Free mode — via worker proxy
+            res = await fetch(`${WORKER_URL}/api/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: state.model, system: SYSTEM_PROMPT, messages, max_tokens: 4096, stream: true }),
+                signal: state.controller.signal
+            });
+        }
 
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
