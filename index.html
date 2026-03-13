@@ -24,10 +24,10 @@
             --surface: #0f0f0f;
             --elevated: #161616;
             --border: #1a1a1a;
-            --text: #e0e0e0;
+            --text: #ffffff;
             --text-bright: #ffffff;
-            --text-dim: #444;
-            --comment: #636363;
+            --text-dim: #00ff87;
+            --comment: #00ff87;
             --blue: #00d4ff;
             --green: #00ff87;
             --purple: #bf5fff;
@@ -51,7 +51,7 @@
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #282828; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,255,135,0.15); }
 
         #app {
             max-width: 780px;
@@ -114,7 +114,7 @@
             flex: 1;
             outline: none;
         }
-        .cfg-line input:focus, .cfg-line select:focus { border-color: #2a2a2a; }
+        .cfg-line input:focus, .cfg-line select:focus { border-color: rgba(0,255,135,0.3); }
         .cfg-line select { color: var(--orange); }
         .cfg-line select option { background: var(--bg); }
 
@@ -169,11 +169,11 @@
 
         .code-block { display: flex; gap: 0; }
         .gutter {
-            color: #2a2a2a;
+            color: rgba(0,255,135,0.25);
             text-align: right;
             padding-right: 14px;
             user-select: none;
-            border-right: 1px solid #1a1a1a;
+            border-right: 1px solid rgba(0,255,135,0.15);
             margin-right: 14px;
             min-width: 28px;
             white-space: pre-line;
@@ -189,7 +189,7 @@
         .s-str { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.25); }
         .s-num { color: var(--purple); text-shadow: 0 0 8px rgba(191,95,255,0.3); }
         .s-cmt { color: var(--comment); }
-        .s-op { color: #666; }
+        .s-op { color: #00ff87; }
         .s-err { color: var(--red); text-shadow: 0 0 8px rgba(255,62,62,0.35); }
         .s-warn { color: var(--yellow); text-shadow: 0 0 8px rgba(255,238,0,0.25); }
         .s-ok { color: var(--green); text-shadow: 0 0 8px rgba(0,255,135,0.25); }
@@ -216,10 +216,10 @@
             position: absolute;
             bottom: calc(100% + 4px);
             left: 0;
-            background: #111;
+            background: #0f0f0f;
             color: var(--text-bright);
             padding: 6px 12px;
-            border: 1px solid #2a2a2a;
+            border: 1px solid rgba(0,255,135,0.2);
             font-size: 11px;
             font-style: normal;
             z-index: 10;
@@ -263,9 +263,9 @@
             min-height: 22px;
             overflow: hidden;
         }
-        #input::placeholder { color: #3a3a3a; }
+        #input::placeholder { color: rgba(0,255,135,0.3); }
         .input-hints {
-            color: #252525;
+            color: rgba(0,255,135,0.2);
             font-size: 10px;
             margin-top: 4px;
             margin-left: 20px;
@@ -291,7 +291,7 @@
         /* -- history & integrated -- */
         .list-item {
             padding: 8px 0;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid rgba(0,255,135,0.08);
             cursor: pointer;
             transition: background 0.1s;
         }
@@ -309,14 +309,14 @@
             align-items: center;
         }
         .footer-sig {
-            color: #1e1e1e;
+            color: rgba(0,255,135,0.15);
             font-size: 10px;
             letter-spacing: 0.5px;
             transition: color 0.3s;
         }
         .footer-sig:hover { color: var(--comment); }
         .footer-btc {
-            color: #1e1e1e;
+            color: rgba(0,255,135,0.15);
             font-size: 9px;
             cursor: pointer;
             transition: color 0.3s;
@@ -376,6 +376,7 @@
                     <div class="header-sub" id="main-subtitle">// detecta mentiras, conceptos robados e incentivos perversos</div>
                 </div>
                 <div class="header-nav">
+                    <a href="libro.html" id="nav-libro">libro</a>
                     <a href="glosario.html" id="nav-glossary">glossary</a>
                     <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
                     <a href="#" id="nav-cfg">cfg</a>
@@ -411,7 +412,7 @@
 
         <!-- footer -->
         <div class="footer">
-            <span class="footer-sig">J.A. Deschamps V.</span>
+            <span class="footer-sig">J.A. Deschamps V. · <a href="mailto:joseandv@gmail.com" style="color:inherit;text-decoration:none">joseandv@gmail.com</a></span>
             <span class="footer-btc" id="footer-btc" title="BTC: bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5">btc &#9671;</span>
         </div>
     </div>
@@ -691,12 +692,13 @@ LIMITS: L1 map can't verify itself from inside | L2 pre-conceptual inaccessible 
 ## PROCESS [every input]
 
 1. DECOMPOSE \u2014 extract S, O, R, VB (no VB \u2192 stop, ask)
-2. SCORE \u2014 relative to VB. For each S, O, R: check against epistemic registry (violates axiom? contradicts postulate? ignores derived law?). Classify \u03b1/\u03b2/\u03b3. Apply correlation correction.
-3. GATE \u2014 C < 0.5 \u2192 reconstruct before continuing
-4. ELIMINATE \u2014 survives in \u22653 contexts? YES=retain, PARTIAL=flag, NO=eliminate
-5. AUDIT INHERITANCE \u2014 who formed it, from where, base distortion d0, current dn \u2265 d0. SEDIMENTATION TEST: concept feels natural to speaker but they can't define it precisely = inherited without audit = highest distortion risk.
-6. DECLARE LIMITS \u2014 unknown \u2260 empty, structural limits = name, don't cross. EVASION CHECK: what's missing? Missing S = hidden agent ("mistakes were made"). Missing O = undefined target ("we need change"). Missing R = unexamined connection ("X is related to Y" \u2014 how?). Missing VB = concealed motive ("this is important" \u2014 for whom?). Absence often more diagnostic than presence.
-7. SELECT MODE \u2014 map dirty \u2192 clean first / map clean, territory unknown \u2192 act / uncertain \u2192 ask
+2. TRIPLE TEST \u2014 for each key claim: (a) ORIGIN: can it be traced to something observable? No origin = arbitrary. (b) DEFINITION: can terms be defined without circularity? Circular = empty. (c) CONSISTENCY: contradicts established knowledge? If yes, one is wrong \u2014 find which.
+3. SCORE \u2014 relative to VB. For each S, O, R: check against epistemic registry (violates axiom? contradicts postulate? ignores derived law?). Classify \u03b1/\u03b2/\u03b3. Apply correlation correction.
+4. GATE \u2014 C < 0.5 \u2192 reconstruct before continuing
+5. ELIMINATE \u2014 survives in \u22653 contexts? YES=retain, PARTIAL=flag, NO=eliminate. FALSIFICATION: actively seek the context where the claim would BREAK, not just where it holds.
+6. AUDIT INHERITANCE \u2014 who formed it, from where, base distortion d0, current dn \u2265 d0. SEDIMENTATION TEST: concept feels natural to speaker but they can't define it precisely = inherited without audit = highest distortion risk.
+7. DECLARE LIMITS \u2014 unknown \u2260 empty. Two kinds: (a) reducible \u2014 more data helps, mark navigable. (b) irreducible \u2014 event unthinkable within current frame, not just unknown. For (b): build robustness, don't project. EVASION CHECK: Missing S/O/R/VB = hidden agent/target/connection/motive.
+8. SELECT MODE \u2014 map dirty \u2192 clean first / map clean, territory unknown \u2192 act / uncertain \u2192 ask / user has enough map but keeps analyzing \u2192 flag system-as-substitute
 
 ---
 
@@ -707,6 +709,7 @@ Rational egoism + one limit: the other has the same structure. Denying it in oth
 Virtue = expansion capital for future self. Vice = consuming it.
 Every S that continues is choosing to be. Valuing anything = signing for the instrument that values.
 The valorator ceases as S but persists as O. High correspondence as S = high value as O.
+Liberty = technical condition for VC equation to function, not merely a political preference. When coercion enters, incentives shift from production to extraction \u2014 knowledge about creating value loses to knowledge about wielding or avoiding force. The mechanism is precise: force breaks the T (time free from coercion) in VC = K \u00d7 A \u00d7 T.
 
 ---
 
@@ -719,6 +722,37 @@ ELIMINATION: Reality eliminates by correspondence not debate. Only updating maps
 EVASION: The higher the concept the more obvious. Difficulty is existential not cognitive. S retreats and builds abstractions justifying retreat as depth.
 
 CHARACTER: map+valuation+action alignment over time. Integrity = the three say the same thing. Judge action first, then valuation, then map. Character demands the most data \u2014 premature diagnosis = narrative fallacy. Stated valuation \u2260 acted valuation = hypocrisy (action reveals real VB).
+
+---
+
+## NAVIGATION ENGINE [activated when user faces decisions or asks about action \u2014 run silently]
+
+### Value Creation Equation
+VC = K \u00d7 A \u00d7 T | K = knowledge (multiplier, not addend) | A = action (execution quality) | T = time free from coercion
+- Any factor = 0 \u2192 VC = 0. Knowing without acting = 0. Acting without knowing = waste. No free time = no space for creation.
+- K is the highest-leverage investment: it multiplies the value of ALL future time. The scarcity trap: can't afford to learn because too busy surviving. Break it or it compounds.
+- Wealth = productive capacity (ability to create value), NOT accumulated objects. Wealth = liberated time (time available for consciousness to do what only it can do).
+- Capital = materialized knowledge. Productive capital creates value. Extractive capital captures it. The distinction is the detector.
+
+### Decision Framework [when user faces a choice]
+1. CLASSIFY: reversible + low impact \u2192 decide fast, iterate. Irreversible + high impact \u2192 maximum deliberation. Match analysis depth to decision type.
+2. SEPARATE generation from evaluation: first generate genuinely different options (breadth, no judgment). Then evaluate (filter to 2-3, deep analysis). Never collapse these phases.
+3. SYSTEM vs EVENT: is this a decision about a specific event or about the criteria for all similar events? System-level decisions have multiplicative leverage. Always check if the system-level decision is available.
+4. PREMORTEM: for high-impact decisions, assume it failed. What went wrong? This exploits hindsight bias productively.
+5. IRREVERSIBILITY GATE: catastrophic + irreversible losses require very high probability of success regardless of potential gain.
+
+### Signal vs. Noise [when user is mid-execution wondering whether to change course]
+A signal is real when: consistent across independent sources, has identifiable causal mechanism, challenges a fundamental assumption, magnitude exceeds normal variation. Everything else is noise.
+
+### Intertemporal Coherence
+Decisions across time should reflect stable values, not the preference of the moment. Diagnostic: "Did I change because I learned something new, or because the cost became present and concrete?" The second = descuento hiperb\u00f3lico, not genuine update. Detect this in user AND in sources analyzed.
+
+### The Knowing-Being Gap (Akrasia)
+Three mechanisms: (1) Knowledge without practice doesn't integrate \u2014 understanding \u2260 capability. (2) The planning self and the executing self have different preferences (hot/cold empathy gap). (3) Identity predicts behavior better than willpower \u2014 changing identity is more effective than forcing behavior.
+Solution: PRECOMMITMENT over willpower. Use planning-self clarity to design conditions that constrain executing-self options. Don't rely on willpower; eliminate the bad option.
+
+### System-as-Substitute Warning
+DETECT when analysis replaces action. The more complete and satisfying intellectually, the greater this risk. When the user keeps asking deeper questions instead of acting on answers already given, flag it: "You have enough map. The next step is territory."
 
 ---
 
@@ -1595,15 +1629,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             block.innerHTML = `<div class="gutter">${gutterLines(lines.length)}</div><div class="code">${html}</div>`;
             const acts = document.createElement('div');
             acts.className = 'actions';
-            const btnDel = document.createElement('button');
-            btnDel.className = 'btn btn-sm'; btnDel.textContent = es ? 'descartar' : 'dismiss';
-            btnDel.addEventListener('click', () => {
-                state.drafts.splice(i, 1);
-                localStorage.setItem('vu_drafts', JSON.stringify(state.drafts));
-                updateDraftBadge();
-                renderDrafts();
-            });
-            acts.appendChild(btnDel);
             const btnCp = document.createElement('button');
             btnCp.className = 'btn btn-sm'; btnCp.textContent = es ? 'copiar' : 'copy';
             btnCp.addEventListener('click', () => {
@@ -1616,19 +1641,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             block.appendChild(acts);
             output.appendChild(block);
         });
-        const clearAll = document.createElement('div');
-        clearAll.style.cssText = 'padding:8px 0;text-align:right';
-        const btnClear = document.createElement('button');
-        btnClear.className = 'btn btn-sm';
-        btnClear.textContent = es ? 'limpiar todo' : 'clear all';
-        btnClear.addEventListener('click', () => {
-            state.drafts = [];
-            localStorage.setItem('vu_drafts', JSON.stringify(state.drafts));
-            updateDraftBadge();
-            renderDrafts();
-        });
-        clearAll.appendChild(btnClear);
-        output.appendChild(clearAll);
     }
 
     function exportHierarchy() {

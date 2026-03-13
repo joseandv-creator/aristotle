@@ -21,10 +21,10 @@
             --bg: #0a0a0a;
             --surface: #0f0f0f;
             --border: #1a1a1a;
-            --text: #e0e0e0;
+            --text: #ffffff;
             --text-bright: #ffffff;
-            --text-dim: #444;
-            --comment: #636363;
+            --text-dim: #00ff87;
+            --comment: #00ff87;
             --blue: #00d4ff;
             --green: #00ff87;
             --purple: #bf5fff;
@@ -149,14 +149,14 @@
 
         /* ── truth list ── */
         .truth-list { list-style: none; padding: 0; }
-        .truth-list li { padding: 8px 0; border-bottom: 1px solid #111; }
+        .truth-list li { padding: 8px 0; border-bottom: 1px solid rgba(0,255,135,0.08); }
         .truth-text { color: var(--text); font-size: 12px; line-height: 1.6; }
         .truth-meta { color: var(--comment); font-size: 11px; margin-top: 2px; }
 
         /* ── history items ── */
         .hist-item {
             padding: 10px 0;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid rgba(0,255,135,0.08);
         }
         .hist-header {
             display: flex;
@@ -206,7 +206,7 @@
         .s-verdict-fail { color: var(--red); font-weight: 500; text-shadow: 0 0 12px rgba(255,62,62,0.4); }
         .s-orange { color: var(--orange); text-shadow: 0 0 8px rgba(255,149,0,0.3); }
         .s-blue { color: var(--blue); }
-        .s-op { color: #666; }
+        .s-op { color: #00ff87; }
 
         .rule-ref {
             color: var(--cyan);
@@ -220,10 +220,10 @@
             position: absolute;
             bottom: calc(100% + 4px);
             left: 0;
-            background: #111;
+            background: #0f0f0f;
             color: var(--text-bright);
             padding: 6px 12px;
-            border: 1px solid #2a2a2a;
+            border: 1px solid rgba(0,255,135,0.2);
             font-size: 11px;
             z-index: 10;
             max-width: 400px;
@@ -242,7 +242,7 @@
             padding: 14px 16px;
             transition: border-color 0.15s;
         }
-        .pillar:hover { border-color: #2a2a2a; }
+        .pillar:hover { border-color: rgba(0,255,135,0.2); }
         .pillar-title {
             color: var(--blue);
             font-size: 11px;
@@ -286,7 +286,7 @@
             margin-top: 40px;
         }
         .footer-sig {
-            color: #1e1e1e;
+            color: rgba(0,255,135,0.15);
             font-size: 10px;
             letter-spacing: 0.5px;
             transition: color 0.3s;
@@ -624,7 +624,7 @@
 
         <!-- footer -->
         <div class="footer">
-            <span class="footer-sig">J.A. Deschamps V.</span>
+            <span class="footer-sig">J.A. Deschamps V. · <a href="mailto:joseandv@gmail.com" style="color:inherit;text-decoration:none">joseandv@gmail.com</a></span>
         </div>
 
     </div>

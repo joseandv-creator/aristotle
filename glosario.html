@@ -12,7 +12,7 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --bg: #0a0a0a; --surface: #0f0f0f; --border: #1a1a1a;
-            --text: #e0e0e0; --text-bright: #ffffff; --text-dim: #444; --comment: #636363;
+            --text: #ffffff; --text-bright: #ffffff; --text-dim: #00ff87; --comment: #00ff87;
             --blue: #00d4ff; --green: #00ff87; --purple: #bf5fff; --yellow: #ffee00;
             --red: #ff3e3e; --cyan: #00ffcc; --orange: #ff9500;
             --font: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
@@ -21,7 +21,7 @@
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #282828; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,255,135,0.15); }
 
         #app { max-width: 820px; margin: 0 auto; padding: 32px 20px 60px; }
 
@@ -38,8 +38,8 @@
             width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--green);
             font-family: var(--font); font-size: 13px; padding: 8px 12px; outline: none;
         }
-        .search-bar input:focus { border-color: #2a2a2a; }
-        .search-bar input::placeholder { color: #3a3a3a; }
+        .search-bar input:focus { border-color: rgba(0,255,135,0.3); }
+        .search-bar input::placeholder { color: rgba(0,255,135,0.3); }
 
         .book-title { color: var(--cyan); font-size: 13px; font-weight: 500; text-shadow: 0 0 10px rgba(0,255,204,0.3); margin-bottom: 4px; }
         .book-author { color: var(--comment); font-size: 11px; margin-bottom: 24px; }
@@ -62,7 +62,7 @@
         .def-term { color: var(--green); font-weight: 500; text-shadow: 0 0 8px rgba(0,255,135,0.25); }
         .def-formula { color: var(--purple); text-shadow: 0 0 8px rgba(191,95,255,0.3); }
         .def-body { color: var(--text); margin-top: 2px; }
-        .def-sub { margin-top: 8px; padding-left: 16px; border-left: 1px solid #1a1a1a; }
+        .def-sub { margin-top: 8px; padding-left: 16px; border-left: 1px solid rgba(0,255,135,0.15); }
         .def-sub .def-term { color: var(--orange); text-shadow: 0 0 8px rgba(255,149,0,0.3); }
 
         .s-cmt { color: var(--comment); }
@@ -72,7 +72,7 @@
         mark { background: rgba(0,255,204,0.15); color: var(--text-bright); border-radius: 2px; padding: 0 2px; }
 
         .footer { border-top: 1px solid var(--border); padding: 14px 0; margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
-        .footer-sig { color: #1e1e1e; font-size: 10px; letter-spacing: 0.5px; transition: color 0.3s; }
+        .footer-sig { color: rgba(0,255,135,0.15); font-size: 10px; letter-spacing: 0.5px; transition: color 0.3s; }
         .footer-sig:hover { color: var(--comment); }
 
         .no-results { color: var(--comment); padding: 20px 0; text-align: center; display: none; }
@@ -92,7 +92,7 @@
             </div>
             <div class="header-nav">
                 <a href="index.html">app</a>
-                <a href="motivos.html">motives</a>
+                <a href="libro.html">libro</a>
             </div>
         </div>
 
@@ -517,7 +517,7 @@
         </div>
 
         <div class="footer">
-            <span class="footer-sig">J.A. Deschamps V.</span>
+            <span class="footer-sig">J.A. Deschamps V. · <a href="mailto:joseandv@gmail.com" style="color:inherit;text-decoration:none">joseandv@gmail.com</a></span>
         </div>
     </div>
 
