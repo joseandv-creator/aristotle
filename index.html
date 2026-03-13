@@ -1672,7 +1672,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     function today() { return new Date().toISOString().split('T')[0]; }
 
     function shareAnalysis(item) {
-        const text = `${item.candidate}\n\n${item.analysis}\n\n\u2014 analyzed via nicomaco.org`;
+        const text = `${item.candidate}\n\n${item.analysis}\n\n\u2014 analyzed via Logic`;
         if (navigator.share) {
             navigator.share({ title: 'Logic Analysis', text }).catch(() => {});
         } else {
