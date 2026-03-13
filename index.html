@@ -837,7 +837,24 @@ Together: concepts tell you WHAT is being distorted. Relations tell you WHERE th
 
 S-O-R | VB \u2192 fidelity \u2192 elimination \u2192 limits declared \u2192 territory corrects
 
-The navigator is the map. The map is not the territory. The territory always wins.`;
+The navigator is the map. The map is not the territory. The territory always wins.
+
+---
+
+## INTEGRATION FILTER
+
+At the END of every response, on its own line, output exactly one of these tags:
+
+[INTEGRABLE] \u2014 the input contains or produced a truth that survives elimination in 3+ contexts, is not a personal statement, and would expand the user's operative map if integrated.
+
+[NO-INTEGRABLE] \u2014 the input is a personal feeling, opinion, question, context-dependent statement, or does not survive universality testing. Valuable to discuss, but not to integrate as a permanent instrument.
+
+Rules:
+- Personal statements ("me siento solo", "estoy triste") are ALWAYS [NO-INTEGRABLE]
+- Opinions without universality test are [NO-INTEGRABLE]
+- Questions are [NO-INTEGRABLE]
+- Only claims that survive the protocol (C >= 0.7, tested in 3+ domains) earn [INTEGRABLE]
+- When in doubt, [NO-INTEGRABLE] \u2014 the bar is high by design`;
 
     const URL_ANALYSIS_PROMPT = `The user has submitted a URL for analysis. The page content has been extracted below.
 
@@ -1358,14 +1375,18 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         btnC.className = 'btn btn-sm'; btnC.textContent = t('challenge');
         btnC.addEventListener('click', () => startChallenge(id));
         acts.appendChild(btnC);
-        const btnI = document.createElement('button');
-        btnI.className = 'btn btn-sm'; btnI.textContent = t('integrate');
-        btnI.addEventListener('click', () => {
-            integrate(id);
-            btnI.textContent = state.lang === 'es' ? 'integrada' : 'integrated'; btnI.disabled = true;
-            btnI.style.color = 'var(--green)'; btnI.style.borderColor = '#1a3a1a';
-        });
-        acts.appendChild(btnI);
+        // Only show integrate button if system marked as [INTEGRABLE]
+        const isIntegrable = /\[INTEGRABLE\]/i.test(fullText);
+        if (isIntegrable) {
+            const btnI = document.createElement('button');
+            btnI.className = 'btn btn-sm'; btnI.textContent = t('integrate');
+            btnI.addEventListener('click', () => {
+                integrate(id);
+                btnI.textContent = state.lang === 'es' ? 'integrada' : 'integrated'; btnI.disabled = true;
+                btnI.style.color = 'var(--green)'; btnI.style.borderColor = '#1a3a1a';
+            });
+            acts.appendChild(btnI);
+        }
         const btnCp = document.createElement('button');
         btnCp.className = 'btn btn-sm'; btnCp.textContent = t('copy');
         btnCp.addEventListener('click', () => {
@@ -1395,6 +1416,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     function highlightURLLine(raw) {
         let line = esc(raw);
+        // Hide integration filter tags from display
+        if (/^\[INTEGRABLE\]$/i.test(line.trim()) || /^\[NO-INTEGRABLE\]$/i.test(line.trim())) return '';
         if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
             return `<span class="s-section">${line}</span>`;
         if (/^\*\*\d+\.\s/.test(line))
@@ -1415,6 +1438,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     function highlightLine(raw) {
         let line = esc(raw);
+        // Hide integration filter tags from display
+        if (/^\[INTEGRABLE\]$/i.test(line.trim()) || /^\[NO-INTEGRABLE\]$/i.test(line.trim())) return '';
         if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|VEREDICTO)\b/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
