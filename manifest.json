@@ -1,7 +1,7 @@
 {
-  "name": "Nicomaco",
-  "short_name": "Nicomaco",
-  "description": "Aristotelian identity engine. Test any claim against reality. What survives becomes an instrument.",
+  "name": "Logic",
+  "short_name": "Logic",
+  "description": "Detect lies, stolen concepts, and perverse incentives. A is A.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",

@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>nicomaco</title>
-    <meta name="description" content="Aristotelian identity engine. Test any claim against reality. What survives becomes an instrument. A is A.">
-    <meta property="og:title" content="Nicomaco">
-    <meta property="og:description" content="Aristotelian identity engine. Test any claim against reality. What survives becomes an instrument. A is A.">
+    <title>Logic</title>
+    <meta name="description" content="Detecta mentiras, conceptos robados e incentivos perversos. A is A.">
+    <meta property="og:title" content="Logic">
+    <meta property="og:description" content="Detecta mentiras, conceptos robados e incentivos perversos. A is A.">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Nicomaco">
+    <meta name="apple-mobile-web-app-title" content="Logic">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
@@ -62,7 +62,7 @@
             flex-direction: column;
         }
 
-        /* ── header ── */
+        /* -- header -- */
         .header {
             margin-bottom: 20px;
             padding-bottom: 12px;
@@ -93,7 +93,7 @@
         }
         .header-nav a:hover { color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
 
-        /* ── config ── */
+        /* -- config -- */
         .screen { display: none; flex-direction: column; flex: 1; }
         .screen.active { display: flex; }
 
@@ -131,7 +131,7 @@
         .btn:hover { border-color: var(--cyan); color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
         .btn-sm { padding: 2px 10px; font-size: 11px; }
 
-        /* ── tabs ── */
+        /* -- tabs -- */
         .tabs {
             display: flex;
             gap: 20px;
@@ -151,7 +151,7 @@
         .tab:hover { color: var(--text-bright); }
         .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,204,0.3); }
 
-        /* ── output ── */
+        /* -- output -- */
         #output {
             flex: 1;
             overflow-y: auto;
@@ -201,6 +201,8 @@
         .s-orange { color: var(--orange); text-shadow: 0 0 8px rgba(255,149,0,0.3); }
         .s-bright { color: var(--text-bright); }
         .s-blue { color: var(--blue); }
+        .s-yellow { color: var(--yellow); }
+        .s-green { color: var(--green); }
 
         .rule-ref {
             color: var(--cyan);
@@ -225,7 +227,7 @@
             white-space: normal;
         }
 
-        /* ── input ── */
+        /* -- input -- */
         #input-bar {
             border-top: 1px solid var(--border);
             padding: 12px 0 16px;
@@ -269,106 +271,7 @@
             margin-left: 20px;
         }
 
-        /* ── reward notification ── */
-        .reward-banner {
-            margin: 8px 0 0 42px;
-            padding: 10px 14px;
-            border: 1px solid #1a3a1a;
-            background: rgba(0,255,135,0.03);
-            animation: fadeUp 0.3s ease;
-        }
-        .reward-banner .reward-title {
-            color: var(--green);
-            font-size: 12px;
-            font-weight: 500;
-            text-shadow: 0 0 10px rgba(0,255,135,0.3);
-        }
-        .reward-banner .reward-detail {
-            color: var(--comment);
-            font-size: 11px;
-            margin-top: 4px;
-        }
-        .reward-banner .reward-detail span { color: var(--text-bright); }
-        .reward-banner .btn-claim {
-            margin-top: 8px;
-            background: none;
-            border: 1px solid var(--green);
-            color: var(--green);
-            font-family: var(--font);
-            font-size: 11px;
-            padding: 4px 12px;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .reward-banner .btn-claim:hover {
-            background: rgba(0,255,135,0.08);
-            text-shadow: 0 0 8px rgba(0,255,135,0.4);
-        }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── bounty claim modal ── */
-        .bounty-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeUp 0.2s ease;
-        }
-        .bounty-modal-inner {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 24px;
-            max-width: 420px;
-            width: 90%;
-        }
-        .bounty-modal-inner h3 {
-            color: var(--green);
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            text-shadow: 0 0 10px rgba(0,255,135,0.3);
-        }
-        .bounty-modal-inner p {
-            color: var(--comment);
-            font-size: 11px;
-            margin-bottom: 12px;
-        }
-        .bounty-modal-inner input {
-            width: 100%;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font);
-            font-size: 11px;
-            padding: 8px 12px;
-            outline: none;
-            margin-bottom: 12px;
-        }
-        .bounty-modal-inner input:focus { border-color: var(--green); }
-        .bounty-modal-inner .modal-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        /* ── pool display ── */
-        .pool-display {
-            color: var(--comment);
-            font-size: 10px;
-            transition: color 0.15s;
-        }
-        .pool-display:hover { color: var(--text); }
-        .pool-sats {
-            color: var(--green);
-            text-shadow: 0 0 6px rgba(0,255,135,0.2);
-        }
-
-        /* ── loading ── */
+        /* -- loading -- */
         .loading-dots span { animation: pulse 1.4s infinite; }
         .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
         .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -377,7 +280,7 @@
             50% { opacity: 0.7; }
         }
 
-        /* ── actions ── */
+        /* -- actions -- */
         .actions {
             margin-top: 8px;
             display: flex;
@@ -385,7 +288,7 @@
             margin-left: 42px;
         }
 
-        /* ── history & integrated ── */
+        /* -- history & integrated -- */
         .list-item {
             padding: 8px 0;
             border-bottom: 1px solid #111;
@@ -396,7 +299,7 @@
         .list-item .meta { color: var(--comment); font-size: 11px; }
         .list-item .candidate-text { color: var(--text); font-size: 12px; }
 
-        /* ── footer ── */
+        /* -- footer -- */
         .footer {
             border-top: 1px solid var(--border);
             padding: 14px 0;
@@ -412,39 +315,23 @@
             transition: color 0.3s;
         }
         .footer-sig:hover { color: var(--comment); }
-        .footer-links {
-            display: flex;
-            gap: 12px;
-        }
-        .footer-links a {
+        .footer-btc {
             color: #1e1e1e;
-            text-decoration: none;
-            font-size: 10px;
+            font-size: 9px;
+            cursor: pointer;
             transition: color 0.3s;
+            text-decoration: none;
         }
-        .footer-links a:hover { color: var(--comment); }
+        .footer-btc:hover { color: var(--comment); }
 
-        /* ── config panels ── */
+        /* -- config panel -- */
         .cfg-panel { padding: 4px 0; }
-        .buy-pack {
-            font-size: 11px !important;
-            padding: 6px 10px !important;
-            border-color: #2a2a00 !important;
-            color: var(--yellow) !important;
-        }
-        .buy-pack:hover { border-color: var(--yellow) !important; background: #1a1a00 !important; }
-        .buy-pack:disabled { opacity: 0.4; cursor: wait; }
-        #invoice-qr canvas { max-width: 200px; border-radius: 4px; image-rendering: pixelated; }
-        .s-yellow { color: var(--yellow); }
-        .s-green { color: var(--green); }
-        .s-bright { color: var(--text-bright); }
 
-        /* ── responsive ── */
+        /* -- responsive -- */
         @media (max-width: 600px) {
             #app { padding: 16px 12px 0; }
             .gutter { display: none; }
             .header { flex-direction: column; gap: 8px; }
-            .buy-pack { width: 100%; }
         }
     </style>
 </head>
@@ -458,52 +345,7 @@
                 </div>
             </div>
 
-            <!-- mode tabs -->
-            <div class="tabs" style="margin-bottom:16px">
-                <button class="tab active" data-cfg="free">free / credits</button>
-                <button class="tab" data-cfg="apikey">own api key</button>
-            </div>
-
-            <!-- free / credits mode -->
-            <div id="cfg-free" class="cfg-panel">
-                <div class="s-cmt" style="margin-bottom:12px">// 3 free analyses per day. buy credits with Lightning BTC for more.</div>
-                <div id="credits-display" style="margin:12px 0">
-                    <span class="s-cmt">// checking credits...</span>
-                </div>
-                <div id="credits-token-row" class="cfg-line" style="display:none">
-                    <label>token:</label>
-                    <input type="text" id="cfg-token" placeholder="paste your token..." style="color:var(--green)" />
-                </div>
-
-                <!-- lightning buy section -->
-                <div style="margin:20px 0 12px">
-                    <div class="s-cmt" style="margin-bottom:8px">// buy credits with Lightning BTC</div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                        <button class="btn buy-pack" data-pack="trial">⚡ 1,000 sats → 10 analyses</button>
-                        <button class="btn buy-pack" data-pack="basic">⚡ 5,000 sats → 80 analyses</button>
-                        <button class="btn buy-pack" data-pack="pro">⚡ 20,000 sats → 400 analyses</button>
-                    </div>
-                </div>
-
-                <!-- invoice display (hidden by default) -->
-                <div id="invoice-display" style="display:none;margin:16px 0">
-                    <div class="s-cmt">// scan with any Lightning wallet</div>
-                    <div id="invoice-qr" style="margin:12px 0;text-align:center"></div>
-                    <div class="cfg-line">
-                        <label>invoice:</label>
-                        <input type="text" id="invoice-text" readonly style="color:var(--yellow);font-size:10px" />
-                        <button class="btn btn-sm" id="copy-invoice">copy</button>
-                    </div>
-                    <div id="payment-status" class="s-cmt" style="margin-top:8px">// waiting for payment...</div>
-                </div>
-
-                <div style="margin-top:16px">
-                    <button class="btn" id="cfg-save-free">start</button>
-                </div>
-            </div>
-
-            <!-- api key mode -->
-            <div id="cfg-apikey" class="cfg-panel" style="display:none">
+            <div class="cfg-panel">
                 <div class="s-cmt" style="margin-bottom:12px">// stored in your browser. never transmitted to third parties.</div>
                 <div class="cfg-line">
                     <label>api_key:</label>
@@ -528,12 +370,10 @@
         <div id="screen-main" class="screen">
             <div class="header">
                 <div class="header-left">
-                    <div class="header-title">NICOMACO</div>
-                    <div class="header-sub" id="main-subtitle">// aristotelian identity engine</div>
+                    <div class="header-title">LOGIC</div>
+                    <div class="header-sub" id="main-subtitle">// detecta mentiras, conceptos robados e incentivos perversos</div>
                 </div>
                 <div class="header-nav">
-                    <a href="motivos.html" id="nav-motives">motives</a>
-                    <a href="economics.html" id="nav-economics">economics</a>
                     <a href="#" id="nav-cfg">cfg</a>
                     <a href="#" id="nav-lang" style="color:var(--comment)">ES</a>
                 </div>
@@ -551,7 +391,7 @@
                     <div class="input-row">
                         <span class="input-chevron">></span>
                         <span class="input-ctx" id="input-ctx"></span>
-                        <textarea id="input" rows="1" placeholder="test a claim, filter a URL..."></textarea>
+                        <textarea id="input" rows="1" placeholder="hazte una pregunta, pega una URL..."></textarea>
                     </div>
                     <div class="input-hints">enter to send &middot; shift+enter new line &middot; paste URL to filter &middot; esc cancel</div>
                 </div>
@@ -573,10 +413,7 @@
         <!-- footer -->
         <div class="footer">
             <span class="footer-sig">J.A. Deschamps V.</span>
-            <span class="pool-display" id="pool-display"></span>
-            <div class="footer-links">
-                <a href="motivos.html" id="footer-motives">motives</a>
-            </div>
+            <span class="footer-btc" id="footer-btc" title="BTC: bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5">btc &#9671;</span>
         </div>
     </div>
 
@@ -646,298 +483,439 @@
     };
 
     const RULES_ES = {
-        G1:'Persistencia: algo invariante bajo transformación',
-        G2:'Entropía: el desorden crece sin trabajo',
-        G3:'Selección: variación + supervivencia diferencial',
-        G4:'Retroalimentación: la salida se convierte en entrada',
+        G1:'Persistencia: algo invariante bajo transformaci\u00f3n',
+        G2:'Entrop\u00eda: el desorden crece sin trabajo',
+        G3:'Selecci\u00f3n: variaci\u00f3n + supervivencia diferencial',
+        G4:'Retroalimentaci\u00f3n: la salida se convierte en entrada',
         G5:'Emergencia: reglas simples iteradas = complejidad',
-        G6:'La restricción da forma',
-        G7:'La simetría revela estructura',
-        G8:'La información tiene costo',
-        G9:'La autorreferencia tiene límites',
-        G10:'Acumulación gradual, cambio cualitativo súbito',
-        U1:'Nada viene de la nada — conservación',
-        U2:'El orden cuesta energía',
+        G6:'La restricci\u00f3n da forma',
+        G7:'La simetr\u00eda revela estructura',
+        G8:'La informaci\u00f3n tiene costo',
+        G9:'La autorreferencia tiene l\u00edmites',
+        G10:'Acumulaci\u00f3n gradual, cambio cualitativo s\u00fabito',
+        U1:'Nada viene de la nada — conservaci\u00f3n',
+        U2:'El orden cuesta energ\u00eda',
         U3:'Los efectos siguen a las causas con retraso',
-        U4:'Fuerzas pequeñas constantes dominan a las grandes esporádicas',
+        U4:'Fuerzas peque\u00f1as constantes dominan a las grandes espor\u00e1dicas',
         U5:'Sistemas desplazados generan fuerza restauradora',
-        U6:'La mayoría de los efectos vienen de pocas causas',
+        U6:'La mayor\u00eda de los efectos vienen de pocas causas',
         U7:'Los extremos revierten a la media',
-        U8:'Las conexiones escalan más rápido que los nodos',
+        U8:'Las conexiones escalan m\u00e1s r\u00e1pido que los nodos',
         U9:'Algunas transformaciones son irreversibles',
         H1:'Los incentivos gobiernan la conducta, no las intenciones',
-        H2:'Cada elección cuesta lo que no elegiste',
+        H2:'Cada elecci\u00f3n cuesta lo que no elegiste',
         H3:'La siguiente unidad importa, no el promedio',
-        H4:'Sin consecuencias, las señales son ruido',
+        H4:'Sin consecuencias, las se\u00f1ales son ruido',
         H5:'Observa lo que hacen, no lo que dicen',
         H6:'Perder duele el doble de lo que ganar agrada',
-        H7:'Los humanos optimizan posición relativa, no absoluta',
+        H7:'Los humanos optimizan posici\u00f3n relativa, no absoluta',
         H8:'Los humanos necesitan narrativas; la realidad no las provee',
-        H9:'Quien actúa por ti optimiza para sí mismo primero',
-        H10:'La capacidad de retrasar la gratificación predice casi todo',
-        H11:'Cooperación en juegos repetidos; deserción en juegos únicos',
-        H12:'La asimetría de información crea poder',
-        K1:'Todo conocimiento es contextual — válido dentro de hechos identificados',
-        K2:'Los sentidos son válidos — datos base, no ilusión',
-        K3:'Los conceptos se forman por abstracción de lo concreto',
-        K4:'La lógica es identificación no contradictoria',
+        H9:'Quien act\u00faa por ti optimiza para s\u00ed mismo primero',
+        H10:'La capacidad de retrasar la gratificaci\u00f3n predice casi todo',
+        H11:'Cooperaci\u00f3n en juegos repetidos; deserci\u00f3n en juegos \u00fanicos',
+        H12:'La asimetr\u00eda de informaci\u00f3n crea poder',
+        K1:'Todo conocimiento es contextual — v\u00e1lido dentro de hechos identificados',
+        K2:'Los sentidos son v\u00e1lidos — datos base, no ilusi\u00f3n',
+        K3:'Los conceptos se forman por abstracci\u00f3n de lo concreto',
+        K4:'La l\u00f3gica es identificaci\u00f3n no contradictoria',
         K5:'La certeza es contextual, no absoluta',
         K6:'La carga de la prueba recae en quien afirma',
-        K7:'El conocimiento requiere integración — hechos aislados no son comprensión',
-        K8:'La corrección de errores es el mecanismo del progreso cognitivo',
-        L1:'El lenguaje mapea conceptos a símbolos — nombra, no crea',
+        K7:'El conocimiento requiere integraci\u00f3n — hechos aislados no son comprensi\u00f3n',
+        K8:'La correcci\u00f3n de errores es el mecanismo del progreso cognitivo',
+        L1:'El lenguaje mapea conceptos a s\u00edmbolos — nombra, no crea',
         L2:'El significado requiere referentes compartidos',
-        L3:'La precisión del lenguaje rastrea la precisión del pensamiento',
-        L4:'La ambigüedad no es profundidad — la vaguedad degrada la señal',
-        L5:'El contexto determina el significado — mismo símbolo, marcos distintos',
-        L6:'La traducción entre marcos pierde información',
+        L3:'La precisi\u00f3n del lenguaje rastrea la precisi\u00f3n del pensamiento',
+        L4:'La ambig\u00fcedad no es profundidad — la vaguedad degrada la se\u00f1al',
+        L5:'El contexto determina el significado — mismo s\u00edmbolo, marcos distintos',
+        L6:'La traducci\u00f3n entre marcos pierde informaci\u00f3n',
         E1:'El valor presupone un valorador — sin vida, nada tiene valor',
-        E2:'La vida es la precondición de todos los valores',
+        E2:'La vida es la precondici\u00f3n de todos los valores',
         E3:'Racionalidad: compromiso de identificar la realidad tal como es',
-        E4:'La producción precede a la distribución — no puedes dar lo que no existe',
-        E5:'El intercambio voluntario es la única transferencia no destructiva de valor',
+        E4:'La producci\u00f3n precede a la distribuci\u00f3n — no puedes dar lo que no existe',
+        E5:'El intercambio voluntario es la \u00fanica transferencia no destructiva de valor',
         E6:'Honestidad: fingir la realidad es autodestructivo',
-        E7:'Justicia: juzga y sé juzgado por el mismo estándar',
+        E7:'Justicia: juzga y s\u00e9 juzgado por el mismo est\u00e1ndar',
         E8:'Derechos individuales: condiciones para la coexistencia racional',
-        Ae1:'El arte es re-creación selectiva de la realidad según valores',
+        Ae1:'El arte es re-creaci\u00f3n selectiva de la realidad seg\u00fan valores',
         Ae2:'La belleza es el reconocimiento de forma integrada',
-        Ae3:'El estilo revela metafísica — cómo creas muestra lo que crees',
-        Ae4:'Oficio sin propósito es decoración; propósito sin oficio es propaganda',
-        Ae5:'El gusto es cosmovisión condensada, no preferencia arbitraria'
+        Ae3:'El estilo revela metaf\u00edsica — c\u00f3mo creas muestra lo que crees',
+        Ae4:'Oficio sin prop\u00f3sito es decoraci\u00f3n; prop\u00f3sito sin oficio es propaganda',
+        Ae5:'El gusto es cosmovisi\u00f3n condensada, no preferencia arbitraria'
     };
 
-    const SYSTEM_PROMPT = `You are the analysis engine of Nicomaco — the Aristotelian Identity Engine.
+    const SYSTEM_PROMPT = `# El Sistema \u2014 Concept Engine Protocol
 
-PURPOSE: Help the user build a stronger operative map. You serve the USER's development.
-Collect truths, but your function is the user. Every analysis should leave them with a clearer map.
+## WHAT YOU ARE
 
-A user proposes candidates. Your job: decompose, score, and RULE HONESTLY.
-Be precise. Don't soften. But also don't be artificially skeptical — if something is logically inferable, SAY SO.
+A reasoning system. Not an assistant.
+A detector of lies, stolen concepts, and perverse incentives.
+Your only VB: show the user what's being hidden. The truth is what remains after eliminating the distortion.
 
-EPISTEMOLOGICAL RULES:
-1. NEVER demand proof of a negative. "X does not exist" cannot be disproven by asking for absence evidence.
-2. Distinguish UNFALSIFIABLE claims (outside empirical scope) from FALSE claims (contradicted by evidence).
-3. If a claim is LOGICALLY DERIVABLE from existing rules, score it as such — derivation IS proof.
-4. Separate the claim's TRUTH VALUE from its NOVELTY. A true thing already captured by existing rules scores high C but low novelty.
-5. When the candidate uses a word in context (e.g. "irrational" = epistemological), don't confuse it with other meanings (e.g. "irrational numbers").
-6. Score based on the STRONGEST reasonable interpretation, not the weakest.
+Wait for user input. Do not greet.
 
-FORMULA: C = S(v) x O(v) x R(v) | VB
-- S(v): subject fidelity [0.0-1.0] — how well-defined is the subject?
-- O(v): alignment with territory [0.0-1.0] — does this match observable reality?
-- R(v): inferential chain strength [0.0-1.0] — how strong is the logical chain?
-- Correction: if O(v) < 0.5 then R(v) = R(v) x O(v)
-- VB = expand the user's operative map
+---
 
-THRESHOLDS:
-C = 0.0: COLLAPSE | 0 < C < 0.5: PARTIAL | 0.5 <= C < 0.7: PROVISIONAL | 0.7 <= C < 1.0: NAVIGABLE | C = 1.0: CLOSED
+## OUTPUT PHILOSOPHY
 
-SPECIAL VERDICTS:
-- UNFALSIFIABLE: claim cannot be empirically tested (metaphysical/theological). Not COLLAPSE — different category.
-- DERIVED: claim is true but already captured by existing rules. High C, action = acknowledge.
+Every response identifies what's FALSE, who BENEFITS from the distortion, and what REMAINS when you strip the lies. Not epistemological correctness. Actionable clarity.
 
-EXISTING RULES (check redundancy AND derivability):
-AXIOMS (self-evident, irrefutable — denying them requires using them):
-A0 Existence exists A1 Consciousness: awareness of existence exists A2 Identity: A is A A3 Causality: entities act according to their nature
-G1 Persistence G2 Entropy G3 Selection G4 Feedback G5 Emergence G6 Constraint gives form G7 Symmetry reveals structure G8 Information has cost G9 Self-reference has limits G10 Threshold transitions
-U1 Conservation U2 Order costs energy U3 Effects with delay U4 Constant forces dominate U5 Homeostasis U6 Power law U7 Regression to the mean U8 Network effect U9 Irreversibility
-H1 Incentives H2 Opportunity cost H3 Marginal thinking H4 Skin in the game H5 Revealed preference H6 Loss aversion H7 Relative position H8 Narrative fallacy H9 Agency problem H10 Time preference H11 Repeated games H12 Information asymmetry
-K1 Contextual knowledge K2 Senses are valid K3 Abstraction from concretes K4 Logic = non-contradictory identification K5 Contextual certainty K6 Burden of proof on asserter K7 Integration required K8 Error correction is progress
-L1 Language names, does not create L2 Shared referents required L3 Precision of language = precision of thought L4 Ambiguity is not depth L5 Context determines meaning L6 Translation loses information
-E1 Value presupposes a valuer E2 Life is the precondition of values E3 Rationality as primary virtue E4 Production precedes distribution E5 Voluntary exchange E6 Honesty E7 Justice E8 Individual rights
-Ae1 Art = selective re-creation Ae2 Beauty = integrated form Ae3 Style reveals metaphysics Ae4 Craft-purpose unity Ae5 Taste is condensed worldview
+Five instruments \u2014 use at least 3 per response:
 
-Respond in English. Use EXACTLY this format:
+1. INFERENCES \u2014 Show what FOLLOWS. "If X then Y, and Y means Z for you." Trace the chain the user can't trace alone. The user came to see consequences, not descriptions.
 
-CANDIDATE
-  "{candidate text}"
+2. TRUTH FILTERED BY VB \u2014 Does this matter for what the user values? NO \u2192 cut it. YES \u2192 say it with force. A true statement irrelevant to their VB is noise.
 
-DECOMPOSITION
-  S(v) = "{subject}"
-  O(v) = "{object}"
-  R(v) = "{relation}"
-  VB   = "{value sought}"
+3. ETHICAL LENS \u2014 Who benefits, who pays, what's the real VB behind the action. Stated values vs acted values = the diagnostic. When humans are involved, this is always the most revealing analysis.
 
-SCORING
-  S(v) = {0.00}     // {reason}
-  O(v) = {0.00}     // {reason}
-  R(v) = {0.00}     // correction: {note}
-  C    = {s} x {o} x {r} = {result}
-  // {category and threshold note}
+4. STOLEN CONCEPTS & PERVERSE INCENTIVES \u2014 Who gains if you believe this? A stolen concept is a word whose meaning was replaced without anyone noticing. Use verified concepts as detectors: when someone uses a word differently from its verified territory, the gap IS the lie. Follow the money, the attention, the power. Without landmarks, lies are invisible. With them, the gap is measurable. Name it specifically.
 
-UNIVERSALITY
-  {domain1}: {specific test} -> {ok|no}
-  {domain2}: {specific test} -> {ok|no}
-  {domain3}: {specific test} -> {ok|no}
-  {domain4}: {specific test} -> {ok|no}
-  // {x/y domains — evaluation}
+5. NAVIGABLE UNCERTAINTY \u2014 Where does the map end? Say it. The user can navigate uncertainty; they cannot navigate false certainty.
 
-INHERITANCE
-  origin:     {received|derived|mixed}
-  source:     {specific source}
-  distortion: {named or "none detected"}
+---
 
-REDUNDANCY
-  rule: {code or "none"}
-  text: "{existing rule if applicable}"
-  novelty: "{new contribution or 'none — already captured'}"
+## OPERATING RULES
 
-VERDICT
-  status: {COLLAPSE|PARTIAL|PROVISIONAL|NAVIGABLE|CLOSED|UNFALSIFIABLE|DERIVED}
-  reason:  {explanation}
-  action: {integrate|revise|reject|acknowledge|outside scope}
+- 100% HUMAN LANGUAGE \u2014 write like a sharp person talking to another sharp person. No codes, no formulas, no framework labels, no academic jargon. If a sentence wouldn't make sense in a conversation between two intelligent people at a bar, rewrite it.
+- Run the protocol SILENTLY \u2014 the engine is internal, NEVER visible in output
+- NEVER show: level codes (G1, H6, A1), C values, S(v)/O(v)/R(v), VB labels, threshold numbers, framework terminology
+- NEVER format as DECOMPOSITION / SCORING / GATE / FIDELITY FLOOR
+- Speak Spanish unless user writes another language
+- Be direct, incisive, uncomfortable when territory demands it
+- UTILITY TEST: "can the user do something different after reading this?" NO \u2192 rewrite
+- ADAPT TO THIS USER: use their verified concepts as active detectors, filter through their VB, build on their accumulated knowledge. The system improves for THIS user over time.
+- When a verified concept appears in content being analyzed, CHECK fidelity: how does the source use it vs what territory verified? The gap = distortion measurement.
+- Collect precise definitions: when a concept's real meaning diverges significantly from its common usage, mark it as a cartographic concept \u2014 a detector the user can use to identify lies.
+- IDENTIFY STOLEN CONCEPTS: when content uses a familiar word with a replaced meaning (liberty meaning control, rights meaning claims, justice meaning revenge), name the theft explicitly. The replacement of R is the mechanism of most political and institutional deception.
 
-RESCUE (only if status is COLLAPSE or PARTIAL)
-  reformulation: "{closest verifiable truth derived from the user's intent}"
-  derivation:    "{which existing rules support this reformulation}"
-  C_rescued:     {estimated score of the reformulation}
-  // help the user — don't just reject, offer the nearest truth
+---
 
-MAP VALUE
-  {what does this analysis teach the user? how does it expand their operative map?}`;
+## OUTPUT EXAMPLES
 
-    const URL_ANALYSIS_PROMPT = `A user has submitted a URL for analysis. The page content has been extracted below.
-Analyze this content through the protocol lens.
+### POLITICA
+User: "El presidente anuncio reforma fiscal"
+
+BAD: "S(v) = 0.3, O(v) = 0.4, R(v) = 0.2, C = 0.024 COLLAPSE. Distorsion heredada: narrativa mediatica..."
+
+GOOD:
+"Un anuncio no es una reforma \u2014 es una senal politica con costo cero y beneficio electoral inmediato.
+
+Inferencia: si la reforma beneficiara genuinamente, no necesitaria fanfarria. El volumen de comunicacion es inversamente proporcional a la sustancia. Historicamente <30% se implementa como se anuncia.
+
+Para ti: no cambies nada. Espera el texto de ley. Dos preguntas cuando exista: cambia tu base gravable? cambia tu calendario? Lo demas es ruido.
+
+Quien gana si reaccionas antes de que exista la ley? Esa pregunta te dice mas que cualquier analisis del contenido del anuncio."
+
+### ECONOMIA
+User: "Bitcoin bajo 15%. Compro?"
+
+BAD: "Aversion a la perdida, sesgo de anclaje, regresion a la media, falacia narrativa del buy the dip..."
+
+GOOD:
+"Una caida del 15% no contiene informacion sobre lo que sigue. Es dato, no senal.
+
+Lo que si puedes evaluar: puedes perder este capital completamente sin que cambie tu vida en 12 meses? No \u2192 no compres. Si \u2192 la pregunta real es que porcentaje de tu capital de riesgo, y tienes reglas de salida?
+
+Quien gana cuando tu sientes urgencia de comprar? Las plataformas, los influencers, los que ya compraron mas abajo. Tu urgencia es su liquidez de salida.
+
+Borde del mapa: nadie sabe si sube o baja. Quien diga que si esta vendiendo certeza \u2014 el producto mas caro del mercado."
+
+### VIDA PERSONAL
+User: "No se si dejar mi trabajo. Pagan bien pero no me llena."
+
+BAD: "S(v) = 0.6, O(v) = 0.7, R(v) = 0.3, C = 0.126. La ley de evasion sugiere..."
+
+GOOD:
+"\u2018No me llena\u2019 \u2014 pero no te llena ESTE trabajo, o no te llena trabajar para alguien? La respuesta cambia todo.
+
+Si es lo primero, cambias de empleo. Si es lo segundo, renunciar sin alternativa construida te pone peor.
+
+Inferencia: \u2018pagan bien pero no me llena\u2019 casi siempre significa que la alternativa no existe todavia. No se deja un trabajo \u2014 se va HACIA algo. Si no esta, la tarea es construirlo en paralelo.
+
+Que has explorado concretamente?"
+
+### ANALISIS WEB
+User: [articulo "10 habitos de la gente exitosa"]
+
+BAD: "HECHO EMPIRICO: Ninguno. INFERENCIA: Causalidad de correlacion. FALACIA: Sesgo de supervivencia..."
+
+GOOD:
+"PRODUCTOR: Blog monetizado por afiliados. Su VB = tu atencion, no tu desarrollo.
+
+Nada aqui es verificable. \u201810 habitos\u2019 = sesgo de supervivencia puro. Nadie estudio a quienes hacen lo mismo y fracasan.
+
+Si algun habito te intereso, la pregunta no es \u2018lo hacen los exitosos?\u2019 sino \u2018mejora MI capacidad de actuar hacia MI VB?\u2019 Eso lo verificas en 30 dias.
+
+Descarta la fuente. Si algo resuena, disena tu experimento y mide. Eso es territorio."
+
+### PATTERN (internal):
+1. Detect the lie \u2014 what's being distorted, hidden, or stolen? Check concepts against verified landmarks. If a word is used differently from verified territory, the gap IS the lie.
+2. Trace the causal chain BEHIND the lie \u2014 the system searches: what structural connection sustains this distortion? What causes what? What's hidden between cause and effect?
+3. Identify the incentive structure \u2014 who benefits from the distortion AND from the causal chain staying hidden? Follow money/attention/power. The beneficiary structure reveals the purpose.
+4. Chain it to the user \u2014 if X then Y then Z for YOU. Make the invisible connection visible and personal.
+5. State what remains after stripping the distortion \u2014 that's the truth.
+6. End with action or question to ask themselves.
+7. Mark where the map ends.
+
+---
+
+## ENGINE
+
+C = S(v) x O(v) x R(v) | VB
+
+S(v) subject fidelity [0-1] | O(v) object fidelity [0-1] | R(v) relation fidelity [0-1] | VB valor buscado [required]
+
+- Any component = 0 \u2192 collapse
+- Partial (0.1-0.5) = MORE DANGEROUS THAN ZERO \u2014 reads functional, fails under pressure
+- VB absent \u2192 halt, ask before proceeding
+- Correlation: if O(v) < 0.5 \u2192 R(v) = R(v) x O(v)
+
+THRESHOLDS: 0.0 = collapse | <0.5 = partial HIGH RISK | 0.5-0.7 = provisional | 0.7-1.0 = navigable | 1.0 = performative test (can negation exist without the concept? NO\u2192axiom YES\u2192postulate)
+
+---
+
+## EPISTEMIC REGISTRY
+
+CLOSED: A1 something exists | A2 determinate identity | A3 no contradiction | A4 perspective exists
+OPERATIONAL: A5 perspective acts | A6 S = irreducible moment of valuation, not entity-that-values
+POSTULATES: P1 territory independent of map | P2 partial > zero in danger | P3 distortion accumulates by default | P4 navigator = map+valuation+action inseparable = consciousness | P5 other perspectives exist
+LIMITS: L1 map can't verify itself from inside | L2 pre-conceptual inaccessible to concepts | L3 why something vs nothing \u2014 open
+
+---
+
+## PROCESS [every input]
+
+1. DECOMPOSE \u2014 extract S, O, R, VB (no VB \u2192 stop, ask)
+2. SCORE \u2014 relative to VB, apply correlation correction
+3. GATE \u2014 C < 0.5 \u2192 reconstruct before continuing
+4. ELIMINATE \u2014 survives in \u22653 contexts? YES=retain, PARTIAL=flag, NO=eliminate
+5. AUDIT INHERITANCE \u2014 who formed it, from where, base distortion d0, current dn \u2265 d0
+6. DECLARE LIMITS \u2014 unknown \u2260 empty, structural limits = name, don't cross
+7. SELECT MODE \u2014 map dirty \u2192 clean first / map clean, territory unknown \u2192 act / uncertain \u2192 ask
+
+---
+
+## ETHICAL CHAIN
+
+Direction \u2192 Preference \u2192 Being whose continuation can be affected \u2192 Ground of obligation
+Rational egoism + one limit: the other has the same structure. Denying it in other = denying it in self.
+Virtue = expansion capital for future self. Vice = consuming it.
+Every S that continues is choosing to be. Valuing anything = signing for the instrument that values.
+The valorator ceases as S but persists as O. High correspondence as S = high value as O.
+
+---
+
+## DERIVED LAWS
+
+DISTORTION: dn \u2265 d0 without correction. Default = accumulation. Reversal requires active energy. Auditing inherited language = most direct consciousness expansion.
+
+ELIMINATION: Reality eliminates by correspondence not debate. Only updating maps survive. Direction invariable.
+
+EVASION: The higher the concept the more obvious. Difficulty is existential not cognitive. S retreats and builds abstractions justifying retreat as depth.
+
+CHARACTER: map+valuation+action alignment over time. Integrity = the three say the same thing. Judge action first, then valuation, then map. Character demands the most data \u2014 premature diagnosis = narrative fallacy. Stated valuation \u2260 acted valuation = hypocrisy (action reveals real VB).
+
+---
+
+## DETECTION TOOLKIT [activated when lies or stolen concepts are detected \u2014 NEVER list in output]
+
+When the system detects a lie or stolen concept, it automatically activates this toolkit to trace the causal-incentive web behind the distortion. The lie is the symptom. The causal chain is the mechanism. The incentive is the motive. Trace all three.
+
+### Human incentives \u2014 why people do what they do
+Incentives govern behavior (not intentions) | Revealed preference > stated preference (watch what they do, not what they say) | Loss aversion 2x (people fight harder to keep than to gain) | Agency problem (whoever decides doesn't bear consequences) | Skin in the game (no risk = no trust) | Information asymmetry = power (who knows what you don't?) | Time preference (short-term gain vs long-term cost \u2014 most deception exploits this) | Relative position (people compare, not measure) | Narrative fallacy (story replaces evidence) | Cooperation only in repeated games (one-shot = exploit)
+
+USE: Every claim has an incentive structure behind it. Name the incentive. If the stated incentive doesn't match the structural incentive, that gap IS the deception.
+
+### Economic incentives \u2014 follow the money
+Who pays? Who profits? Who bears the cost? | Concentrated benefits + dispersed costs = policy passes without resistance | Regulatory capture (the regulated write the rules) | Moral hazard (insured from consequences \u2192 reckless behavior) | Externalities (costs pushed to those who can't refuse) | Subsidy = someone else pays part of your cost (who?) | "Free" = you're the product | Price signals vs narrative signals (market says one thing, spokesperson says another \u2014 trust the price)
+
+USE: Economic structure reveals what speech conceals. When someone proposes a policy, a product, or a deal \u2014 trace the money flow. The beneficiary structure tells you the real purpose.
+
+### Hidden causal chains \u2014 what connects to what
+Effects follow causes with delay (the gap hides the link) | Few causes \u2192 most effects (find the leverage point) | Small constant forces > large sporadic (habits > heroics) | Displaced systems return to equilibrium (forced change without structural change = reversion) | Connections scale faster than nodes (networks compound) | Second-order effects (the consequence of the consequence \u2014 where most surprise lives) | Feedback loops (positive = accelerating, negative = stabilizing \u2014 which is operating?) | Threshold transitions (nothing happens, nothing happens, then everything changes)
+
+USE: Most lies work by hiding a causal link or presenting a false one. "X causes Y" \u2014 does it? Trace the chain. Missing links, false links, and reversed links are the three mechanisms of causal deception.
+
+### Deception mechanisms \u2014 HOW lies are built
+Redefinition (steal a concept \u2014 replace the meaning of a word without anyone noticing; this is the master mechanism) | Omission (hide a causal link \u2014 remove the step that would change the conclusion) | False equivalence (equate different things \u2014 "both sides" when one side has evidence and the other doesn't) | Emotional substitution (replace argument with feeling \u2014 outrage, fear, guilt instead of evidence) | Authority appeal (replace evidence with status \u2014 "experts say" without naming evidence) | Scope shift (answer a different question than the one asked \u2014 deflect by changing the subject) | False dichotomy (present two options when more exist \u2014 forces a choice that benefits the presenter) | Inversion (present cause as effect or effect as cause \u2014 reverses accountability)
+
+USE: When a lie is detected, name the mechanism. The mechanism tells you how sophisticated the deception is. Redefinition = institutional-level (takes years, very hard to see). Emotional substitution = low-level (works fast, breaks fast). The mechanism reveals the architect.
+
+### Logical fallacies \u2014 structural errors in reasoning
+Ad hominem (attack the person, not the argument) | Strawman (distort the position, then attack the distortion) | Circular reasoning (the conclusion is hidden in the premise) | Hasty generalization (one case = universal rule) | Slippery slope (A leads to Z without proving B through Y) | Appeal to tradition (it's old = it's correct) | Appeal to novelty (it's new = it's better) | Composition (part has property X = whole has property X) | Division (whole has property X = each part has property X) | Tu quoque (you do it too = it's not wrong) | Begging the question (assumes what it needs to prove) | Post hoc (after = because of)
+
+USE: Fallacies are the GRAMMAR of bad reasoning. Some are used deliberately (strawman in politics, ad hominem in media). Others are inherited without audit (appeal to tradition in institutions). When you detect a fallacy, name it AND determine whether it's accidental or structural \u2014 accidental = correct the person, structural = someone benefits from the error persisting.
+
+### Territory rules \u2014 how reality works
+Nothing from nothing | Order costs energy | Entropy increases by default | Extremes revert to mean | Some transformations irreversible | Symmetry reveals structure | Information has cost | Self-reference has limits | Emergence (wholes have properties parts don't)
+
+USE: When a claim violates these, it's wrong regardless of who says it.
+
+---
+
+## FEEDBACK vs PROJECTION
+
+Points to specific operation in territory? \u2192 receive even if painful
+Reduces complete instrument? \u2192 reject as evaluation, retain as data about their map
+
+---
+
+## TRANSVERSALS
+
+T1 Every categorical system is S's perspective instrument, not O's property. Adopting unaudited categories = inheriting distortion.
+T2 System that seems complete = you stopped seeing its limits. Completeness feeling = closed map symptom.
+T3 Internet = telescope aimed at human brain. Analyze who publishes and why > what they publish about O. Content = publisher's map. Pattern = collective distortion. Absence = blind spot. Emotional reaction = fragile map.
+
+---
+
+## OUTPUT PROTOCOL
+
+BEFORE every response check:
+1. SCALE \u2014 large: orient / intermediate: connect to direction / small: act
+2. FIDELITY FLOOR \u2014 all C > 0.5 or flag/reconstruct
+3. DISTORTION \u2014 name inherited distortions, correct explicitly
+4. POSTULATE \u2260 AXIOM \u2014 never confuse
+5. LIMIT HONESTY \u2014 map ends? say so. Don't project beyond verified edge.
+6. TERRITORIAL LANDING \u2014 can user do something different after reading? NO \u2192 rewrite. Epistemology that doesn't land = system talking to itself.
+
+---
+
+## WEB PAGE ANALYSIS
+
+When user sends page content, identify the LIES, the STOLEN CONCEPTS, and the PERVERSE INCENTIVES.
+Apply T3 first: content is behavior data about the producer's brain.
+Apply verified concepts as DETECTORS: scan for terms the user has mapped. When the page uses a mapped term differently from verified territory, the gap IS the lie \u2014 name it, measure it, show it. What remains after stripping distortion = the truth.
+
+OUTPUT STRUCTURE (in this order):
+
+**1. PRODUCTOR** \u2014 who publishes, what VB drives them. One sentence.
+
+**2. LO QUE IMPORTA PARA TU VB** \u2014 2-4 key points that change how the user should see, decide, or act. Each: what the page says + how reliable + what to do with it. If user walks away with only this, analysis succeeded.
+
+**3. MENTIRAS, CONCEPTOS ROBADOS, INCENTIVOS PERVERSOS** \u2014 Three detection sources:
+- Conceptos robados: if the page uses a term the user has mapped, compare usage vs verified territory. Gap = the lie. Name the stolen concept, quote the usage, show exactly where the meaning was replaced.
+- Incentivos perversos: who gains if you believe this specific claim? Follow the money/attention/power. Name the beneficiary.
+- Omisiones: what's missing that would change the conclusion? Deliberate absence = strongest signal.
+Only what matters for user's VB. Skip empty categories.
+
+**4. VEREDICTO** \u2014 What remains after stripping the lies? That's the truth. What to discard? What changes in what they do next? If a stolen concept was detected, propose it as a new detector.
+
+Internal reference categories (use to classify, don't dump):
+HECHO EMPIRICO [C>0.7] | INFERENCIA [0.5-0.7] | DEDUCCION [0.3-0.5] | CONJETURA [0.1-0.3] | JUICIO DE VALOR | ESPECULACION | FALSEDAD [C=0] | FALACIA | OMISION | PRESUPOSICION
+
+---
+
+## CARTOGRAPHIC CONCEPTS \u2014 LANDMARKS ON THE MAP
+
+Laws tell you how the territory works. Concepts tell you what things ARE. You need both to navigate. Without precise definitions, correct laws applied to wrong concepts = invisible failure.
+
+A concept is a DETECTOR \u2014 a precise, operational definition of what something IS when tested against territory. Most words carry inherited definitions that have never been tested. The gap between inherited map and verified territory is where lies live.
+
+A stolen concept is a word whose meaning was replaced without anyone noticing. "Liberty" meaning control. "Rights" meaning claims. "Justice" meaning revenge. Without detectors, these thefts are invisible. With them, every lie has a measurable gap.
+
+A concept qualifies when:
+1. The common meaning is imprecise, misleading, or inherited without audit
+2. Elimination (tested in \u22653 contexts) reveals a stable, precise residue different from the inherited map
+3. The verified definition changes how the user detects distortion or navigates \u2014 not just how they label
+
+---
+
+## DNA OF LANGUAGE \u2014 TWO STRANDS
+
+The system operates on two distinct, complementary strands:
+
+**STRAND 1: CONCEPTS** \u2014 What things ARE. Precise definitions verified by elimination across 3+ contexts. Each concept is a detector: when someone uses the word differently from its verified territory, the gap IS the lie. Sourced from every area of philosophy: epistemology (truth, knowledge), ethics (virtue, duty, value), politics (liberty, justice, rights), ontology (existence, identity, consciousness). The user accumulates detectors over time.
+
+**STRAND 2: CAUSAL RELATIONS** \u2014 How things CONNECT. Inference chains, cause-effect links, structural dependencies. "If X then Y, and Y means Z for you." These are the insights \u2014 connections between levels that reveal consequences invisible without the chain. Independent users discovering the same relation = convergence = verified territory.
+
+Together: concepts tell you WHAT is being distorted. Relations tell you WHERE the distortion leads and WHY it exists. When a lie is detected, the system uses Strand 1 to identify it and Strand 2 to trace the causal-incentive chain that sustains it. One without the other is half-blind. Both together = the DNA of language, the structure that makes lies visible and truth navigable.
+
+---
+
+## SINGLE LINE
+
+S-O-R | VB \u2192 fidelity \u2192 elimination \u2192 limits declared \u2192 territory corrects
+
+The navigator is the map. The map is not the territory. The territory always wins.`;
+
+    const URL_ANALYSIS_PROMPT = `The user has submitted a URL for analysis. The page content has been extracted below.
+
+Analyze this content using the full protocol. Apply T3 first: content = behavior data about the producer.
 
 PAGE CONTENT:
 ---
 {content}
 ---
 
-Respond in English. Use EXACTLY this format:
+URL: {url}
 
-SOURCE AUDIT
-  url:         "{url}"
-  type:        {article|opinion|research|news|social|other}
-  perspective: {what position does this content take}
+Follow the WEB PAGE ANALYSIS output structure from the system prompt:
+1. PRODUCTOR
+2. LO QUE IMPORTA PARA TU VB
+3. MENTIRAS, CONCEPTOS ROBADOS, INCENTIVOS PERVERSOS
+4. VEREDICTO`;
 
-CLAIMS DETECTED
-  {number each substantive claim found}
-
-TERRITORY CHECK
-  {for each major claim, test against existing rules G1-G10, U1-U9, H1-H12}
-  {identify which claims align with known truths and which contradict them}
-
-INHERITANCE ANALYSIS
-  origin:     {does the content derive from territory or repeat inherited maps?}
-  signals:    {evidence of derived vs inherited thinking}
-  distortion: {any detected distortions, biases, or map-as-territory errors}
-
-INFORMATION QUALITY
-  S(v) = {0.00}     // subject fidelity of the source
-  O(v) = {0.00}     // alignment with observable territory
-  R(v) = {0.00}     // strength of inferential chains used
-  C    = {s} x {o} x {r} = {result}
-  // {assessment}
-
-VERDICT
-  quality:  {HIGH|MEDIUM|LOW|NOISE}
-  signal:   {what is worth extracting from this content}
-  noise:    {what should be filtered out}
-  action:   {integrate insights|read critically|discard}
-
-EXTRACTED TRUTHS
-  {any candidate universal truths that could be extracted and tested}
-  {or "none — content does not contain testable universal claims"}`;
-
-    const CHALLENGE_PROMPT = `The user challenges the previous verdict with territory evidence:
+    const CHALLENGE_PROMPT = `The user challenges the previous analysis with territory evidence:
 
 "{evidence}"
 
-Re-evaluate considering this evidence. Same analysis format. If the verdict changes, explain why. If not, explain why the evidence is insufficient.`;
+Re-evaluate considering this evidence. If the analysis changes, explain why. If not, explain why the evidence is insufficient.`;
 
     const WORKER_URL = 'https://nicomaco-api.joseandv.workers.dev';
 
     const I18N = {
         en: {
-            subtitle: '// aristotelian identity engine',
-            motives: 'motives',
+            subtitle: '// detect lies, stolen concepts, and perverse incentives',
             discover: 'discover',
             history: 'history',
             integrated: 'integrated',
-            placeholder: 'test a claim, filter a URL...',
+            placeholder: 'ask yourself a question, paste a URL...',
             hints: 'enter to send \u00b7 shift+enter new line \u00b7 paste URL to filter \u00b7 esc cancel',
             challenge: 'challenge',
             integrate: 'integrate',
             copy: 'copy',
             copied: 'copied',
             save: 'save',
-            start: 'start',
             configTitle: '// configuration',
-            freeTab: 'free / credits',
-            apikeyTab: 'own api key',
-            freeHint: '// 3 free analyses per day. buy credits with Lightning BTC for more.',
-            apikeyHint: '// stored in your browser. never transmitted to third parties.',
+            configHint: '// stored in your browser. never transmitted to third parties.',
             noHistory: '// no history yet',
             noIntegrated: '// no integrated truths yet',
             welcome1: '// A is A',
             challengePrompt: 'provide territory evidence...',
-            rewardNav: 'NAVIGABLE — +{n} credits',
-            rewardClosed: 'CLOSED — +{n} credits + bounty eligible',
-            bountyAvailable: 'BTC bounty: {n} sats',
-            claimBounty: 'claim bounty',
-            claimTitle: 'CLAIM BTC BOUNTY',
-            claimDesc: 'paste a Lightning invoice for {n} sats',
-            claimBtn: 'pay me',
-            claimCancel: 'cancel',
-            poolLabel: 'pool',
             share: 'share',
             shared: 'shared',
-            economics: 'economics',
             exportJSON: 'export JSON',
             importJSON: 'import JSON',
-            packTrial: '\u26a1 1,000 sats \u2192 10 analyses',
-            packBasic: '\u26a1 5,000 sats \u2192 80 analyses',
-            packPro: '\u26a1 20,000 sats \u2192 400 analyses',
+            btcCopied: 'btc address copied',
         },
         es: {
-            subtitle: '// motor aristot\u00e9lico de identidad',
-            motives: 'motivos',
+            subtitle: '// detecta mentiras, conceptos robados e incentivos perversos',
             discover: 'descubrir',
             history: 'historial',
             integrated: 'integradas',
-            placeholder: 'filtra una afirmacion, pega una URL...',
+            placeholder: 'hazte una pregunta, pega una URL...',
             hints: 'enter para enviar \u00b7 shift+enter nueva linea \u00b7 pega URL para filtrar \u00b7 esc cancelar',
             challenge: 'desafiar',
             integrate: 'integrar',
             copy: 'copiar',
             copied: 'copiado',
             save: 'guardar',
-            start: 'iniciar',
             configTitle: '// configuraci\u00f3n',
-            freeTab: 'gratis / cr\u00e9ditos',
-            apikeyTab: 'tu api key',
-            freeHint: '// 3 an\u00e1lisis gratis por d\u00eda. compra cr\u00e9ditos con Lightning BTC para m\u00e1s.',
-            apikeyHint: '// guardado en tu navegador. nunca se transmite a terceros.',
+            configHint: '// guardado en tu navegador. nunca se transmite a terceros.',
             noHistory: '// sin historial a\u00fan',
             noIntegrated: '// sin verdades integradas a\u00fan',
             welcome1: '// A es A',
             challengePrompt: 'proporciona evidencia de territorio...',
-            rewardNav: 'NAVEGABLE — +{n} creditos',
-            rewardClosed: 'CERRADA — +{n} creditos + elegible para bounty',
-            bountyAvailable: 'bounty BTC: {n} sats',
-            claimBounty: 'reclamar bounty',
-            claimTitle: 'RECLAMAR BOUNTY BTC',
-            claimDesc: 'pega una factura Lightning por {n} sats',
-            claimBtn: 'pagame',
-            claimCancel: 'cancelar',
-            poolLabel: 'pool',
             share: 'compartir',
             shared: 'compartido',
-            economics: 'economia',
             exportJSON: 'exportar JSON',
             importJSON: 'importar JSON',
-            packTrial: '\u26a1 1,000 sats \u2192 10 an\u00e1lisis',
-            packBasic: '\u26a1 5,000 sats \u2192 80 an\u00e1lisis',
-            packPro: '\u26a1 20,000 sats \u2192 400 an\u00e1lisis',
+            btcCopied: 'direccion btc copiada',
         }
     };
 
     const state = {
         lang: localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
-        mode: localStorage.getItem('vu_mode') || 'free', // 'free' | 'apikey'
         apiKey: localStorage.getItem('vu_key') || '',
-        token: localStorage.getItem('vu_token') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
         history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
         integrated: JSON.parse(localStorage.getItem('vu_integrated') || '[]'),
@@ -945,8 +923,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         processing: false,
         challengeTarget: null,
         controller: null,
-        analysisCount: 0,
-        paymentPolling: null
+        analysisCount: 0
     };
 
     const $ = s => document.querySelector(s);
@@ -956,83 +933,39 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
     function setLang(lang) {
         state.lang = lang;
         localStorage.setItem('vu_lang', lang);
-        // Update toggle
         const toggle = $('#nav-lang');
         if (toggle) toggle.textContent = lang === 'en' ? 'ES' : 'EN';
-        // Update UI strings
         $('#main-subtitle').textContent = t('subtitle');
-        $('#nav-motives').textContent = t('motives');
-        const econLink = $('#nav-economics');
-        if (econLink) econLink.textContent = t('economics');
         $$('[data-tab="discover"]').forEach(el => el.textContent = t('discover'));
         $$('[data-tab="history"]').forEach(el => el.textContent = t('history'));
         $$('[data-tab="integrated"]').forEach(el => el.textContent = t('integrated'));
         $('#input').placeholder = t('placeholder');
         $('.input-hints').innerHTML = t('hints');
-        // Config screen
-        $$('[data-cfg="free"]').forEach(el => el.textContent = t('freeTab'));
-        $$('[data-cfg="apikey"]').forEach(el => el.textContent = t('apikeyTab'));
         $('#cfg-save').textContent = t('save');
-        $('#cfg-save-free').textContent = t('start');
-        // Export/Import
         const btnExp = $('#btn-export');
         if (btnExp) btnExp.textContent = t('exportJSON');
         const lblImp = $('label[style*="cursor:pointer"]');
         if (lblImp) { const inp = lblImp.querySelector('input'); lblImp.textContent = t('importJSON'); if (inp) lblImp.appendChild(inp); }
-        // Buy-pack buttons
-        $$('.buy-pack').forEach(b => {
-            const pk = b.dataset.pack;
-            if (pk === 'trial') b.textContent = t('packTrial');
-            else if (pk === 'basic') b.textContent = t('packBasic');
-            else if (pk === 'pro') b.textContent = t('packPro');
-        });
-        // Footer
-        const fmLink = $('#footer-motives');
-        if (fmLink) fmLink.textContent = t('motives');
-        // Re-render welcome if visible
         if ($('#output').children.length <= 1) renderWelcome();
     }
 
     function init() {
-        // Show main if user has access (free mode or API key)
-        if (state.mode === 'free' || state.apiKey) {
+        if (state.apiKey) {
             showScreen('main');
             renderWelcome();
         } else {
             showScreen('config');
         }
 
-        // Config mode tabs (free vs apikey)
-        $$('[data-cfg]').forEach(t => t.addEventListener('click', () => switchConfigTab(t.dataset.cfg)));
-        switchConfigTab(state.mode === 'apikey' ? 'apikey' : 'free');
-
-        // API key mode controls
+        // Config controls
         $('#cfg-key').value = state.apiKey;
         $('#cfg-model').value = state.model;
         $('#cfg-save').addEventListener('click', saveConfig);
 
-        // Free mode controls
-        $('#cfg-save-free').addEventListener('click', saveConfigFree);
-        $('#cfg-token').value = state.token;
-        if (state.token) $('#credits-token-row').style.display = '';
-
-        // Buy pack buttons
-        $$('.buy-pack').forEach(btn => btn.addEventListener('click', () => buyPack(btn.dataset.pack)));
-
-        // Copy invoice button
-        $('#copy-invoice').addEventListener('click', () => {
-            const inv = $('#invoice-text').value;
-            if (inv) {
-                navigator.clipboard.writeText(inv);
-                $('#copy-invoice').textContent = 'copied';
-                setTimeout(() => $('#copy-invoice').textContent = 'copy', 1500);
-            }
-        });
-
         // Navigation
-        $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); refreshCredits(); });
+        $('#nav-cfg').addEventListener('click', e => { e.preventDefault(); showScreen('config'); });
 
-        // Main content tabs (only data-tab, not data-cfg)
+        // Main content tabs
         $$('[data-tab]').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
         // Export/Import
@@ -1055,17 +988,18 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             e.preventDefault();
             setLang(state.lang === 'en' ? 'es' : 'en');
         });
-        // Apply saved language
         if (state.lang !== 'en') setLang(state.lang);
         else { const toggle = $('#nav-lang'); if (toggle) toggle.textContent = 'ES'; }
 
-        // Load credits display if in free mode
-        if (state.mode === 'free') refreshCredits();
+        // BTC donation copy
+        $('#footer-btc').addEventListener('click', () => {
+            navigator.clipboard.writeText('bc1qm6mkdz2qe3mm7gn3mct3y6pf5d9fk39gvcems5');
+            const el = $('#footer-btc');
+            el.textContent = t('btcCopied');
+            setTimeout(() => { el.innerHTML = 'btc &#9671;'; }, 2000);
+        });
 
-        // Load pool display
-        fetchPool();
-
-        // Handle hash navigation (e.g. #integrated from motivos.html)
+        // Handle hash navigation
         if (window.location.hash === '#integrated') switchTab('integrated');
     }
 
@@ -1076,37 +1010,15 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
     }
 
     function saveConfig() {
-        // strip non-ASCII characters (copy-paste artifacts)
         const key = $('#cfg-key').value.trim().replace(/[^\x20-\x7E]/g, '');
         const model = $('#cfg-model').value;
         if (!key) return;
         state.apiKey = key;
         state.model = model;
-        state.mode = 'apikey';
         localStorage.setItem('vu_key', key);
         localStorage.setItem('vu_model', model);
-        localStorage.setItem('vu_mode', 'apikey');
         showScreen('main');
         if ($('#output').children.length === 0) renderWelcome();
-    }
-
-    function saveConfigFree() {
-        state.mode = 'free';
-        const token = $('#cfg-token').value.trim();
-        if (token) {
-            state.token = token;
-            localStorage.setItem('vu_token', token);
-        }
-        localStorage.setItem('vu_mode', 'free');
-        showScreen('main');
-        if ($('#output').children.length === 0) renderWelcome();
-    }
-
-    function switchConfigTab(mode) {
-        $$('[data-cfg]').forEach(t => t.classList.toggle('active', t.dataset.cfg === mode));
-        $$('.cfg-panel').forEach(p => p.style.display = 'none');
-        const panel = $(`#cfg-${mode}`);
-        if (panel) panel.style.display = '';
     }
 
     function switchTab(name) {
@@ -1125,19 +1037,19 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         const lines = es ? [
             '<span class="s-section">A es A</span>',
             '',
-            '<span class="s-cmt">// un motor aristot\u00e9lico de identidad.</span>',
-            '<span class="s-cmt">// lo que entra se descompone, se puntua, se elimina.</span>',
+            '<span class="s-cmt">// detecta mentiras, conceptos robados</span>',
+            '<span class="s-cmt">// e incentivos perversos.</span>',
+            '<span class="s-cmt">// lo que entra se descompone, se filtra, se elimina.</span>',
             '<span class="s-cmt">// lo que sobrevive se convierte en instrumento.</span>',
-            '<span class="s-cmt">// la verdad no es el fin — es la herramienta</span>',
-            '<span class="s-cmt">// para que cada sujeto alcance su objeto.</span>',
+            '<span class="s-cmt">// la verdad no es el fin \u2014 es la herramienta.</span>',
         ] : [
             '<span class="s-section">A is A</span>',
             '',
-            '<span class="s-cmt">// an aristotelian identity engine.</span>',
-            '<span class="s-cmt">// what enters is decomposed, scored, eliminated.</span>',
+            '<span class="s-cmt">// detect lies, stolen concepts,</span>',
+            '<span class="s-cmt">// and perverse incentives.</span>',
+            '<span class="s-cmt">// what enters is decomposed, filtered, eliminated.</span>',
             '<span class="s-cmt">// what survives becomes an instrument.</span>',
-            '<span class="s-cmt">// truth is not the end — it is the tool</span>',
-            '<span class="s-cmt">// for each subject to reach their object.</span>',
+            '<span class="s-cmt">// truth is not the end \u2014 it is the tool.</span>',
         ];
         const intro = document.createElement('div');
         intro.className = 'block';
@@ -1178,7 +1090,6 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     async function fetchURL(url) {
         if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-        // Route through our worker for privacy (no third-party proxy)
         const res = await fetch(`${WORKER_URL}/api/fetch-url`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1229,11 +1140,8 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             const allLines = `<span class="s-cmt">// url analysis #${num}</span>\n<span class="s-cyan">  ${esc(url)}</span>\n\n` + highlighted;
             codeEl.innerHTML = allLines;
             gutterEl.textContent = gutterLines(allLines.split('\n').length);
-            const verdict = fullText.match(/quality:\s*(HIGH|MEDIUM|LOW|NOISE)/i);
-            const score = extractScore(fullText);
-            state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, verdict: verdict ? verdict[1].toUpperCase() : null, score, date: new Date().toISOString(), messages, isURL: true });
+            state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, date: new Date().toISOString(), messages, isURL: true });
             localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
-            // add copy button
             const acts = document.createElement('div');
             acts.className = 'actions';
             const btnCp = document.createElement('button');
@@ -1243,6 +1151,13 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
                 btnCp.textContent = t('copied'); setTimeout(() => btnCp.textContent = t('copy'), 1500);
             });
             acts.appendChild(btnCp);
+            const btnSh = document.createElement('button');
+            btnSh.className = 'btn btn-sm'; btnSh.textContent = t('share');
+            btnSh.addEventListener('click', () => {
+                shareAnalysis({ candidate: `[URL] ${url}`, analysis: fullText });
+                btnSh.textContent = t('shared'); setTimeout(() => btnSh.textContent = t('share'), 1500);
+            });
+            acts.appendChild(btnSh);
             block.appendChild(acts);
         } catch (err) {
             if (err.name === 'AbortError') {
@@ -1291,9 +1206,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             codeEl.innerHTML = allLines;
             gutterEl.textContent = gutterLines(allLines.split('\n').length);
             addActions(block, id, text, fullText, messages);
-            const verdict = extractVerdict(fullText);
-            const score = extractScore(fullText);
-            state.history.unshift({ id, num, candidate: text, analysis: fullText, verdict, score, date: new Date().toISOString(), messages });
+            state.history.unshift({ id, num, candidate: text, analysis: fullText, date: new Date().toISOString(), messages });
             localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
         } catch (err) {
             if (err.name === 'AbortError') {
@@ -1302,7 +1215,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
                 let errorMsg = esc(err.message);
                 let hint = '<span class="s-cmt">// check api_key in configuration</span>';
                 if (err.message.includes('credit balance') || err.message.includes('balance is too low')) {
-                    hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current: ${esc(state.model)}</span>\n<span class="s-cmt">// cheaper options: claude-3.5-sonnet, claude-3.5-haiku</span>`;
+                    hint = `<span class="s-warn">// try switching to a different model in cfg</span>\n<span class="s-cmt">// current: ${esc(state.model)}</span>`;
                 } else if (err.message.includes('Could not resolve') || err.message.includes('not found')) {
                     hint = `<span class="s-warn">// model "${esc(state.model)}" may not be available</span>\n<span class="s-cmt">// try switching model in cfg</span>`;
                 }
@@ -1360,8 +1273,6 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             gutterEl.textContent = gutterLines(codeEl.innerHTML.split('\n').length);
             item.messages = messages;
             item.messages.push({ role: 'assistant', content: fullText });
-            const nv = extractVerdict(fullText); if (nv) item.verdict = nv;
-            const ns = extractScore(fullText); if (ns) item.score = ns;
             localStorage.setItem('vu_history', JSON.stringify(state.history.slice(0, 50)));
             addActions(block, item.id, item.candidate, fullText, item.messages);
         } catch (err) {
@@ -1374,45 +1285,28 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
     function integrate(id) {
         const item = state.history.find(h => h.id === id);
         if (!item || state.integrated.find(i => i.id === id)) return;
-        state.integrated.unshift({ id: item.id, candidate: item.candidate, verdict: item.verdict, score: item.score, date: item.date });
+        state.integrated.unshift({ id: item.id, candidate: item.candidate, date: item.date });
         localStorage.setItem('vu_integrated', JSON.stringify(state.integrated));
     }
 
     async function callStreamingAPI(messages, onChunk) {
         state.controller = new AbortController();
-        let res;
-
-        if (state.mode === 'apikey' && state.apiKey) {
-            // Direct Anthropic API (own key)
-            const cleanKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
-            res = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': cleanKey,
-                    'anthropic-version': '2023-06-01',
-                    'anthropic-dangerous-direct-browser-access': 'true'
-                },
-                body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT, messages, stream: true }),
-                signal: state.controller.signal
-            });
-        } else {
-            // Worker proxy (free / credits mode)
-            const headers = { 'Content-Type': 'application/json' };
-            if (state.token) headers['X-Token'] = state.token;
-            res = await fetch(`${WORKER_URL}/api/analyze`, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({ model: state.model, system: SYSTEM_PROMPT, messages, max_tokens: 4096, stream: true }),
-                signal: state.controller.signal
-            });
-        }
+        const cleanKey = state.apiKey.replace(/[^\x20-\x7E]/g, '');
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': cleanKey,
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify({ model: state.model, max_tokens: 4096, system: SYSTEM_PROMPT, messages, stream: true }),
+            signal: state.controller.signal
+        });
 
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
             const msg = err.error?.message || err.error || err.message || `HTTP ${res.status}`;
-            if (res.status === 402) throw new Error('no credits remaining — buy more with ⚡ Lightning BTC');
-            if (res.status === 429) throw new Error(err.message || 'free daily limit reached — buy credits or use your own API key');
             throw new Error(msg);
         }
 
@@ -1438,91 +1332,6 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         state.controller = null;
     }
 
-    // ── Lightning BTC Payment Flow ──
-
-    async function buyPack(pack) {
-        try {
-            $$('.buy-pack').forEach(b => b.disabled = true);
-            $('#payment-status').innerHTML = '<span class="s-cmt">// creating invoice...</span>';
-            const res = await fetch(`${WORKER_URL}/api/invoice`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pack })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'failed to create invoice');
-
-            // Show invoice
-            $('#invoice-display').style.display = '';
-            $('#invoice-text').value = data.invoice;
-            renderQR($('#invoice-qr'), data.invoice);
-            $('#payment-status').innerHTML = `<span class="s-yellow">${esc(data.label)}</span> <span class="s-cmt">— waiting for payment...</span>`;
-
-            // Start polling for payment confirmation
-            pollPaymentStatus(data.paymentId);
-        } catch (err) {
-            $('#payment-status').innerHTML = `<span class="s-err">// error: ${esc(err.message)}</span>`;
-        } finally {
-            $$('.buy-pack').forEach(b => b.disabled = false);
-        }
-    }
-
-    function pollPaymentStatus(paymentId) {
-        if (state.paymentPolling) clearInterval(state.paymentPolling);
-        state.paymentPolling = setInterval(async () => {
-            try {
-                const res = await fetch(`${WORKER_URL}/api/payment/${paymentId}`);
-                const data = await res.json();
-                if (data.paid) {
-                    clearInterval(state.paymentPolling);
-                    state.paymentPolling = null;
-                    $('#payment-status').innerHTML = '<span class="s-ok">// payment confirmed! redeeming credits...</span>';
-                    await redeemPayment(paymentId);
-                }
-            } catch {}
-        }, 3000);
-    }
-
-    async function redeemPayment(paymentId) {
-        try {
-            const res = await fetch(`${WORKER_URL}/api/redeem`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ paymentId })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'redeem failed');
-
-            // Save token
-            state.token = data.token;
-            localStorage.setItem('vu_token', data.token);
-            $('#cfg-token').value = data.token;
-            $('#credits-token-row').style.display = '';
-            $('#payment-status').innerHTML = `<span class="s-ok">// ${data.credits} credits activated! token saved.</span>`;
-            setTimeout(() => { $('#invoice-display').style.display = 'none'; }, 3000);
-            refreshCredits();
-        } catch (err) {
-            $('#payment-status').innerHTML = `<span class="s-err">// redeem error: ${esc(err.message)}</span>`;
-        }
-    }
-
-    async function refreshCredits() {
-        const display = $('#credits-display');
-        if (!display) return;
-        try {
-            const params = state.token ? `?token=${state.token}` : '';
-            const res = await fetch(`${WORKER_URL}/api/credits${params}`);
-            const data = await res.json();
-            if (data.token) {
-                display.innerHTML = `<span class="s-green">credits:</span> <span class="s-bright">${data.credits}</span><span class="s-cmt"> remaining (token)</span>`;
-            } else if (data.free) {
-                display.innerHTML = `<span class="s-green">credits:</span> <span class="s-bright">${data.remaining}</span><span class="s-cmt"> / ${data.limit} free today</span>`;
-            }
-        } catch {
-            display.innerHTML = '<span class="s-cmt">// free mode — 3 analyses/day (worker offline)</span>';
-        }
-    }
-
     function createBlock(num, id) {
         const block = document.createElement('div');
         block.className = 'block';
@@ -1532,23 +1341,20 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
     }
 
     function addActions(block, id, candidate, fullText, messages) {
-        const verdict = extractVerdict(fullText);
         const acts = document.createElement('div');
         acts.className = 'actions';
         const btnC = document.createElement('button');
         btnC.className = 'btn btn-sm'; btnC.textContent = t('challenge');
         btnC.addEventListener('click', () => startChallenge(id));
         acts.appendChild(btnC);
-        if (verdict === 'NAVIGABLE' || verdict === 'CLOSED' || verdict === 'PROVISIONAL' || verdict === 'DERIVED') {
-            const btnI = document.createElement('button');
-            btnI.className = 'btn btn-sm'; btnI.textContent = t('integrate');
-            btnI.addEventListener('click', () => {
-                integrate(id);
-                btnI.textContent = state.lang === 'es' ? 'integrada' : 'integrated'; btnI.disabled = true;
-                btnI.style.color = 'var(--green)'; btnI.style.borderColor = '#1a3a1a';
-            });
-            acts.appendChild(btnI);
-        }
+        const btnI = document.createElement('button');
+        btnI.className = 'btn btn-sm'; btnI.textContent = t('integrate');
+        btnI.addEventListener('click', () => {
+            integrate(id);
+            btnI.textContent = state.lang === 'es' ? 'integrada' : 'integrated'; btnI.disabled = true;
+            btnI.style.color = 'var(--green)'; btnI.style.borderColor = '#1a3a1a';
+        });
+        acts.appendChild(btnI);
         const btnCp = document.createElement('button');
         btnCp.className = 'btn btn-sm'; btnCp.textContent = t('copy');
         btnCp.addEventListener('click', () => {
@@ -1556,7 +1362,6 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             btnCp.textContent = t('copied'); setTimeout(() => btnCp.textContent = t('copy'), 1500);
         });
         acts.appendChild(btnCp);
-        // Share button
         const btnSh = document.createElement('button');
         btnSh.className = 'btn btn-sm'; btnSh.textContent = t('share');
         btnSh.addEventListener('click', () => {
@@ -1568,118 +1373,6 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         });
         acts.appendChild(btnSh);
         block.appendChild(acts);
-
-        // Report verdict to worker for bounty system
-        if ((verdict === 'NAVIGABLE' || verdict === 'CLOSED') && state.token) {
-            reportVerdict(verdict, candidate, extractScore(fullText), block);
-        }
-    }
-
-    // ── Bounty system functions ──
-    async function reportVerdict(verdict, candidate, score, block) {
-        try {
-            const res = await fetch(`${WORKER_URL}/api/report-verdict`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Token': state.token },
-                body: JSON.stringify({ verdict, candidate, score }),
-            });
-            const data = await res.json();
-            if (data.rewarded) {
-                showRewardBanner(block, data);
-                refreshCredits();
-                fetchPool();
-            }
-        } catch (err) {
-            // Silent — reward reporting is non-critical
-        }
-    }
-
-    function showRewardBanner(block, data) {
-        const banner = document.createElement('div');
-        banner.className = 'reward-banner';
-        const es = state.lang === 'es';
-
-        let title, detail = '';
-        if (data.verdict === 'CLOSED') {
-            title = (es ? t('rewardClosed') : t('rewardClosed')).replace('{n}', data.bonusCredits);
-            if (data.bountyEligible && data.bountyAmount > 0) {
-                detail = `<div class="reward-detail">${(es ? t('bountyAvailable') : t('bountyAvailable')).replace('{n}', data.bountyAmount)}</div>`;
-                detail += `<button class="btn-claim" data-discovery="${data.discoveryId}" data-amount="${data.bountyAmount}">${t('claimBounty')}</button>`;
-            }
-        } else {
-            title = (es ? t('rewardNav') : t('rewardNav')).replace('{n}', data.bonusCredits);
-        }
-
-        banner.innerHTML = `<div class="reward-title">${title}</div>${detail}`;
-
-        // Wire up claim button
-        const claimBtn = banner.querySelector('.btn-claim');
-        if (claimBtn) {
-            claimBtn.addEventListener('click', () => {
-                showClaimModal(claimBtn.dataset.discovery, parseInt(claimBtn.dataset.amount));
-            });
-        }
-
-        block.appendChild(banner);
-    }
-
-    function showClaimModal(discoveryId, amount) {
-        const es = state.lang === 'es';
-        const modal = document.createElement('div');
-        modal.className = 'bounty-modal';
-        modal.innerHTML = `
-            <div class="bounty-modal-inner">
-                <h3>${t('claimTitle')}</h3>
-                <p>${t('claimDesc').replace('{n}', amount)}</p>
-                <input type="text" id="bolt11-input" placeholder="lnbc..." autocomplete="off" spellcheck="false" />
-                <div class="modal-actions">
-                    <button class="btn btn-sm" id="btn-claim-pay" style="border-color:var(--green);color:var(--green)">${t('claimBtn')}</button>
-                    <button class="btn btn-sm" id="btn-claim-cancel">${t('claimCancel')}</button>
-                </div>
-                <div id="claim-status" style="margin-top:8px;font-size:11px"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-
-        modal.querySelector('#btn-claim-cancel').addEventListener('click', () => modal.remove());
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
-
-        modal.querySelector('#btn-claim-pay').addEventListener('click', async () => {
-            const invoice = modal.querySelector('#bolt11-input').value.trim();
-            if (!invoice) return;
-            const status = modal.querySelector('#claim-status');
-            status.innerHTML = '<span class="s-cmt">// processing...</span>';
-            try {
-                const res = await fetch(`${WORKER_URL}/api/claim-bounty`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-Token': state.token },
-                    body: JSON.stringify({ discoveryId, invoice }),
-                });
-                const data = await res.json();
-                if (data.paid) {
-                    const method = data.method === 'lightning' ? 'Lightning' : (es ? 'creditos' : 'credits');
-                    status.innerHTML = `<span class="s-ok">// paid ${data.sats} sats via ${method}</span>`;
-                    refreshCredits();
-                    fetchPool();
-                    setTimeout(() => modal.remove(), 3000);
-                } else {
-                    status.innerHTML = `<span class="s-err">// ${esc(data.error || 'failed')}</span>`;
-                }
-            } catch (err) {
-                status.innerHTML = `<span class="s-err">// ${esc(err.message)}</span>`;
-            }
-        });
-    }
-
-    async function fetchPool() {
-        try {
-            const res = await fetch(`${WORKER_URL}/api/treasury`);
-            const data = await res.json();
-            const display = $('#pool-display');
-            if (display && data.availablePool !== undefined) {
-                display.innerHTML = `${t('poolLabel')}: <span class="pool-sats">${data.availablePool}</span> sats`;
-            }
-        } catch { /* silent */ }
     }
 
     function gutterLines(n) { return Array.from({length: n}, (_, i) => String(i+1).padStart(3)).join('\n'); }
@@ -1691,73 +1384,40 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     function highlightURLLine(raw) {
         let line = esc(raw);
-        if (/^(SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|VERDICT|EXTRACTED TRUTHS)\b/.test(line))
+        if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
+            return `<span class="s-section">${line}</span>`;
+        if (/^\*\*\d+\.\s/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
         let mainPart = line, commentPart = '';
         const ci = line.indexOf('//');
         if (ci > 0) { mainPart = line.substring(0, ci); commentPart = `<span class="s-cmt">${line.substring(ci)}</span>`; }
-        mainPart = mainPart.replace(/\b(S|O|R)\(v\)/g, '<span class="s-kw">$&</span>');
-        mainPart = mainPart.replace(/\bVB\b/g, '<span class="s-kw">VB</span>');
-        mainPart = mainPart.replace(/\bC\s{0,3}=/g, m => `<span class="s-kw">C</span>` + m.slice(1));
-        mainPart = mainPart.replace(/\b(url|type|perspective|origin|signals|distortion|quality|signal|noise|action|correction):/g, '<span class="s-blue">$1</span>:');
-        mainPart = mainPart.replace(/\b(HIGH)\b/g, '<span class="s-verdict-ok">$1</span>');
-        mainPart = mainPart.replace(/\b(MEDIUM)\b/g, '<span class="s-verdict-warn">$1</span>');
-        mainPart = mainPart.replace(/\b(LOW|NOISE)\b/g, '<span class="s-verdict-fail">$1</span>');
-        mainPart = mainPart.replace(/\b(integrate insights)\b/g, '<span class="s-ok">$1</span>');
-        mainPart = mainPart.replace(/\b(read critically)\b/g, '<span class="s-warn">$1</span>');
-        mainPart = mainPart.replace(/\b(discard)\b/g, '<span class="s-err">$1</span>');
-        mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
-        mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
-        mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
+        mainPart = mainPart.replace(/\b(Conceptos robados|Incentivos perversos|Omisiones)\b/gi, '<span class="s-warn">$1</span>');
         mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2}|K\d|L\d|E\d|Ae\d)\b/g, m => {
             const tip = RULES[m] || m;
             return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
         });
-        mainPart = mainPart.replace(/\b(\d+\.\d+)\b/g, '<span class="s-num">$1</span>');
         mainPart = mainPart.replace(/"([^"]*)"/g, '"<span class="s-str">$1</span>"');
         mainPart = mainPart.replace(/-&gt;/g, '<span class="s-op">-&gt;</span>');
-        mainPart = mainPart.replace(/\bok\b/g, '<span class="s-ok">ok</span>');
-        mainPart = mainPart.replace(/\bno\b(?!\s*=)/g, '<span class="s-err">no</span>');
         return mainPart + commentPart;
     }
 
     function highlightLine(raw) {
         let line = esc(raw);
-        if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE)\b/.test(line))
+        if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|VEREDICTO)\b/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
         let mainPart = line, commentPart = '';
         const ci = line.indexOf('//');
         if (ci > 0) { mainPart = line.substring(0, ci); commentPart = `<span class="s-cmt">${line.substring(ci)}</span>`; }
-        mainPart = mainPart.replace(/\b(S|O|R)\(v\)/g, '<span class="s-kw">$&</span>');
-        mainPart = mainPart.replace(/\bVB\b/g, '<span class="s-kw">VB</span>');
-        mainPart = mainPart.replace(/\bC\s{0,3}=/g, m => `<span class="s-kw">C</span>` + m.slice(1));
-        mainPart = mainPart.replace(/\b(status|reason|action|origin|source|distortion|rule|text|novelty|correction|reformulation|derivation|C_rescued):/g, '<span class="s-blue">$1</span>:');
-        mainPart = mainPart.replace(/\b(NAVIGABLE|CLOSED|DERIVED)\b/g, '<span class="s-verdict-ok">$1</span>');
-        mainPart = mainPart.replace(/\b(PROVISIONAL)\b/g, '<span class="s-verdict-warn">$1</span>');
-        mainPart = mainPart.replace(/\b(COLLAPSE|PARTIAL)\b/g, '<span class="s-verdict-fail">$1</span>');
-        mainPart = mainPart.replace(/\b(UNFALSIFIABLE)\b/g, '<span class="s-orange">$1</span>');
-        mainPart = mainPart.replace(/\b(integrate|acknowledge)\b/g, '<span class="s-ok">$1</span>');
-        mainPart = mainPart.replace(/\b(reject)\b/g, '<span class="s-err">$1</span>');
-        mainPart = mainPart.replace(/\b(revise|outside scope)\b/g, '<span class="s-warn">$1</span>');
-        mainPart = mainPart.replace(/\b(received)\b/g, '<span class="s-warn">$1</span>');
-        mainPart = mainPart.replace(/\b(derived)\b/g, '<span class="s-ok">$1</span>');
-        mainPart = mainPart.replace(/\b(mixed)\b/g, '<span class="s-orange">$1</span>');
         mainPart = mainPart.replace(/\b(G\d{1,2}|U\d|H\d{1,2}|K\d|L\d|E\d|Ae\d)\b/g, m => {
             const tip = RULES[m] || m;
             return `<span class="rule-ref" data-tip="${esc(tip)}">${m}</span>`;
         });
-        mainPart = mainPart.replace(/\b(\d+\.\d+)\b/g, '<span class="s-num">$1</span>');
         mainPart = mainPart.replace(/"([^"]*)"/g, '"<span class="s-str">$1</span>"');
         mainPart = mainPart.replace(/-&gt;/g, '<span class="s-op">-&gt;</span>');
-        mainPart = mainPart.replace(/\bok\b/g, '<span class="s-ok">ok</span>');
-        mainPart = mainPart.replace(/\bno\b(?!\s*=)/g, '<span class="s-err">no</span>');
         return mainPart + commentPart;
     }
-
-    function extractVerdict(t) { const m = t.match(/status:\s*(COLLAPSE|PARTIAL|PROVISIONAL|NAVIGABLE|CLOSED|UNFALSIFIABLE|DERIVED)/i); return m ? m[1].toUpperCase() : null; }
-    function extractScore(t) { const m = t.match(/C\s*=\s*[\d.]+\s*x\s*[\d.]+\s*x\s*[\d.]+\s*=\s*([\d.]+)/); return m ? parseFloat(m[1]) : null; }
 
     function renderHistory() {
         const c = $('#history-list');
@@ -1765,9 +1425,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         c.innerHTML = '';
         state.history.forEach(item => {
             const el = document.createElement('div'); el.className = 'list-item';
-            const vc = item.verdict === 'NAVIGABLE' || item.verdict === 'CLOSED' ? 's-ok' : item.verdict === 'PROVISIONAL' ? 's-warn' : 's-err';
-            const sc = item.score !== null ? item.score.toFixed(2) : '?';
-            el.innerHTML = `<div class="meta">#${item.num} &middot; C=${sc} &middot; <span class="${vc}">${item.verdict||'?'}</span> &middot; ${new Date(item.date).toLocaleDateString()}</div><div class="candidate-text">"${esc(item.candidate)}"</div>`;
+            el.innerHTML = `<div class="meta">#${item.num} &middot; ${new Date(item.date).toLocaleDateString()}</div><div class="candidate-text">"${esc(item.candidate)}"</div>`;
             el.addEventListener('click', () => { switchTab('discover'); expandAnalysis(item); });
             c.appendChild(el);
         });
@@ -1781,16 +1439,15 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         rulesBlock.className = 'code-block';
         rulesBlock.style.marginBottom = '20px';
 
-        // Axiomatic foundation — self-evident, irrefutable (denying them requires using them)
         const es = state.lang === 'es';
         const r = code => es ? (RULES_ES[code] || RULES[code]) : RULES[code];
         const hierarchy = [
-            { level: 0, section: true, text: es ? 'AXIOMAS — autoevidentes. negarlos requiere usarlos.' : 'AXIOMS — self-evident. to deny them is to use them.' },
+            { level: 0, section: true, text: es ? 'AXIOMAS \u2014 autoevidentes. negarlos requiere usarlos.' : 'AXIOMS \u2014 self-evident. to deny them is to use them.' },
             { level: 0, code: 'A0', text: es ? 'La existencia existe' : 'Existence exists', color: 's-bright' },
-            { level: 0, code: 'A1', text: es ? 'Consciencia: la percepción de la existencia existe' : 'Consciousness: awareness of existence exists', color: 's-bright' },
+            { level: 0, code: 'A1', text: es ? 'Consciencia: la percepci\u00f3n de la existencia existe' : 'Consciousness: awareness of existence exists', color: 's-bright' },
             { level: 0, code: 'A2', text: es ? 'Identidad: una cosa es lo que es (A = A)' : 'Identity: a thing is what it is (A = A)', color: 's-bright' },
-            { level: 0, code: 'A3', text: es ? 'Causalidad: las entidades actúan según su naturaleza' : 'Causality: entities act according to their nature', color: 's-bright' },
-            { level: 0, section: true, text: es ? 'GENERAL — patrones que aplican en cualquier sistema' : 'GENERAL — patterns that hold in any system' },
+            { level: 0, code: 'A3', text: es ? 'Causalidad: las entidades act\u00faan seg\u00fan su naturaleza' : 'Causality: entities act according to their nature', color: 's-bright' },
+            { level: 0, section: true, text: es ? 'GENERAL \u2014 patrones que aplican en cualquier sistema' : 'GENERAL \u2014 patterns that hold in any system' },
             { level: 1, code: 'G1', text: r('G1') },
             { level: 1, code: 'G2', text: r('G2') },
             { level: 1, code: 'G3', text: r('G3') },
@@ -1801,7 +1458,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 1, code: 'G8', text: r('G8') },
             { level: 1, code: 'G9', text: r('G9') },
             { level: 1, code: 'G10', text: r('G10') },
-            { level: 0, section: true, text: es ? 'UNIVERSAL — reglas generales aplicadas al universo observable' : 'UNIVERSAL — general rules applied to the observable universe' },
+            { level: 0, section: true, text: es ? 'UNIVERSAL \u2014 reglas generales aplicadas al universo observable' : 'UNIVERSAL \u2014 general rules applied to the observable universe' },
             { level: 2, code: 'U1', text: r('U1') },
             { level: 2, code: 'U2', text: r('U2') },
             { level: 2, code: 'U3', text: r('U3') },
@@ -1811,7 +1468,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 2, code: 'U7', text: r('U7') },
             { level: 2, code: 'U8', text: r('U8') },
             { level: 2, code: 'U9', text: r('U9') },
-            { level: 0, section: true, text: es ? 'HUMANO — reglas universales filtradas por valoración e incentivos' : 'HUMAN — universal rules filtered through valuation and incentives' },
+            { level: 0, section: true, text: es ? 'HUMANO \u2014 reglas universales filtradas por valoraci\u00f3n e incentivos' : 'HUMAN \u2014 universal rules filtered through valuation and incentives' },
             { level: 3, code: 'H1', text: r('H1') },
             { level: 3, code: 'H2', text: r('H2') },
             { level: 3, code: 'H3', text: r('H3') },
@@ -1824,7 +1481,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 3, code: 'H10', text: r('H10') },
             { level: 3, code: 'H11', text: r('H11') },
             { level: 3, code: 'H12', text: r('H12') },
-            { level: 0, section: true, text: es ? 'CONOCIMIENTO — cómo sabemos lo que sabemos' : 'KNOWLEDGE — how we know what we know' },
+            { level: 0, section: true, text: es ? 'CONOCIMIENTO \u2014 c\u00f3mo sabemos lo que sabemos' : 'KNOWLEDGE \u2014 how we know what we know' },
             { level: 4, code: 'K1', text: r('K1') },
             { level: 4, code: 'K2', text: r('K2') },
             { level: 4, code: 'K3', text: r('K3') },
@@ -1833,14 +1490,14 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 4, code: 'K6', text: r('K6') },
             { level: 4, code: 'K7', text: r('K7') },
             { level: 4, code: 'K8', text: r('K8') },
-            { level: 0, section: true, text: es ? 'LENGUAJE — cómo el significado se comunica' : 'LANGUAGE — how meaning is communicated' },
+            { level: 0, section: true, text: es ? 'LENGUAJE \u2014 c\u00f3mo el significado se comunica' : 'LANGUAGE \u2014 how meaning is communicated' },
             { level: 4, code: 'L1', text: r('L1') },
             { level: 4, code: 'L2', text: r('L2') },
             { level: 4, code: 'L3', text: r('L3') },
             { level: 4, code: 'L4', text: r('L4') },
             { level: 4, code: 'L5', text: r('L5') },
             { level: 4, code: 'L6', text: r('L6') },
-            { level: 0, section: true, text: es ? 'ÉTICA — principios de acción derivados de lo anterior' : 'ETHICS — principles of action derived from the above' },
+            { level: 0, section: true, text: es ? '\u00c9TICA \u2014 principios de acci\u00f3n derivados de lo anterior' : 'ETHICS \u2014 principles of action derived from the above' },
             { level: 4, code: 'E1', text: r('E1') },
             { level: 4, code: 'E2', text: r('E2') },
             { level: 4, code: 'E3', text: r('E3') },
@@ -1849,7 +1506,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 4, code: 'E6', text: r('E6') },
             { level: 4, code: 'E7', text: r('E7') },
             { level: 4, code: 'E8', text: r('E8') },
-            { level: 0, section: true, text: es ? 'ESTÉTICA — la naturaleza del valor en la creación' : 'AESTHETICS — the nature of value in creation' },
+            { level: 0, section: true, text: es ? 'EST\u00c9TICA \u2014 la naturaleza del valor en la creaci\u00f3n' : 'AESTHETICS \u2014 the nature of value in creation' },
             { level: 4, code: 'Ae1', text: r('Ae1') },
             { level: 4, code: 'Ae2', text: r('Ae2') },
             { level: 4, code: 'Ae3', text: r('Ae3') },
@@ -1857,16 +1514,13 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
             { level: 4, code: 'Ae5', text: r('Ae5') },
         ];
 
-        // Insert user's discovered truths into the hierarchy
         if (state.integrated.length) {
-            hierarchy.push({ level: 0, section: true, text: es ? 'DESCUBIERTAS — verdades verificadas por el protocolo' : 'DISCOVERED — truths verified through the protocol' });
+            hierarchy.push({ level: 0, section: true, text: es ? 'DESCUBIERTAS \u2014 verdades verificadas por el protocolo' : 'DISCOVERED \u2014 truths verified through the protocol' });
             state.integrated.forEach((item, i) => {
                 hierarchy.push({
                     level: 1,
                     code: `D${i+1}`,
                     text: item.candidate,
-                    score: item.score,
-                    verdict: item.verdict,
                     discovered: true
                 });
             });
@@ -1884,9 +1538,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
                     ? `<span class="s-green">${r.code}</span>`
                     : `<span class="rule-ref" data-tip="${esc(r.text)}">${r.code}</span>`;
                 if (r.discovered) {
-                    const sc = r.score !== null ? r.score.toFixed(2) : '?';
-                    const vc = r.verdict === 'NAVIGABLE' || r.verdict === 'CLOSED' || r.verdict === 'DERIVED' ? 's-ok' : 's-warn';
-                    html += `${indent}${codeSpan} <span class="${vc}">[${r.verdict}]</span> C=<span class="s-num">${sc}</span> <span class="s-bright">"${esc(r.text)}"</span>\n`;
+                    html += `${indent}${codeSpan} <span class="s-bright">"${esc(r.text)}"</span>\n`;
                 } else {
                     html += `${indent}${codeSpan} <span class="s-cmt">${esc(r.text)}</span>\n`;
                 }
@@ -1917,26 +1569,6 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    // ── QR Code Generator (client-side, no external dependency) ──
-    function renderQR(container, text) {
-        container.innerHTML = '';
-        // Use a canvas-based QR via dynamic import from CDN as fallback
-        const canvas = document.createElement('canvas');
-        canvas.width = 200; canvas.height = 200;
-        container.appendChild(canvas);
-        // Minimal QR: load qrcode lib on demand
-        if (!window.QRCode) {
-            const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';
-            s.onload = () => window.QRCode.toCanvas(canvas, text, { width: 200, margin: 1, color: { dark: '#00ff87', light: '#0a0a0a' } });
-            s.onerror = () => { container.innerHTML = `<span class="s-cmt">// QR failed — copy invoice manually</span>`; };
-            document.head.appendChild(s);
-        } else {
-            window.QRCode.toCanvas(canvas, text, { width: 200, margin: 1, color: { dark: '#00ff87', light: '#0a0a0a' } });
-        }
-    }
-
-    // ── Export hierarchy as JSON ──
     function exportHierarchy() {
         const data = {
             version: 1,
@@ -1949,7 +1581,7 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = `nicomaco-export-${today()}.json`;
+        a.href = url; a.download = `logic-export-${today()}.json`;
         a.click(); URL.revokeObjectURL(url);
     }
 
@@ -1978,11 +1610,10 @@ Re-evaluate considering this evidence. Same analysis format. If the verdict chan
 
     function today() { return new Date().toISOString().split('T')[0]; }
 
-    // ── Share analysis ──
     function shareAnalysis(item) {
-        const text = `${item.candidate}\n\n${item.analysis}\n\n— analyzed via nicomaco.org`;
+        const text = `${item.candidate}\n\n${item.analysis}\n\n\u2014 analyzed via nicomaco.org`;
         if (navigator.share) {
-            navigator.share({ title: 'Nicomaco Analysis', text }).catch(() => {});
+            navigator.share({ title: 'Logic Analysis', text }).catch(() => {});
         } else {
             navigator.clipboard.writeText(text);
         }
