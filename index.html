@@ -356,12 +356,12 @@
                         <option value="claude-3-5-haiku-20241022">claude-3.5-haiku</option>
                     </select>
                 </div>
-                <div class="s-cmt" style="margin-top:20px;margin-bottom:8px">// optional: use your own API key</div>
+                <div class="s-cmt" style="margin-top:20px;margin-bottom:8px">// api key (required)</div>
                 <div class="cfg-line">
                     <label>api_key:</label>
-                    <input type="password" id="cfg-key" placeholder="sk-ant-... (optional)" />
+                    <input type="password" id="cfg-key" placeholder="sk-ant-..." />
                 </div>
-                <div class="s-cmt" style="font-size:10px">// leave empty to use free mode. your key is never transmitted to third parties.</div>
+                <div class="s-cmt" style="font-size:10px">// stored locally, never transmitted to third parties. get yours at console.anthropic.com</div>
                 <div style="margin-top:16px">
                     <button class="btn" id="cfg-save">save</button>
                 </div>
@@ -1010,7 +1010,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         // Clean legacy storage
         localStorage.removeItem('vu_history');
 
-        // Always show main — free mode by default
+        // Always show main
         showScreen('main');
         renderWelcome();
 
@@ -1361,7 +1361,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                 signal: state.controller.signal
             });
         } else {
-            // Free mode — via worker proxy
+            // No API key — via worker proxy fallback
             res = await fetch(`${WORKER_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
