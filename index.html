@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logic</title>
+    <title>Lenguaje Cartográfico</title>
     <meta name="description" content="Detecta mentiras, conceptos robados e incentivos perversos. A is A.">
-    <meta property="og:title" content="Logic">
+    <meta property="og:title" content="Lenguaje Cartográfico">
     <meta property="og:description" content="Detecta mentiras, conceptos robados e incentivos perversos. A is A.">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Logic">
+    <meta name="apple-mobile-web-app-title" content="Lenguaje Cartográfico">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
@@ -372,11 +372,12 @@
         <div id="screen-main" class="screen">
             <div class="header">
                 <div class="header-left">
-                    <div class="header-title">LOGIC</div>
+                    <div class="header-title" id="main-title">LENGUAJE CARTOGRÁFICO</div>
                     <div class="header-sub" id="main-subtitle">// detecta mentiras, conceptos robados e incentivos perversos</div>
                 </div>
                 <div class="header-nav">
                     <a href="glosario.html" id="nav-glossary">glossary</a>
+                    <a href="motivos.html" id="nav-motives">motives</a>
                     <a href="#" id="nav-borrador" style="display:none;color:var(--orange)">borrador <span id="draft-badge" style="font-size:0.7em"></span></a>
                     <a href="#" id="nav-cfg">cfg</a>
                     <a href="#" id="nav-lang" style="color:var(--comment)">ES</a>
@@ -992,6 +993,10 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         if (toggle) toggle.textContent = lang === 'en' ? 'ES' : 'EN';
         const glossaryLink = $('#nav-glossary');
         if (glossaryLink) glossaryLink.textContent = lang === 'en' ? 'glossary' : 'glosario';
+        const motivesLink = $('#nav-motives');
+        if (motivesLink) motivesLink.textContent = lang === 'en' ? 'motives' : 'motivos';
+        const mainTitle = $('#main-title');
+        if (mainTitle) mainTitle.textContent = lang === 'en' ? 'CARTOGRAPHIC LANGUAGE' : 'LENGUAJE CARTOGRÁFICO';
         $('#main-subtitle').textContent = t('subtitle');
         $$('[data-tab="discover"]').forEach(el => el.textContent = t('discover'));
         $$('[data-tab="integrated"]').forEach(el => el.textContent = t('integrated'));
@@ -1671,9 +1676,9 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     function today() { return new Date().toISOString().split('T')[0]; }
 
     function shareAnalysis(item) {
-        const text = `${item.candidate}\n\n${item.analysis}\n\n\u2014 analyzed via Logic`;
+        const text = `${item.candidate}\n\n${item.analysis}\n\n\u2014 nicomaco.org`;
         if (navigator.share) {
-            navigator.share({ title: 'Logic Analysis', text }).catch(() => {});
+            navigator.share({ title: 'Lenguaje Cartográfico', text }).catch(() => {});
         } else {
             navigator.clipboard.writeText(text);
         }

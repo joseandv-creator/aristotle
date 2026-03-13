@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glossary — Logic</title>
+    <title>Glossary — Cartographic Language</title>
     <meta name="description" content="Complete Glossary of Cartographic Language. The Unified Theory of Language, Consciousness, and Ethics.">
     <meta name="theme-color" content="#0a0a0a">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
@@ -87,8 +87,8 @@
     <div id="app">
         <div class="header">
             <div class="header-left">
-                <div class="header-title">LOGIC</div>
-                <div class="header-sub">// glossary of cartographic language</div>
+                <div class="header-title">CARTOGRAPHIC LANGUAGE</div>
+                <div class="header-sub">// glossary</div>
             </div>
             <div class="header-nav">
                 <a href="index.html">app</a>
@@ -891,6 +891,8 @@
             contentEs.style.display = lang === 'es' ? '' : 'none';
             bookTitle.innerHTML = bookTitle.getAttribute('data-' + lang);
             bookAuthor.innerHTML = bookAuthor.getAttribute('data-' + lang);
+            document.querySelector('.header-title').textContent = lang === 'en' ? 'CARTOGRAPHIC LANGUAGE' : 'LENGUAJE CARTOGRÁFICO';
+            document.querySelector('.header-sub').textContent = lang === 'en' ? '// glossary' : '// glosario';
             searchInput.placeholder = lang === 'en' ? '> search definitions...' : '> buscar definiciones...';
             searchInput.value = '';
             searchInput.dispatchEvent(new Event('input'));
