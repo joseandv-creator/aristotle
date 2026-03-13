@@ -376,6 +376,7 @@
                     <div class="header-sub" id="main-subtitle">// detecta mentiras, conceptos robados e incentivos perversos</div>
                 </div>
                 <div class="header-nav">
+                    <a href="glosario.html" id="nav-glossary">glossary</a>
                     <a href="#" id="nav-cfg">cfg</a>
                     <a href="#" id="nav-lang" style="color:var(--comment)">ES</a>
                 </div>
@@ -934,6 +935,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         localStorage.setItem('vu_lang', lang);
         const toggle = $('#nav-lang');
         if (toggle) toggle.textContent = lang === 'en' ? 'ES' : 'EN';
+        const glossaryLink = $('#nav-glossary');
+        if (glossaryLink) glossaryLink.textContent = lang === 'en' ? 'glossary' : 'glosario';
         $('#main-subtitle').textContent = t('subtitle');
         $$('[data-tab="discover"]').forEach(el => el.textContent = t('discover'));
         $$('[data-tab="history"]').forEach(el => el.textContent = t('history'));

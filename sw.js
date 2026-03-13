@@ -1,8 +1,9 @@
-const CACHE_NAME = 'logic-v1';
+const CACHE_NAME = 'logic-v2';
 const ASSETS = [
   '/',
   '/index.html',
   '/motivos.html',
+  '/glosario.html',
   '/manifest.json',
   'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap'
 ];
