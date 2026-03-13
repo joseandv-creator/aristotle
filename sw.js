@@ -1,4 +1,4 @@
-const CACHE_NAME = 'logic-v5';
+const CACHE_NAME = 'lc-v6';
 const ASSETS = [
   '/',
   '/index.html',

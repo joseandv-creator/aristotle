@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>motives — Cartographic Language</title>
+    <title>Motives — Cartographic Language</title>
     <meta name="description" content="Detect lies, stolen concepts, and perverse incentives. Build the subject that operates the truth.">
     <meta property="og:title" content="Motives — Cartographic Language">
+    <meta property="og:description" content="Detect lies, stolen concepts, and perverse incentives.">
     <meta property="og:type" content="website">
+    <meta name="apple-mobile-web-app-title" content="Lenguaje Cartográfico">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -310,6 +312,8 @@
                 <div class="nav-links">
                     <a href="index.html" class="en-only">tool</a>
                     <a href="index.html" class="es-only">herramienta</a>
+                    <a href="glosario.html" class="en-only">glossary</a>
+                    <a href="glosario.html" class="es-only">glosario</a>
                     <a href="motivos.html" class="active en-only">motives</a>
                     <a href="motivos.html" class="active es-only">motivos</a>
                 </div>
@@ -639,7 +643,7 @@
             lang = l;
             document.body.classList.remove('en', 'es');
             document.body.classList.add(l);
-            document.getElementById('lang-toggle').textContent = l === 'es' ? 'ES' : 'EN';
+            document.getElementById('lang-toggle').textContent = l === 'en' ? 'ES' : 'EN';
             document.documentElement.lang = l;
             localStorage.setItem('vu_lang', l);
         }
@@ -823,16 +827,22 @@
                 const div = document.createElement('div');
                 div.className = 'hist-item';
 
-                const verdictClass = item.verdict === 'NAVIGABLE' || item.verdict === 'CLOSED' ? 's-ok'
-                    : item.verdict === 'PROVISIONAL' ? 's-warn' : 's-err';
-                const sc = item.score !== null ? item.score.toFixed(2) : '?';
+                const meta = [`#${item.num || '?'}`];
+                if (item.score != null) meta.push(`C=${item.score.toFixed(2)}`);
+                if (item.verdict) {
+                    const verdictClass = item.verdict === 'NAVIGABLE' || item.verdict === 'CLOSED' ? 's-ok'
+                        : item.verdict === 'PROVISIONAL' ? 's-warn' : 's-err';
+                    meta.push(`<span class="${verdictClass}">${item.verdict}</span>`);
+                }
+                if (item.isURL) meta.push('URL');
+                meta.push(new Date(item.date).toLocaleDateString());
 
                 const header = document.createElement('div');
                 header.className = 'hist-header';
                 header.innerHTML = `
                     <div>
                         <div class="hist-candidate">"${esc(item.candidate)}"</div>
-                        <div class="hist-meta">#${item.num} &middot; C=${sc} &middot; <span class="${verdictClass}">${item.verdict || '?'}</span> &middot; ${new Date(item.date).toLocaleDateString()}</div>
+                        <div class="hist-meta">${meta.join(' &middot; ')}</div>
                     </div>
                     <span class="hist-toggle">expand</span>
                 `;

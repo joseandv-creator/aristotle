@@ -973,13 +973,13 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         lang: localStorage.getItem('vu_lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
         apiKey: localStorage.getItem('vu_key') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
-        history: [],
+        history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
         drafts: JSON.parse(localStorage.getItem('vu_drafts') || '[]'),
         currentTab: 'discover',
         processing: false,
         challengeTarget: null,
         controller: null,
-        analysisCount: 0
+        analysisCount: JSON.parse(localStorage.getItem('vu_history') || '[]').length
     };
 
     const $ = s => document.querySelector(s);
@@ -1011,8 +1011,8 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
     }
 
     function init() {
-        // Clean legacy storage
-        localStorage.removeItem('vu_history');
+        // Restore analysis count from persisted history
+        if (state.history.length) state.analysisCount = Math.max(...state.history.map(h => h.num || 0));
 
         // Always show main
         showScreen('main');
@@ -1203,6 +1203,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             codeEl.innerHTML = allLines;
             gutterEl.textContent = gutterLines(allLines.split('\n').length);
             state.history.unshift({ id, num, candidate: `[URL] ${url}`, analysis: fullText, date: new Date().toISOString(), messages, isURL: true });
+            localStorage.setItem('vu_history', JSON.stringify(state.history));
 
             const acts = document.createElement('div');
             acts.className = 'actions';
@@ -1270,6 +1271,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             gutterEl.textContent = gutterLines(allLines.split('\n').length);
             addActions(block, id, text, fullText, messages);
             state.history.unshift({ id, num, candidate: text, analysis: fullText, date: new Date().toISOString(), messages });
+            localStorage.setItem('vu_history', JSON.stringify(state.history));
 
         } catch (err) {
             if (err.name === 'AbortError') {
@@ -1657,7 +1659,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = `logic-export-${today()}.json`;
+        a.href = url; a.download = `lc-export-${today()}.json`;
         a.click(); URL.revokeObjectURL(url);
     }
 

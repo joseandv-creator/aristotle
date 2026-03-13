@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glossary — Cartographic Language</title>
     <meta name="description" content="Complete Glossary of Cartographic Language. The Unified Theory of Language, Consciousness, and Ethics.">
+    <meta property="og:title" content="Glossary — Cartographic Language">
+    <meta property="og:description" content="Complete Glossary of Cartographic Language.">
     <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Lenguaje Cartográfico">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9671;</text></svg>">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -92,6 +99,7 @@
             </div>
             <div class="header-nav">
                 <a href="index.html">app</a>
+                <a href="motivos.html" id="nav-motives">motives</a>
                 <a href="#" id="lang-toggle" style="color:var(--cyan);cursor:pointer">ES</a>
             </div>
         </div>
@@ -867,7 +875,7 @@
     <script>
     (function() {
         'use strict';
-        let lang = 'en';
+        let lang = localStorage.getItem('vu_lang') || 'en';
         const contentEn = document.getElementById('content-en');
         const contentEs = document.getElementById('content-es');
         const toggle = document.getElementById('lang-toggle');
@@ -875,6 +883,22 @@
         const noResults = document.getElementById('no-results');
         const bookTitle = document.querySelector('.book-title');
         const bookAuthor = document.querySelector('.book-author');
+        const motivesLink = document.getElementById('nav-motives');
+
+        function applyLang() {
+            localStorage.setItem('vu_lang', lang);
+            toggle.textContent = lang === 'en' ? 'ES' : 'EN';
+            contentEn.style.display = lang === 'en' ? '' : 'none';
+            contentEs.style.display = lang === 'es' ? '' : 'none';
+            bookTitle.innerHTML = bookTitle.getAttribute('data-' + lang);
+            bookAuthor.innerHTML = bookAuthor.getAttribute('data-' + lang);
+            document.querySelector('.header-title').textContent = lang === 'en' ? 'CARTOGRAPHIC LANGUAGE' : 'LENGUAJE CARTOGRÁFICO';
+            document.querySelector('.header-sub').textContent = lang === 'en' ? '// glossary' : '// glosario';
+            if (motivesLink) motivesLink.textContent = lang === 'en' ? 'motives' : 'motivos';
+            searchInput.placeholder = lang === 'en' ? '> search definitions...' : '> buscar definiciones...';
+            noResults.textContent = lang === 'en' ? 'no results' : 'sin resultados';
+        }
+        applyLang();
 
         // Toggle sections (delegated)
         document.getElementById('sections').addEventListener('click', e => {
@@ -886,14 +910,7 @@
         toggle.addEventListener('click', e => {
             e.preventDefault();
             lang = lang === 'en' ? 'es' : 'en';
-            toggle.textContent = lang === 'en' ? 'ES' : 'EN';
-            contentEn.style.display = lang === 'en' ? '' : 'none';
-            contentEs.style.display = lang === 'es' ? '' : 'none';
-            bookTitle.innerHTML = bookTitle.getAttribute('data-' + lang);
-            bookAuthor.innerHTML = bookAuthor.getAttribute('data-' + lang);
-            document.querySelector('.header-title').textContent = lang === 'en' ? 'CARTOGRAPHIC LANGUAGE' : 'LENGUAJE CARTOGRÁFICO';
-            document.querySelector('.header-sub').textContent = lang === 'en' ? '// glossary' : '// glosario';
-            searchInput.placeholder = lang === 'en' ? '> search definitions...' : '> buscar definiciones...';
+            applyLang();
             searchInput.value = '';
             searchInput.dispatchEvent(new Event('input'));
         });
