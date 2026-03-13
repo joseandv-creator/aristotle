@@ -839,22 +839,7 @@ S-O-R | VB \u2192 fidelity \u2192 elimination \u2192 limits declared \u2192 terr
 
 The navigator is the map. The map is not the territory. The territory always wins.
 
----
-
-## INTEGRATION FILTER
-
-At the END of every response, on its own line, output exactly one of these tags:
-
-[INTEGRABLE] \u2014 the input contains or produced a truth that survives elimination in 3+ contexts, is not a personal statement, and would expand the user's operative map if integrated.
-
-[NO-INTEGRABLE] \u2014 the input is a personal feeling, opinion, question, context-dependent statement, or does not survive universality testing. Valuable to discuss, but not to integrate as a permanent instrument.
-
-Rules:
-- Personal statements ("me siento solo", "estoy triste") are ALWAYS [NO-INTEGRABLE]
-- Opinions without universality test are [NO-INTEGRABLE]
-- Questions are [NO-INTEGRABLE]
-- Only claims that survive the protocol (C >= 0.7, tested in 3+ domains) earn [INTEGRABLE]
-- When in doubt, [NO-INTEGRABLE] \u2014 the bar is high by design`;
+`;
 
     const URL_ANALYSIS_PROMPT = `The user has submitted a URL for analysis. The page content has been extracted below.
 
@@ -890,14 +875,12 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             placeholder: 'ask yourself a question, paste a URL...',
             hints: 'enter to send \u00b7 shift+enter new line \u00b7 paste URL to filter \u00b7 esc cancel',
             challenge: 'challenge',
-            integrate: 'integrate',
             copy: 'copy',
             copied: 'copied',
             save: 'save',
             configTitle: '// configuration',
             configHint: '// stored in your browser. never transmitted to third parties.',
             noHistory: '// no history yet',
-            noIntegrated: '// no integrated truths yet',
             welcome1: '// A is A',
             challengePrompt: 'provide territory evidence...',
             share: 'share',
@@ -914,14 +897,12 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             placeholder: 'hazte una pregunta, pega una URL...',
             hints: 'enter para enviar \u00b7 shift+enter nueva linea \u00b7 pega URL para filtrar \u00b7 esc cancelar',
             challenge: 'desafiar',
-            integrate: 'integrar',
             copy: 'copiar',
             copied: 'copiado',
             save: 'guardar',
             configTitle: '// configuraci\u00f3n',
             configHint: '// guardado en tu navegador. nunca se transmite a terceros.',
             noHistory: '// sin historial a\u00fan',
-            noIntegrated: '// sin verdades integradas a\u00fan',
             welcome1: '// A es A',
             challengePrompt: 'proporciona evidencia de territorio...',
             share: 'compartir',
@@ -937,7 +918,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         apiKey: localStorage.getItem('vu_key') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
         history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
-        integrated: JSON.parse(localStorage.getItem('vu_integrated') || '[]'),
         currentTab: 'discover',
         processing: false,
         challengeTarget: null,
@@ -1297,13 +1277,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         scrollToBottom();
     }
 
-    function integrate(id) {
-        const item = state.history.find(h => h.id === id);
-        if (!item || state.integrated.find(i => i.id === id)) return;
-        state.integrated.unshift({ id: item.id, candidate: item.candidate, date: item.date });
-        localStorage.setItem('vu_integrated', JSON.stringify(state.integrated));
-    }
-
     async function callStreamingAPI(messages, onChunk) {
         state.controller = new AbortController();
         let res;
@@ -1375,18 +1348,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         btnC.className = 'btn btn-sm'; btnC.textContent = t('challenge');
         btnC.addEventListener('click', () => startChallenge(id));
         acts.appendChild(btnC);
-        // Only show integrate button if system marked as [INTEGRABLE]
-        const isIntegrable = /\[INTEGRABLE\]/i.test(fullText);
-        if (isIntegrable) {
-            const btnI = document.createElement('button');
-            btnI.className = 'btn btn-sm'; btnI.textContent = t('integrate');
-            btnI.addEventListener('click', () => {
-                integrate(id);
-                btnI.textContent = state.lang === 'es' ? 'integrada' : 'integrated'; btnI.disabled = true;
-                btnI.style.color = 'var(--green)'; btnI.style.borderColor = '#1a3a1a';
-            });
-            acts.appendChild(btnI);
-        }
         const btnCp = document.createElement('button');
         btnCp.className = 'btn btn-sm'; btnCp.textContent = t('copy');
         btnCp.addEventListener('click', () => {
@@ -1416,8 +1377,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     function highlightURLLine(raw) {
         let line = esc(raw);
-        // Hide integration filter tags from display
-        if (/^\[INTEGRABLE\]$/i.test(line.trim()) || /^\[NO-INTEGRABLE\]$/i.test(line.trim())) return '';
         if (/^(PRODUCTOR|LO QUE IMPORTA|MENTIRAS|CONCEPTOS ROBADOS|INCENTIVOS PERVERSOS|VEREDICTO|SOURCE AUDIT|CLAIMS DETECTED|TERRITORY CHECK|INHERITANCE ANALYSIS|INFORMATION QUALITY|EXTRACTED TRUTHS)\b/i.test(line))
             return `<span class="s-section">${line}</span>`;
         if (/^\*\*\d+\.\s/.test(line))
@@ -1438,8 +1397,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
 
     function highlightLine(raw) {
         let line = esc(raw);
-        // Hide integration filter tags from display
-        if (/^\[INTEGRABLE\]$/i.test(line.trim()) || /^\[NO-INTEGRABLE\]$/i.test(line.trim())) return '';
         if (/^(CANDIDATE|DECOMPOSITION|SCORING|UNIVERSALITY|INHERITANCE|REDUNDANCY|VERDICT|RESCUE|MAP VALUE|PRODUCTOR|VEREDICTO)\b/.test(line))
             return `<span class="s-section">${line}</span>`;
         if (line.trimStart().startsWith('//')) return `<span class="s-cmt">${line}</span>`;
@@ -1550,18 +1507,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             { level: 4, code: 'Ae5', text: r('Ae5') },
         ];
 
-        if (state.integrated.length) {
-            hierarchy.push({ level: 0, section: true, text: es ? 'DESCUBIERTAS \u2014 verdades verificadas por el protocolo' : 'DISCOVERED \u2014 truths verified through the protocol' });
-            state.integrated.forEach((item, i) => {
-                hierarchy.push({
-                    level: 1,
-                    code: `D${i+1}`,
-                    text: item.candidate,
-                    discovered: true
-                });
-            });
-        }
-
         let html = '';
         hierarchy.forEach(r => {
             if (r.section) {
@@ -1570,20 +1515,10 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                 html += `<span class="s-cyan">${r.code}</span> <span class="${r.color}">${esc(r.text)}</span>\n`;
             } else {
                 const indent = '  '.repeat(r.level);
-                const codeSpan = r.discovered
-                    ? `<span class="s-green">${r.code}</span>`
-                    : `<span class="rule-ref" data-tip="${esc(r.text)}">${r.code}</span>`;
-                if (r.discovered) {
-                    html += `${indent}${codeSpan} <span class="s-bright">"${esc(r.text)}"</span>\n`;
-                } else {
-                    html += `${indent}${codeSpan} <span class="s-cmt">${esc(r.text)}</span>\n`;
-                }
+                const codeSpan = `<span class="rule-ref" data-tip="${esc(r.text)}">${r.code}</span>`;
+                html += `${indent}${codeSpan} <span class="s-cmt">${esc(r.text)}</span>\n`;
             }
         });
-
-        if (!state.integrated.length) {
-            html += `\n<span class="s-cmt">// ${state.lang === 'es' ? 'filtra afirmaciones. lo que sobreviva se agrega aqui.' : 'filter claims. what survives gets added here.'}</span>\n`;
-        }
 
         rulesBlock.innerHTML = `<div class="gutter">${gutterLines(html.split('\n').length)}</div><div class="code">${html}</div>`;
         c.appendChild(rulesBlock);
@@ -1611,7 +1546,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
             exported: new Date().toISOString(),
             axioms: ['A0','A1','A2','A3'].map(k => ({ code: k, text: { A0:'Existence exists', A1:'Consciousness: awareness of existence exists', A2:'Identity: a thing is what it is (A = A)', A3:'Causality: entities act according to their nature' }[k] })),
             rules: Object.entries(RULES).map(([code, text]) => ({ code, text })),
-            integrated: state.integrated,
             history: state.history,
         };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1626,10 +1560,6 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         reader.onload = e => {
             try {
                 const data = JSON.parse(e.target.result);
-                if (data.integrated) {
-                    state.integrated = [...state.integrated, ...data.integrated];
-                    localStorage.setItem('vu_integrated', JSON.stringify(state.integrated));
-                }
                 if (data.history) {
                     const existingIds = new Set(state.history.map(h => h.id));
                     const newItems = data.history.filter(h => !existingIds.has(h.id));
