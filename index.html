@@ -974,7 +974,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         apiKey: localStorage.getItem('vu_key') || '',
         model: localStorage.getItem('vu_model') || 'claude-sonnet-4-20250514',
         history: JSON.parse(localStorage.getItem('vu_history') || '[]'),
-        drafts: JSON.parse(localStorage.getItem('vu_drafts') || '[]'),
+        drafts: JSON.parse(localStorage.getItem('vu_drafts') || '[]').filter(d => d.t && d.d),
         currentTab: 'discover',
         processing: false,
         challengeTarget: null,
@@ -1590,6 +1590,7 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
         const clean = text.replace(/<!--BORRADOR:(.*?)-->/g, (_, json) => {
             try {
                 const d = JSON.parse(json);
+                if (!d.t || !d.d) return '';  // skip malformed drafts
                 d.id = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
                 d.date = new Date().toISOString();
                 drafts.push(d);
