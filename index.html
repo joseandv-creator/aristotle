@@ -1645,6 +1645,15 @@ Re-evaluate considering this evidence. If the analysis changes, explain why. If 
                 setTimeout(() => btnCp.textContent = es ? 'copiar' : 'copy', 1500);
             });
             acts.appendChild(btnCp);
+            const btnDel = document.createElement('button');
+            btnDel.className = 'btn btn-sm'; btnDel.textContent = es ? 'eliminar' : 'delete';
+            btnDel.addEventListener('click', () => {
+                state.drafts.splice(i, 1);
+                localStorage.setItem('vu_drafts', JSON.stringify(state.drafts));
+                updateDraftBadge();
+                renderDrafts();
+            });
+            acts.appendChild(btnDel);
             block.appendChild(acts);
             output.appendChild(block);
         });
